@@ -36,4 +36,5 @@ public:
 	afx_msg void OnEnChangeEditDecay();
 	afx_msg void OnEnChangeEditDelay();
     afx_msg void OnCbnSelchangeComboFrgdMode();
+    afx_msg void OnCbnSelchangeComboAudioDevice();
 };

@@ -233,6 +233,11 @@ void cfft(float * x, long NC, unsigned int forward)
 				j = i + mmax;
 				rtemp = wr*x[j] - wi*x[j + 1];
 				itemp = wr*x[j + 1] + wi*x[j];
+                if (j >= 511 || i >= 511)
+                {
+                    int asdf = 0;
+                    j = 0;
+                }
 				x[j] = x[i] - rtemp;
 				x[j + 1] = x[i + 1] - itemp;
 				x[i] += rtemp;

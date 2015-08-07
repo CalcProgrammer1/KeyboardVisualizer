@@ -7,6 +7,9 @@
 #include "chuck_fft.h"
 #include "hsv.h"
 
+#include <string>
+#include <vector>
+
 class Visualizer
 {
 public:
@@ -22,10 +25,14 @@ public:
 	void VisThread();
 
 	//Keyboard Update Thread
-	void KeyboardUpdateThread();
+	void RazerKeyboardUpdateThread();
+    void CorsairKeyboardUpdateThread();
 
 	//Update function
 	void Update();
+
+    //Change Audio Device function
+    void ChangeDevice();
 
 	//Calculated FFT
 	float fft[256];
@@ -46,6 +53,12 @@ public:
 
     //Foreground Variables
     int frgd_mode;
+
+    //List of audio devices
+    std::vector<std::string> device_list;
+
+    //Audio device list ID
+    int device_idx;
 
 private:
 	//Audio Device Pointer

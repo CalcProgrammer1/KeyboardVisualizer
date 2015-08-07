@@ -60,9 +60,14 @@ BOOL KeyboardVisDlg::OnInitDialog()
     frgdModeBox->AddString("Green/Yellow/Red");
     frgdModeBox->SetCurSel(vis->frgd_mode);
 
-	SetTimer(1, 25, NULL);
+    CComboBox* audioDeviceBox = (CComboBox*)GetDlgItem(IDC_COMBO_AUDIO_DEVICE);
+    for (int i = 0; i < vis->device_list.size(); i++)
+    {
+        audioDeviceBox->AddString(vis->device_list[i].c_str());
+    }
+    audioDeviceBox->SetCurSel(vis->device_idx);
 
-	vis->StartThread();
+	SetTimer(1, 25, NULL);
 
 	return TRUE;
 }
@@ -95,6 +100,7 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_DECAY, &KeyboardVisDlg::OnEnChangeEditDecay)
 	ON_EN_CHANGE(IDC_EDIT_DELAY, &KeyboardVisDlg::OnEnChangeEditDelay)
     ON_CBN_SELCHANGE(IDC_COMBO_FRGD_MODE, &KeyboardVisDlg::OnCbnSelchangeComboFrgdMode)
+    ON_CBN_SELCHANGE(IDC_COMBO_AUDIO_DEVICE, &KeyboardVisDlg::OnCbnSelchangeComboAudioDevice)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
@@ -142,4 +148,15 @@ void KeyboardVisDlg::OnEnChangeEditDelay()
 void KeyboardVisDlg::OnCbnSelchangeComboFrgdMode()
 {
     vis->frgd_mode = ((CComboBox*)GetDlgItem(IDC_COMBO_FRGD_MODE))->GetCurSel();
+}
+
+
+void KeyboardVisDlg::OnCbnSelchangeComboAudioDevice()
+{
+    int new_device = ((CComboBox*)GetDlgItem(IDC_COMBO_AUDIO_DEVICE))->GetCurSel();
+    if (new_device != vis->device_idx)
+    {
+        vis->device_idx = new_device;
+        vis->ChangeDevice();
+    }
 }

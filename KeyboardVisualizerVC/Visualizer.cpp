@@ -12,10 +12,16 @@ static void thread(void *param)
 	vis->VisThread();
 }
 
-static void kbthread(void *param)
+static void rkbthread(void *param)
 {
 	Visualizer* vis = static_cast<Visualizer*>(param);
-	vis->KeyboardUpdateThread();
+	vis->RazerKeyboardUpdateThread();
+}
+
+static void ckbthread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->CorsairKeyboardUpdateThread();
 }
 
 Visualizer::Visualizer()
@@ -27,10 +33,27 @@ float fft_nrml[256];
 
 void Visualizer::Initialize()
 {
-	ALCchar* devices;
+    ALCchar* devices;
+    ALCchar* devstr;
+    ALCchar* next;
+    int len = 0;
+
 	devices = (ALCchar *) alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
-	device = alcCaptureOpenDevice(devices, 10000, AL_FORMAT_MONO8, 2048);
-	alcCaptureStart(device);
+	
+    devstr = devices;
+    next = devices + 1;
+
+    while ( (devstr) && (*devstr != '\0') && next && (*next != '\0') )
+    {
+        device_list.push_back(devstr);
+        len = strlen(devstr);
+        devstr += (len + 1);
+        next += (len + 2);
+    }
+    
+    device_idx = 0;
+
+    ChangeDevice();
 
 	rkb.Initialize();
 	//ckb.Initialize();
@@ -56,6 +79,18 @@ void Visualizer::Initialize()
 	}
 }
 
+void Visualizer::ChangeDevice()
+{
+    if (device != NULL)
+    {
+        alcCaptureStop(device);
+        alcCaptureCloseDevice(device);
+    }
+
+    device = alcCaptureOpenDevice(device_list[device_idx].c_str(), 8000, AL_FORMAT_MONO8, 2048);
+    alcCaptureStart(device);
+}
+
 void Visualizer::Update()
 {
 	float fft_tmp[512];
@@ -78,12 +113,22 @@ void Visualizer::Update()
 
 	do
 	{
-		alcGetIntegerv(device, ALC_CAPTURE_SAMPLES, 1, &samples);
+        if (device != NULL)
+        {
+            alcGetIntegerv(device, ALC_CAPTURE_SAMPLES, 1, &samples);
+        }
+        else
+        {
+            break;
+        }
 		Sleep(1);
-	} while (samples < 512);
+	} while (samples < 256);
 	
 	//Capture 256 audio samples
-	alcCaptureSamples(device, (ALCvoid *)buffer, 256);
+    if (device != NULL)
+    {
+        alcCaptureSamples(device, (ALCvoid *)buffer, 256);
+    }
 
 	//Scale the input into the FFT processing array
 	for (int i = 0; i < 512; i++)
@@ -171,7 +216,8 @@ void Visualizer::Update()
 void Visualizer::StartThread()
 {
 	_beginthread(thread, 0, this);
-	_beginthread(kbthread, 0, this);
+	_beginthread(rkbthread, 0, this);
+    //_beginthread(ckbthread, 0, this);
 }
 
 
@@ -253,13 +299,20 @@ void Visualizer::VisThread()
 	}
 }
 
-void Visualizer::KeyboardUpdateThread()
+void Visualizer::RazerKeyboardUpdateThread()
 {
 	while (1)
 	{
-		//Set keyboard LEDs
 		rkb.SetLEDs(pixels);
-		//ckb.SetLEDs(pixels);
-		Sleep(delay);
+		Sleep(16);
 	}
+}
+
+void Visualizer::CorsairKeyboardUpdateThread()
+{
+    while (1)
+    {
+        //ckb.SetLEDs(pixels);
+        Sleep(25);
+    }
 }

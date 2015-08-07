@@ -33,6 +33,6 @@ private:
 
     RZEFFECTID effect;
 
-	CUSTOM_GRID_EFFECT_TYPE Grid;
+    CUSTOM_EFFECT_TYPE Grid;
 };
 
