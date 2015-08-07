@@ -40,7 +40,7 @@ void RazerKeyboard::SetLEDs(COLORREF pixels[64][256])
 	{
 		for (int y = 0; y < 6; y++)
 		{
-			int x_idx = x * (128 / 22);
+			int x_idx = x * (256 / 22);
 			int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
             Grid.Color[y][x] = (pixels[y_idx][x_idx] & 0x00FFFFFF);
 		}
