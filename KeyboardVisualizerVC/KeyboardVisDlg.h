@@ -22,8 +22,13 @@ public:
 
 private:
     afx_msg void OnTimer(UINT_PTR nIDEvent);
+    afx_msg void OnDestroy();
+    UINT_PTR timer;
 
 protected:
+    // WM_TRAYICON_EVENT handler
+    afx_msg LRESULT OnTrayIconEvent(WPARAM wParam, LPARAM lParam);
+
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	DECLARE_MESSAGE_MAP()
 

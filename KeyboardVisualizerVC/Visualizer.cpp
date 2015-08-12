@@ -304,7 +304,7 @@ void Visualizer::RazerKeyboardUpdateThread()
 	while (1)
 	{
 		rkb.SetLEDs(pixels);
-		Sleep(16);
+		Sleep(25);
 	}
 }
 

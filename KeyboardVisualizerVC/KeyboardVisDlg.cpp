@@ -9,6 +9,12 @@
 
 // KeyboardVisDlg dialog
 
+// tray icon ID
+#define ID_SYSTEMTRAY 0x1000
+
+// custom message ID
+#define WM_TRAYICON_EVENT (WM_APP + 1)
+
 #define RGB2BGR(a_ulColor) (a_ulColor & 0xFF000000) | ((a_ulColor & 0xFF0000) >> 16) | (a_ulColor & 0x00FF00) | ((a_ulColor & 0x0000FF) << 16)
 
 IMPLEMENT_DYNAMIC(KeyboardVisDlg, CDialogEx)
@@ -36,6 +42,18 @@ void KeyboardVisDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL KeyboardVisDlg::OnInitDialog()
 {
+    NOTIFYICONDATA Tray;
+
+    Tray.cbSize = sizeof(Tray);
+    Tray.hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_ICON));
+    Tray.hWnd = GetSafeHwnd();
+    strcpy(Tray.szTip, "Keyboard Visualizer");
+    Tray.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
+    Tray.uID = ID_SYSTEMTRAY;
+    Tray.uCallbackMessage = WM_TRAYICON_EVENT;
+
+    Shell_NotifyIcon(NIM_ADD, &Tray);
+
 	SetDlgItemInt(IDC_EDIT_AMPLITUDE, vis->amplitude);
 	SetDlgItemInt(IDC_EDIT_BACKGROUND_BRIGHTNESS, vis->bkgd_bright);
 	SetDlgItemInt(IDC_EDIT_AVERAGE_SIZE, vis->avg_size);
@@ -67,9 +85,24 @@ BOOL KeyboardVisDlg::OnInitDialog()
     }
     audioDeviceBox->SetCurSel(vis->device_idx);
 
-	SetTimer(1, 25, NULL);
+	timer = SetTimer(1, 25, NULL);
 
 	return TRUE;
+}
+
+void KeyboardVisDlg::OnDestroy()
+{
+    NOTIFYICONDATA Tray;
+
+    Tray.cbSize = sizeof(Tray);
+    Tray.hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_ICON));
+    Tray.hWnd = GetSafeHwnd();
+    strcpy(Tray.szTip, "Keyboard Visualizer");
+    Tray.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
+    Tray.uID = ID_SYSTEMTRAY;
+    Tray.uCallbackMessage = WM_TRAYICON_EVENT;
+
+    Shell_NotifyIcon(NIM_DELETE, &Tray);
 }
 
 void KeyboardVisDlg::OnTimer(UINT nIDEvent)
@@ -90,17 +123,45 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
 	DeleteObject(hBitmap);
 }
 
+LRESULT KeyboardVisDlg::OnTrayIconEvent(WPARAM wParam, LPARAM lParam)
+{
+    if ((UINT)wParam != ID_SYSTEMTRAY)
+        return ERROR_SUCCESS;
+
+    switch ((UINT)lParam)
+    {
+        case WM_LBUTTONUP:
+        {
+            if (IsWindowVisible())
+            {
+                KillTimer(timer);
+                ShowWindow(SW_HIDE);
+            }
+            else
+            {
+                ShowWindow(SW_SHOW);
+                timer = SetTimer(1, 25, NULL);
+            }
+            break;
+        }
+    }
+
+    return ERROR_SUCCESS;
+}
+
 BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
-	ON_WM_TIMER()
-	ON_EN_CHANGE(IDC_EDIT_AMPLITUDE, &KeyboardVisDlg::OnEnChangeEditAmplitude)
-	ON_EN_CHANGE(IDC_EDIT_BACKGROUND_BRIGHTNESS, &KeyboardVisDlg::OnEnChangeEditBackgroundBrightness)
-	ON_CBN_SELCHANGE(IDC_COMBO_WINDOW, &KeyboardVisDlg::OnCbnSelchangeComboWindow)
-	ON_EN_CHANGE(IDC_EDIT_AVERAGE_SIZE, &KeyboardVisDlg::OnEnChangeEditAverageSize)
-	ON_CBN_SELCHANGE(IDC_COMBO_BKGD_MODE, &KeyboardVisDlg::OnCbnSelchangeComboBkgdMode)
-	ON_EN_CHANGE(IDC_EDIT_DECAY, &KeyboardVisDlg::OnEnChangeEditDecay)
-	ON_EN_CHANGE(IDC_EDIT_DELAY, &KeyboardVisDlg::OnEnChangeEditDelay)
+    ON_WM_TIMER()
+    ON_EN_CHANGE(IDC_EDIT_AMPLITUDE, &KeyboardVisDlg::OnEnChangeEditAmplitude)
+    ON_EN_CHANGE(IDC_EDIT_BACKGROUND_BRIGHTNESS, &KeyboardVisDlg::OnEnChangeEditBackgroundBrightness)
+    ON_CBN_SELCHANGE(IDC_COMBO_WINDOW, &KeyboardVisDlg::OnCbnSelchangeComboWindow)
+    ON_EN_CHANGE(IDC_EDIT_AVERAGE_SIZE, &KeyboardVisDlg::OnEnChangeEditAverageSize)
+    ON_CBN_SELCHANGE(IDC_COMBO_BKGD_MODE, &KeyboardVisDlg::OnCbnSelchangeComboBkgdMode)
+    ON_EN_CHANGE(IDC_EDIT_DECAY, &KeyboardVisDlg::OnEnChangeEditDecay)
+    ON_EN_CHANGE(IDC_EDIT_DELAY, &KeyboardVisDlg::OnEnChangeEditDelay)
     ON_CBN_SELCHANGE(IDC_COMBO_FRGD_MODE, &KeyboardVisDlg::OnCbnSelchangeComboFrgdMode)
     ON_CBN_SELCHANGE(IDC_COMBO_AUDIO_DEVICE, &KeyboardVisDlg::OnCbnSelchangeComboAudioDevice)
+    ON_WM_DESTROY()
+    ON_MESSAGE(WM_TRAYICON_EVENT, OnTrayIconEvent)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
