@@ -76,6 +76,10 @@ BOOL KeyboardVisDlg::OnInitDialog()
     CComboBox* frgdModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_FRGD_MODE);
     frgdModeBox->AddString("White");
     frgdModeBox->AddString("Green/Yellow/Red");
+    frgdModeBox->AddString("Blue/Cyan/White");
+    frgdModeBox->AddString("Red/White/Blue");
+    frgdModeBox->AddString("Rainbow");
+    frgdModeBox->AddString("Rainbow Inverse");
     frgdModeBox->SetCurSel(vis->frgd_mode);
 
     CComboBox* audioDeviceBox = (CComboBox*)GetDlgItem(IDC_COMBO_AUDIO_DEVICE);

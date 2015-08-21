@@ -296,7 +296,12 @@ void CorsairKeyboard::SetLEDs(COLORREF pixels[64][256])
             if (led < 144)
             {
                 int x_idx = x * (256 / 22);
-                int y_idx = (y * (64 / 7)) + ((64 / 7) / 2);
+                int y_idx = (y - 1) * (64 / 6) + (0.5f * (64 / 6));
+
+                if (y == 0)
+                {
+                    y_idx = 0 * (64 / 6) + (0.5f * (64 / 6));
+                }
 
                 red_val[led] = 7 - (GetRValue(pixels[y_idx][x_idx]) / 32);
                 grn_val[led] = 7 - (GetGValue(pixels[y_idx][x_idx]) / 32);

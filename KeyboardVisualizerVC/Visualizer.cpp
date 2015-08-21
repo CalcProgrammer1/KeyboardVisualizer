@@ -3,7 +3,7 @@
 #include "CorsairKeyboard.h"
 
 RazerKeyboard rkb;
-//CorsairKeyboard ckb;
+CorsairKeyboard ckb;
 
 //Thread starting static function
 static void thread(void *param)
@@ -55,18 +55,18 @@ void Visualizer::Initialize()
 
     ChangeDevice();
 
-	rkb.Initialize();
-	//ckb.Initialize();
+    rkb.Initialize();
+	ckb.Initialize();
 
-	amplitude   = 150;
-	avg_size    = 4;
+	amplitude   = 100;
+	avg_size    = 8;
 	bkgd_step   = 0;
 	bkgd_bright = 10;
-	bkgd_mode   = 2;
-	delay       = 25;
+	bkgd_mode   = 0;
+	delay       = 0;
 	window_mode = 1;
 	decay       = 80;
-    frgd_mode   = 0;
+    frgd_mode   = 1;
 
 	hanning(win_hanning, 256);
 	hamming(win_hamming, 256);
@@ -75,7 +75,7 @@ void Visualizer::Initialize()
 	for (int i = 0; i < 256; i++)
 	{
 		fft[i] = 0.0f;
-		fft_nrml[i] = 0.05f + (0.50f * (i / 256.0f));
+		fft_nrml[i] = 0.060f + (0.50f * (i / 256.0f));
 	}
 }
 
@@ -87,7 +87,7 @@ void Visualizer::ChangeDevice()
         alcCaptureCloseDevice(device);
     }
 
-    device = alcCaptureOpenDevice(device_list[device_idx].c_str(), 8000, AL_FORMAT_MONO8, 2048);
+    device = alcCaptureOpenDevice(device_list[device_idx].c_str(), 12000, AL_FORMAT_MONO8, 2048);
     alcCaptureStart(device);
 }
 
@@ -173,6 +173,8 @@ void Visualizer::Update()
 		//Compute magnitude from real and imaginary components of FFT and apply simple LPF
 		fftmag = (float)sqrt((fft_tmp[i] * fft_tmp[i]) + (fft_tmp[i + 1] * fft_tmp[i + 1]));
 
+        //fftmag = 10 * log10(fftmag);
+
 		//Limit FFT magnitude to 1.0
 		if (fftmag > 1.0f)
 		{
@@ -217,7 +219,7 @@ void Visualizer::StartThread()
 {
 	_beginthread(thread, 0, this);
 	_beginthread(rkbthread, 0, this);
-    //_beginthread(ckbthread, 0, this);
+    _beginthread(ckbthread, 0, this);
 }
 
 
@@ -285,14 +287,108 @@ void Visualizer::VisThread()
                         }
                     }
                     break;
+
+                case 2:
+                    if (fft[x] > ((1 / 64.0f)*(64.0f - y)))
+                    {
+                        if (y > (2 * (64 / 3)))
+                        {
+                            pixels[y][x] = RGB(0, 0, 255);
+                        }
+                        else if (y > (64 / 3))
+                        {
+                            pixels[y][x] = RGB(0, 255, 255);
+                        }
+                        else
+                        {
+                            pixels[y][x] = RGB(255, 255, 255);
+                        }
+                    }
+                    break;
+
+                case 3:
+                    if (fft[x] > ((1 / 64.0f)*(64.0f - y)))
+                    {
+                        if (y > (2 * (64 / 3)))
+                        {
+                            pixels[y][x] = RGB(0, 0, 255);
+                        }
+                        else if (y > (64 / 3))
+                        {
+                            pixels[y][x] = RGB(255, 255, 255);
+                        }
+                        else
+                        {
+                            pixels[y][x] = RGB(255, 0, 0);
+                        }
+                    }
+                    break;
+
+                case 4:
+                    if (fft[x] > ((1 / 64.0f)*(64.0f - y)))
+                    {
+                        if (y > (5 * (64 / 6)))
+                        {
+                            pixels[y][x] = RGB(255, 0, 0);
+                        }
+                        else if (y > (4 * (64 / 6)))
+                        {
+                            pixels[y][x] = RGB(255, 255, 0);
+                        }
+                        else if (y > (3 * (64 / 6)))
+                        {
+                            pixels[y][x] = RGB(0, 255, 0);
+                        }
+                        else if (y > (2 * (64 / 6)))
+                        {
+                            pixels[y][x] = RGB(0, 255, 255);
+                        }
+                        else if (y > (64 / 6))
+                        {
+                            pixels[y][x] = RGB(0, 0, 255);
+                        }
+                        else
+                        {
+                            pixels[y][x] = RGB(255, 0, 255);
+                        }
+                    }
+                    break;
+
+                case 5:
+                    if (fft[x] > ((1 / 64.0f)*(64.0f - y)))
+                    {
+                        if (y > (5 * (64 / 6)))
+                        {
+                            pixels[y][x] = RGB(255, 0, 255);
+                        }
+                        else if (y > (4 * (64 / 6)))
+                        {
+                            pixels[y][x] = RGB(0, 0, 255);
+                        }
+                        else if (y > (3 * (64 / 6)))
+                        {
+                            pixels[y][x] = RGB(0, 255, 255);
+                        }
+                        else if (y > (2 * (64 / 6)))
+                        {
+                            pixels[y][x] = RGB(0, 255, 0);
+                        }
+                        else if (y > (64 / 6))
+                        {
+                            pixels[y][x] = RGB(255, 255, 0);
+                        }
+                        else
+                        {
+                            pixels[y][x] = RGB(255, 0, 0);
+                        }
+                    }
+                    break;
                 }
 			}
 		}
 
 		//Increment background step
 		bkgd_step++;
-
-
 
 		//Wait for the next update cycle
 		Sleep(delay);
@@ -312,7 +408,7 @@ void Visualizer::CorsairKeyboardUpdateThread()
 {
     while (1)
     {
-        //ckb.SetLEDs(pixels);
+        ckb.SetLEDs(pixels);
         Sleep(25);
     }
 }
