@@ -34,11 +34,15 @@ public:
     //Change Audio Device function
     void ChangeDevice();
 
+    //Get Foreground Color From Amplitude
+    COLORREF GetAmplitudeColor(int amplitude, int range);
+
 	//Calculated FFT
 	float fft[256];
 	
 	//Amplitude of input waveform
 	int amplitude;
+    int avg_mode;
 	int avg_size;
 	int window_mode;
 	int decay;

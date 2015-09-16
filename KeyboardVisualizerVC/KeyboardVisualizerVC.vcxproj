@@ -94,7 +94,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\openal-soft-1.16.0-bin\include;..\dependencies\razer-chroma-0.4.7\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\dependencies\openal-soft-1.16.0-bin\include;..\dependencies\razer-chroma-0.4.8\inc</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -137,7 +137,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\openal-soft-1.16.0-bin\include;..\dependencies\razer-chroma-0.4.7\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\dependencies\openal-soft-1.16.0-bin\include;..\dependencies\razer-chroma-0.4.8\inc</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
@@ -175,9 +175,11 @@
     <ClCompile Include="chuck_fft.c" />
     <ClCompile Include="CorsairKeyboard.cpp" />
     <ClCompile Include="hsv.cpp" />
+    <ClCompile Include="LEDStrip.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="KeyboardVisDlg.cpp" />
     <ClCompile Include="RazerKeyboard.cpp" />
+    <ClCompile Include="serial_port.cpp" />
     <ClCompile Include="Visualizer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -185,8 +187,10 @@
     <ClInclude Include="CorsairKeyboard.h" />
     <ClInclude Include="hsv.h" />
     <ClInclude Include="KeyboardVisDlg.h" />
+    <ClInclude Include="LEDStrip.h" />
     <ClInclude Include="RazerKeyboard.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="serial_port.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Visualizer.h" />
   </ItemGroup>

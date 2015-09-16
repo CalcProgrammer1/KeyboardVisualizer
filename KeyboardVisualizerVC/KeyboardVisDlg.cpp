@@ -89,6 +89,11 @@ BOOL KeyboardVisDlg::OnInitDialog()
     }
     audioDeviceBox->SetCurSel(vis->device_idx);
 
+    CComboBox* avgModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_AVG_MODE);
+    avgModeBox->AddString("Binning");
+    avgModeBox->AddString("Low Pass");
+    avgModeBox->SetCurSel(vis->avg_mode);
+
 	timer = SetTimer(1, 25, NULL);
 
 	return TRUE;
@@ -166,6 +171,7 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_CBN_SELCHANGE(IDC_COMBO_AUDIO_DEVICE, &KeyboardVisDlg::OnCbnSelchangeComboAudioDevice)
     ON_WM_DESTROY()
     ON_MESSAGE(WM_TRAYICON_EVENT, OnTrayIconEvent)
+    ON_CBN_SELCHANGE(IDC_COMBO_AVG_MODE, &KeyboardVisDlg::OnCbnSelchangeComboAvgMode)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
@@ -224,4 +230,10 @@ void KeyboardVisDlg::OnCbnSelchangeComboAudioDevice()
         vis->device_idx = new_device;
         vis->ChangeDevice();
     }
+}
+
+
+void KeyboardVisDlg::OnCbnSelchangeComboAvgMode()
+{
+    vis->avg_mode = ((CComboBox*)GetDlgItem(IDC_COMBO_AVG_MODE))->GetCurSel();
 }

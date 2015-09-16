@@ -33,7 +33,7 @@ void RazerKeyboard::Initialize()
 	}
     
 }
-
+static int red = 0;
 void RazerKeyboard::SetLEDs(COLORREF pixels[64][256])
 {
 	for (int x = 0; x < 22; x++)
@@ -53,11 +53,18 @@ void RazerKeyboard::SetLEDs(COLORREF pixels[64][256])
 
     ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE Effect = {};
 
-    for (int x = 0; x < 8; x++)
+    for (int x = 0; x < 15; x++)
     {
-        Effect.Color[x] = pixels[x * (64 / 8)][1];
-        Effect.Color[x + 7] = pixels[(7-x)*(64 / 8)][1];
+        if (x < 8)
+        {
+            Effect.Color[x-1] = pixels[0][7 + (x * 16)];
+        }
+        else
+        {
+            Effect.Color[x] = pixels[0][8 + (x * 16)];
+        }
     }
+    Effect.Color[7] = pixels[0][128];
 
     CreateEffect(ChromaSDK::FIREFLY_CHROMA, ChromaSDK::CHROMA_CUSTOM, &Effect, NULL);
 
@@ -65,8 +72,8 @@ void RazerKeyboard::SetLEDs(COLORREF pixels[64][256])
 
     for (int x = 0; x < 7; x++)
     {
-        Effect2.Color[x+4] = pixels[x*(64/7)][1];
-        Effect2.Color[x + 11] = pixels[x*(64 / 7)][1];
+        Effect2.Color[x + 4] = pixels[0][(16*x)];
+        Effect2.Color[x + 11] = pixels[0][(16*x)];
     }
     
     CreateEffect(ChromaSDK::MAMBA_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &Effect2, NULL);
