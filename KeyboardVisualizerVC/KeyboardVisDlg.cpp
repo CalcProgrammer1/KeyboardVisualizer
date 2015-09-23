@@ -82,13 +82,6 @@ BOOL KeyboardVisDlg::OnInitDialog()
     frgdModeBox->AddString("Rainbow Inverse");
     frgdModeBox->SetCurSel(vis->frgd_mode);
 
-    CComboBox* audioDeviceBox = (CComboBox*)GetDlgItem(IDC_COMBO_AUDIO_DEVICE);
-    for (int i = 0; i < vis->device_list.size(); i++)
-    {
-        audioDeviceBox->AddString(vis->device_list[i].c_str());
-    }
-    audioDeviceBox->SetCurSel(vis->device_idx);
-
     CComboBox* avgModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_AVG_MODE);
     avgModeBox->AddString("Binning");
     avgModeBox->AddString("Low Pass");
@@ -168,7 +161,6 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_EN_CHANGE(IDC_EDIT_DECAY, &KeyboardVisDlg::OnEnChangeEditDecay)
     ON_EN_CHANGE(IDC_EDIT_DELAY, &KeyboardVisDlg::OnEnChangeEditDelay)
     ON_CBN_SELCHANGE(IDC_COMBO_FRGD_MODE, &KeyboardVisDlg::OnCbnSelchangeComboFrgdMode)
-    ON_CBN_SELCHANGE(IDC_COMBO_AUDIO_DEVICE, &KeyboardVisDlg::OnCbnSelchangeComboAudioDevice)
     ON_WM_DESTROY()
     ON_MESSAGE(WM_TRAYICON_EVENT, OnTrayIconEvent)
     ON_CBN_SELCHANGE(IDC_COMBO_AVG_MODE, &KeyboardVisDlg::OnCbnSelchangeComboAvgMode)
@@ -219,17 +211,6 @@ void KeyboardVisDlg::OnEnChangeEditDelay()
 void KeyboardVisDlg::OnCbnSelchangeComboFrgdMode()
 {
     vis->frgd_mode = ((CComboBox*)GetDlgItem(IDC_COMBO_FRGD_MODE))->GetCurSel();
-}
-
-
-void KeyboardVisDlg::OnCbnSelchangeComboAudioDevice()
-{
-    int new_device = ((CComboBox*)GetDlgItem(IDC_COMBO_AUDIO_DEVICE))->GetCurSel();
-    if (new_device != vis->device_idx)
-    {
-        vis->device_idx = new_device;
-        vis->ChangeDevice();
-    }
 }
 
 

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "stdafx.h"
-#include <AL/al.h>
-#include <AL/alc.h>
 #include <math.h>
 #include "chuck_fft.h"
 #include "hsv.h"
@@ -31,9 +29,6 @@ public:
 	//Update function
 	void Update();
 
-    //Change Audio Device function
-    void ChangeDevice();
-
     //Get Foreground Color From Amplitude
     COLORREF GetAmplitudeColor(int amplitude, int range);
 
@@ -58,16 +53,7 @@ public:
     //Foreground Variables
     int frgd_mode;
 
-    //List of audio devices
-    std::vector<std::string> device_list;
-
-    //Audio device list ID
-    int device_idx;
-
 private:
-	//Audio Device Pointer
-	ALCdevice *device;
-
 	//Background Step
 	int bkgd_step;
 

@@ -3,9 +3,25 @@
 #include "CorsairKeyboard.h"
 #include "LEDStrip.h"
 
+//WASAPI includes
+#include <mmsystem.h>
+#include <mmdeviceapi.h>
+#include <audioclient.h>
+#include <initguid.h>
+#include <mmdeviceapi.h>
+#include <functiondiscoverykeys_devpkey.h>
+
 RazerKeyboard rkb;
 CorsairKeyboard ckb;
 //LEDStrip str;
+
+//WASAPI objects
+IMMDeviceEnumerator *pMMDeviceEnumerator;
+IMMDevice *pMMDevice;
+IMMDeviceCollection *pMMDeviceCollection;
+IAudioClient *pAudioClient;
+IAudioCaptureClient *pAudioCaptureClient;
+WAVEFORMATEX *waveformat;
 
 //Thread starting static function
 static void thread(void *param)
@@ -35,28 +51,18 @@ float fft_nrml[256];
 
 void Visualizer::Initialize()
 {
-    ALCchar* devices;
-    ALCchar* devstr;
-    ALCchar* next;
-    int len = 0;
+    CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&pMMDeviceEnumerator);
+    pMMDeviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pMMDevice);
+    pMMDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, NULL, (void**)&pAudioClient);
 
-	devices = (ALCchar *) alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
-	
-    devstr = devices;
-    next = devices + 1;
+    pAudioClient->GetMixFormat(&waveformat);
 
-    while ( (devstr) && (*devstr != '\0') && next && (*next != '\0') )
-    {
-        device_list.push_back(devstr);
-        len = strlen(devstr);
-        devstr += (len + 1);
-        next += (len + 2);
-    }
+    pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_LOOPBACK, 0, 0, waveformat, 0);
+    pAudioClient->GetService(__uuidof(IAudioCaptureClient), (void**)&pAudioCaptureClient);
     
-    device_idx = 0;
-
-    ChangeDevice();
-
+    pAudioClient->Start();
+    
     rkb.Initialize();
 	ckb.Initialize();
     //str.Initialize();
@@ -79,66 +85,50 @@ void Visualizer::Initialize()
 	for (int i = 0; i < 256; i++)
 	{
 		fft[i] = 0.0f;
-		fft_nrml[i] = 0.040f + (0.60f * (i / 256.0f));
+		fft_nrml[i] = 0.040f + (0.5f * (i / 256.0f));
 	}
-}
-
-void Visualizer::ChangeDevice()
-{
-    if (device != NULL)
-    {
-        alcCaptureStop(device);
-        alcCaptureCloseDevice(device);
-    }
-
-    device = alcCaptureOpenDevice(device_list[device_idx].c_str(), 16000, AL_FORMAT_MONO8, 2048);
-    alcCaptureStart(device);
 }
 
 void Visualizer::Update()
 {
+    static float input_wave[512];
 	float fft_tmp[512];
 
-	//Audio Sample Buffer
-	unsigned char buffer[256];
+    unsigned int buffer_pos = 0;
 
 	for (int i = 0; i < 256; i++)
 	{
 		//Clear the buffers
-		buffer[i] = 0;
 		fft_tmp[i] = 0;
 
 		//Decay previous values
 		fft[i] = fft[i] * (((float)decay) / 100.0f);
 	}
 
-	//Only update FFT if there are at least 256 samples in the sample buffer
-	int samples;
+    unsigned int nextPacketSize = 1;
+    unsigned int flags;
 
-	do
-	{
-        if (device != NULL)
-        {
-            alcGetIntegerv(device, ALC_CAPTURE_SAMPLES, 1, &samples);
-        }
-        else
-        {
-            break;
-        }
-		Sleep(1);
-	} while (samples < 256);
-	
-	//Capture 256 audio samples
-    if (device != NULL)
+    while(nextPacketSize > 0 )
     {
-        alcCaptureSamples(device, (ALCvoid *)buffer, 256);
+        float *buf;
+        pAudioCaptureClient->GetBuffer((BYTE**)&buf, &nextPacketSize, (DWORD *)&flags, NULL, NULL);
+        
+        for (int i = 0; i < nextPacketSize; i+=5)
+        {
+            for (int j = 0; j < 255; j++)
+            {
+                input_wave[2 * j] = input_wave[2 * (j + 1)];
+                input_wave[(2 * j) + 1] = input_wave[2 * j];
+            }
+            input_wave[510] = buf[i] * 2.0f * amplitude;
+            input_wave[511] = input_wave[510];
+        }
+
+        buffer_pos += nextPacketSize/4;
+        pAudioCaptureClient->ReleaseBuffer(nextPacketSize);
     }
 
-	//Scale the input into the FFT processing array
-	for (int i = 0; i < 512; i++)
-	{
-		fft_tmp[i] = (buffer[i / 2] - 128.0f) * (amplitude / 128.0f);
-	}
+    memcpy(fft_tmp, input_wave, sizeof(input_wave));
 
 	//Apply selected window
 	switch (window_mode)
@@ -177,7 +167,7 @@ void Visualizer::Update()
 		//Compute magnitude from real and imaginary components of FFT and apply simple LPF
 		fftmag = (float)sqrt((fft_tmp[i] * fft_tmp[i]) + (fft_tmp[i + 1] * fft_tmp[i + 1]));
 
-        //fftmag = 10 * log10(fftmag);
+        fftmag = ( 0.5f * log10(1.1f * fftmag) ) + ( 0.9f * fftmag );
 
 		//Limit FFT magnitude to 1.0
 		if (fftmag > 1.0f)
@@ -462,6 +452,8 @@ void Visualizer::VisThread()
 
 		//Increment background step
 		bkgd_step++;
+
+        Sleep(15);
 	}
 }
 

@@ -46,6 +46,9 @@ void RazerKeyboard::SetLEDs(COLORREF pixels[64][256])
 		}
 	}
 
+    //Set Razer "Three Headed Snake" logo to the background color of the 11th column
+    Grid.Color[0][20] = pixels[3][11 * (256 / 22)];
+
     CreateEffect = (CREATEEFFECT)GetProcAddress(hModule, "CreateEffect");
 
     if(CreateEffect != NULL)
@@ -72,9 +75,13 @@ void RazerKeyboard::SetLEDs(COLORREF pixels[64][256])
 
     for (int x = 0; x < 7; x++)
     {
-        Effect2.Color[x + 4] = pixels[0][(16*x)];
-        Effect2.Color[x + 11] = pixels[0][(16*x)];
+        Effect2.Color[x + 4] = pixels[0][(16*(x+1))];
+        Effect2.Color[x + 11] = pixels[0][(16*(x+1))];
     }
     
+    //Set scroll wheel and logo LEDs to background color
+    Effect2.Color[2] = pixels[3][16 * 5];
+    Effect2.Color[1] = pixels[3][0];
+
     CreateEffect(ChromaSDK::MAMBA_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &Effect2, NULL);
 };
