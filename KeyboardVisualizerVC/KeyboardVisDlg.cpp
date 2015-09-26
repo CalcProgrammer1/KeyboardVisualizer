@@ -75,6 +75,13 @@ BOOL KeyboardVisDlg::OnInitDialog()
 
     CComboBox* frgdModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_FRGD_MODE);
     frgdModeBox->AddString("White");
+    frgdModeBox->AddString("Red");
+    frgdModeBox->AddString("Orange");
+    frgdModeBox->AddString("Yellow");
+    frgdModeBox->AddString("Green");
+    frgdModeBox->AddString("Cyan");
+    frgdModeBox->AddString("Blue");
+    frgdModeBox->AddString("Purple");
     frgdModeBox->AddString("Green/Yellow/Red");
     frgdModeBox->AddString("Blue/Cyan/White");
     frgdModeBox->AddString("Red/White/Blue");

@@ -76,7 +76,7 @@ void Visualizer::Initialize()
 	delay       = 50;
 	window_mode = 1;
 	decay       = 80;
-    frgd_mode   = 1;
+    frgd_mode   = 8;
 
 	hanning(win_hanning, 256);
 	hamming(win_hamming, 256);
@@ -278,8 +278,43 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range)
         color = RGB(255, 255, 255);
         break;
 
-    //Green/Yellow/Red
+    //Red
     case 1:
+        color = RGB(255, 0, 0);
+        break;
+
+    //Orange
+    case 2:
+        color = RGB(255, 128, 0);
+        break;
+
+    //Yellow
+    case 3:
+        color = RGB(255, 255, 0);
+        break;
+
+    //Green
+    case 4:
+        color = RGB(0, 255, 0);
+        break;
+
+    //Cyan
+    case 5:
+        color = RGB(0, 255, 255);
+        break;
+
+    //Blue
+    case 6:
+        color = RGB(0, 0, 255);
+        break;
+
+    //Purple
+    case 7:
+        color = RGB(255, 0, 255);
+        break;
+
+    //Green/Yellow/Red
+    case 8:
         if (val > 66)
         {
             color = RGB(0, 255, 0);
@@ -295,7 +330,7 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range)
         break;
 
     //White/Cyan/Blue
-    case 2:
+    case 9:
         if (val > 66)
         {
             color = RGB(0, 0, 255);
@@ -311,7 +346,7 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range)
         break;
 
     //Red/White/Blue
-    case 3:
+    case 10:
         if (val > 66)
         {
             color = RGB(0, 0, 255);
@@ -327,7 +362,7 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range)
         break;
 
     //Rainbow
-    case 4:
+    case 11:
         if (val > 83)
         {
             color = RGB(255, 0, 0);
@@ -355,7 +390,7 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range)
         break;
 
     //Rainbow Inverse
-    case 5:
+    case 12:
         if (val > 83)
         {
             color = RGB(255, 0, 255);
