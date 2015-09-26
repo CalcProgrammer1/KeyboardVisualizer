@@ -18,7 +18,7 @@ public:
 	~CorsairKeyboard();
 
 	int Initialize();
-	void SetLEDs(COLORREF pixels[64][256]);
+	bool SetLEDs(COLORREF pixels[64][256]);
 
 private:
 	HANDLE dev;

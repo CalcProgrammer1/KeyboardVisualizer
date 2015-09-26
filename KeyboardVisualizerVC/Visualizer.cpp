@@ -494,18 +494,16 @@ void Visualizer::VisThread()
 
 void Visualizer::RazerKeyboardUpdateThread()
 {
-	while (1)
+	while (rkb.SetLEDs(pixels))
 	{
-		rkb.SetLEDs(pixels);
 		Sleep(delay);
 	}
 }
 
 void Visualizer::CorsairKeyboardUpdateThread()
 {
-    while (1)
+    while (ckb.SetLEDs(pixels))
     {
-        ckb.SetLEDs(pixels);
         Sleep(delay);
     }
 }

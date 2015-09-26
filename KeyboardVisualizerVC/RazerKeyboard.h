@@ -25,7 +25,7 @@ public:
 	~RazerKeyboard();
 
 	void Initialize();
-	void SetLEDs(COLORREF pixels[64][256]);
+	bool SetLEDs(COLORREF pixels[64][256]);
 
 private:
 	HMODULE hModule = NULL;

@@ -11,6 +11,8 @@ const static int led_matrix_c[7][22]
 /*Row 6*/   { 255, 5,   17,  29,  255, 255, 255, 53,  255, 255, 255, 89,  101, 113, 91,  115, 127, 139, 255, 129, 141, 140 }
 };
 
+static bool init_ok = TRUE;
+
 CorsairKeyboard::CorsairKeyboard()
 {
 }
@@ -136,151 +138,12 @@ int CorsairKeyboard::Initialize()
 	dev = GetDeviceHandle(0x1B1C, 0x1B13, 0x3);
 	if (dev == NULL)
 	{
+        init_ok = FALSE;
 		return 0;
 	}
-
-	// Initialization Messages
-	data_pkt[0][0] = 0x07;
-	data_pkt[0][1] = 0x04;
-	data_pkt[0][2] = 0x02;
-
-	data_pkt[1][0]   = 0x07;
-	data_pkt[1][1]   = 0x40;
-	data_pkt[1][2]   = 0x1E;
-	data_pkt[1][3]   = 0x00;
-	data_pkt[1][4]   = 0x00;
-	data_pkt[1][5]   = 0xC0;
-	data_pkt[1][6]   = 0x01;
-	data_pkt[1][7]   = 0xC0;
-	data_pkt[1][8]   = 0x02;
-	data_pkt[1][9]   = 0xC0;
-	data_pkt[1][10]  = 0x03;
-	data_pkt[1][11]  = 0xC0;
-	data_pkt[1][12]  = 0x04;
-	data_pkt[1][13]  = 0xC0;
-	data_pkt[1][14]  = 0x05;
-	data_pkt[1][15]  = 0xC0;
-	data_pkt[1][16]  = 0x06;
-	data_pkt[1][17]  = 0xC0;
-	data_pkt[1][18]  = 0x07;
-	data_pkt[1][19]  = 0xC0;
-	data_pkt[1][20]  = 0x08;
-	data_pkt[1][21]  = 0xC0;
-	data_pkt[1][22]  = 0x09;
-	data_pkt[1][23]  = 0xC0;
-	data_pkt[1][24]  = 0x0A;
-	data_pkt[1][25]  = 0xC0;
-	data_pkt[1][26]  = 0x0B;
-	data_pkt[1][27]  = 0xC0;
-	data_pkt[1][28]  = 0x0C;
-	data_pkt[1][29]  = 0xC0;
-	data_pkt[1][30]  = 0x0D;
-	data_pkt[1][31]  = 0xC0;
-	data_pkt[1][32]  = 0x0E;
-	data_pkt[1][33]  = 0xC0;
-	data_pkt[1][34]  = 0x0F;
-	data_pkt[1][35]  = 0xC0;
-	data_pkt[1][36]  = 0x10;
-	data_pkt[1][38]  = 0xC0;
-	data_pkt[1][39]  = 0x11;
-	data_pkt[1][40]  = 0xC0;
-	data_pkt[1][41]  = 0x12;
-	data_pkt[1][42]  = 0xC0;
-	data_pkt[1][43]  = 0x13;
-	data_pkt[1][44]  = 0xC0;
-	data_pkt[1][45]  = 0x14;
-	data_pkt[1][46]  = 0xC0;
-	data_pkt[1][47]  = 0x15;
-	data_pkt[1][48]  = 0xC0;
-	data_pkt[1][49]  = 0x16;
-	data_pkt[1][50]  = 0xC0;
-	data_pkt[1][51]  = 0x17;
-	data_pkt[1][52]  = 0xC0;
-	data_pkt[1][53]  = 0x18;
-	data_pkt[1][54]  = 0xC0;
-	data_pkt[1][55]  = 0x19;
-	data_pkt[1][56]  = 0xC0;
-	data_pkt[1][57]  = 0x1A;
-	data_pkt[1][58]  = 0xC0;
-	data_pkt[1][59]  = 0x1B;
-	data_pkt[1][60]  = 0xC0;
-	data_pkt[1][61]  = 0x1C;
-	data_pkt[1][62]  = 0xC0;
-	data_pkt[1][63]  = 0x1D;
-
-	data_pkt[2][0]   = 0x07;
-	data_pkt[2][1]   = 0x40;
-	data_pkt[2][2]   = 0x1E;
-	data_pkt[2][3]   = 0x00;
-	data_pkt[2][4]   = 0x00;
-	data_pkt[2][5]   = 0xC0;
-	data_pkt[2][6]   = 0x01;
-	data_pkt[2][7]   = 0xC0;
-	data_pkt[2][8]   = 0x02;
-	data_pkt[2][9]   = 0xC0;
-	data_pkt[2][10]  = 0x03;
-	data_pkt[2][11]  = 0xC0;
-	data_pkt[2][12]  = 0x04;
-	data_pkt[2][13]  = 0xC0;
-	data_pkt[2][14]  = 0x05;
-	data_pkt[2][15]  = 0xC0;
-	data_pkt[2][16]  = 0x06;
-	data_pkt[2][17]  = 0xC0;
-	data_pkt[2][18]  = 0x07;
-	data_pkt[2][19]  = 0xC0;
-	data_pkt[2][20]  = 0x08;
-	data_pkt[2][21]  = 0xC0;
-	data_pkt[2][22]  = 0x09;
-	data_pkt[2][23]  = 0xC0;
-	data_pkt[2][24]  = 0x0A;
-	data_pkt[2][25]  = 0xC0;
-	data_pkt[2][26]  = 0x0B;
-	data_pkt[2][27]  = 0xC0;
-	data_pkt[2][28]  = 0x0C;
-	data_pkt[2][29]  = 0xC0;
-	data_pkt[2][30]  = 0x0D;
-	data_pkt[2][31]  = 0xC0;
-	data_pkt[2][32]  = 0x0E;
-	data_pkt[2][33]  = 0xC0;
-	data_pkt[2][34]  = 0x0F;
-	data_pkt[2][35]  = 0xC0;
-	data_pkt[2][36]  = 0x10;
-	data_pkt[2][38]  = 0xC0;
-	data_pkt[2][39]  = 0x11;
-	data_pkt[2][40]  = 0xC0;
-	data_pkt[2][41]  = 0x12;
-	data_pkt[2][42]  = 0xC0;
-	data_pkt[2][43]  = 0x13;
-	data_pkt[2][44]  = 0xC0;
-	data_pkt[2][45]  = 0x14;
-	data_pkt[2][46]  = 0xC0;
-	data_pkt[2][47]  = 0x15;
-	data_pkt[2][48]  = 0xC0;
-	data_pkt[2][49]  = 0x16;
-	data_pkt[2][50]  = 0xC0;
-	data_pkt[2][51]  = 0x17;
-	data_pkt[2][52]  = 0xC0;
-	data_pkt[2][53]  = 0x18;
-	data_pkt[2][54]  = 0xC0;
-	data_pkt[2][55]  = 0x19;
-	data_pkt[2][56]  = 0xC0;
-	data_pkt[2][57]  = 0x1A;
-	data_pkt[2][58]  = 0xC0;
-	data_pkt[2][59]  = 0x1B;
-	data_pkt[2][60]  = 0xC0;
-	data_pkt[2][61]  = 0x1C;
-	data_pkt[2][62]  = 0xC0;
-	data_pkt[2][63]  = 0x1D;
-
-	// Send Initialization USB Messages
-	//send_usb_msg(data_pkt[0]);
-	Sleep(1);
-	//send_usb_msg(data_pkt[1]);
-	Sleep(1);
-	//send_usb_msg(data_pkt[2]);
 }
 
-void CorsairKeyboard::SetLEDs(COLORREF pixels[64][256])
+bool CorsairKeyboard::SetLEDs(COLORREF pixels[64][256])
 {
 	char red_val[144];
 	char grn_val[144];
@@ -369,4 +232,6 @@ void CorsairKeyboard::SetLEDs(COLORREF pixels[64][256])
 	send_usb_msg(data_pkt[3]);
 	Sleep(1);
 	send_usb_msg(data_pkt[4]);
+
+    return init_ok;
 }
