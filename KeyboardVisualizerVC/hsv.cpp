@@ -77,7 +77,7 @@ COLORREF hsv2rgb(hsv_t* hsv)
 		r = g = b = hsv->value;
 	}
 	else {
-		int h = hsv->hue;
+		int h = (hsv->hue)%360;
 		int s = hsv->saturation;
 		int v = hsv->value;
 		int i = h / (60 * HUE_DEGREE);

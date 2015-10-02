@@ -42,6 +42,12 @@ static void ckbthread(void *param)
     vis->CorsairKeyboardUpdateThread();
 }
 
+static void lsthread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->LEDStripUpdateThread();
+}
+
 Visualizer::Visualizer()
 {
 
@@ -263,6 +269,7 @@ void Visualizer::StartThread()
 	_beginthread(thread, 0, this);
 	_beginthread(rkbthread, 0, this);
     _beginthread(ckbthread, 0, this);
+    //_beginthread(lsthread, 0, this);
 }
 
 COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range)
@@ -451,10 +458,20 @@ void Visualizer::VisThread()
 					break;
 
 				case 2:
-					int hsv_h = ((bkgd_step + (256 - x)) % 360);
-					hsv_t hsv = { hsv_h, 255, bkgd_bright };
-					pixels[y][x] = hsv2rgb(&hsv);
+                    {
+                        int hsv_h = ((bkgd_step + (256 - x)) % 360);
+                        hsv_t hsv = { hsv_h, 255, bkgd_bright };
+                        pixels[y][x] = hsv2rgb(&hsv);
+                    }
 					break;
+
+                case 3:
+                    {
+                        float hue = bkgd_step + (int)(180 + atan2(y - 32.1, x - 128.1) * (180.0 / 3.14159))%360;
+                        hsv_t hsv2 = { hue, 255, bkgd_bright };
+                        pixels[y][x] = hsv2rgb(&hsv2);
+                    }
+                    break;
 				}
 
                 if (y > 3)
@@ -504,6 +521,15 @@ void Visualizer::CorsairKeyboardUpdateThread()
 {
     while (ckb.SetLEDs(pixels))
     {
+        Sleep(delay);
+    }
+}
+
+void Visualizer::LEDStripUpdateThread()
+{
+    while (TRUE)
+    {
+//        str.SetLEDs(pixels);
         Sleep(delay);
     }
 }

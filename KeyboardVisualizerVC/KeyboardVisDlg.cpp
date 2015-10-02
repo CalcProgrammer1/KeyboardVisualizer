@@ -71,6 +71,7 @@ BOOL KeyboardVisDlg::OnInitDialog()
 	bkgdModeBox->AddString("None");
 	bkgdModeBox->AddString("Original");
 	bkgdModeBox->AddString("Rainbow");
+    bkgdModeBox->AddString("Color Wheel");
 	bkgdModeBox->SetCurSel(vis->bkgd_mode);
 
     CComboBox* frgdModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_FRGD_MODE);
