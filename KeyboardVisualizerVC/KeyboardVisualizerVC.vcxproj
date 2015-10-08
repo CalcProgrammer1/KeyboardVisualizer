@@ -178,7 +178,7 @@
     <ClCompile Include="LEDStrip.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="KeyboardVisDlg.cpp" />
-    <ClCompile Include="RazerKeyboard.cpp" />
+    <ClCompile Include="RazerChroma.cpp" />
     <ClCompile Include="serial_port.cpp" />
     <ClCompile Include="Visualizer.cpp" />
   </ItemGroup>
@@ -188,7 +188,7 @@
     <ClInclude Include="hsv.h" />
     <ClInclude Include="KeyboardVisDlg.h" />
     <ClInclude Include="LEDStrip.h" />
-    <ClInclude Include="RazerKeyboard.h" />
+    <ClInclude Include="RazerChroma.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="serial_port.h" />
     <ClInclude Include="stdafx.h" />

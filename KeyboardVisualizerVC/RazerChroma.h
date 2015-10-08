@@ -11,6 +11,7 @@ using namespace ChromaSDK::Keyboard;
 typedef RZRESULT(*INIT)(void);
 typedef RZRESULT(*UNINIT)(void);
 typedef RZRESULT(*CREATEEFFECT)(RZDEVICEID DeviceId, ChromaSDK::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
+typedef RZRESULT(*CREATEMOUSEEFFECT)(ChromaSDK::Mouse::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
 
 #ifdef _WIN64
 #define CHROMASDKDLL        _T("RzChromaSDK64.dll")
@@ -18,11 +19,11 @@ typedef RZRESULT(*CREATEEFFECT)(RZDEVICEID DeviceId, ChromaSDK::EFFECT_TYPE Effe
 #define CHROMASDKDLL        _T("RzChromaSDK.dll")
 #endif
 
-class RazerKeyboard
+class RazerChroma
 {
 public:
-	RazerKeyboard();
-	~RazerKeyboard();
+	RazerChroma();
+	~RazerChroma();
 
 	void Initialize();
 	bool SetLEDs(COLORREF pixels[64][256]);
@@ -30,9 +31,8 @@ public:
 private:
 	HMODULE hModule = NULL;
     CREATEEFFECT CreateEffect;
+    CREATEMOUSEEFFECT CreateMouseEffect;
 
     RZEFFECTID effect;
-
-    CUSTOM_EFFECT_TYPE Grid;
 };
 

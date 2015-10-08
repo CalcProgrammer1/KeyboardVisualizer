@@ -1,5 +1,5 @@
 #include "Visualizer.h"
-#include "RazerKeyboard.h"
+#include "RazerChroma.h"
 #include "CorsairKeyboard.h"
 #include "LEDStrip.h"
 
@@ -11,7 +11,7 @@
 #include <mmdeviceapi.h>
 #include <functiondiscoverykeys_devpkey.h>
 
-RazerKeyboard rkb;
+RazerChroma rkb;
 CorsairKeyboard ckb;
 //LEDStrip str;
 
@@ -33,7 +33,7 @@ static void thread(void *param)
 static void rkbthread(void *param)
 {
 	Visualizer* vis = static_cast<Visualizer*>(param);
-	vis->RazerKeyboardUpdateThread();
+	vis->RazerChromaUpdateThread();
 }
 
 static void ckbthread(void *param)
@@ -509,7 +509,7 @@ void Visualizer::VisThread()
 	}
 }
 
-void Visualizer::RazerKeyboardUpdateThread()
+void Visualizer::RazerChromaUpdateThread()
 {
 	while (rkb.SetLEDs(pixels))
 	{

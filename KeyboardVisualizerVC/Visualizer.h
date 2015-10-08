@@ -23,7 +23,7 @@ public:
 	void VisThread();
 
 	//Keyboard Update Thread
-	void RazerKeyboardUpdateThread();
+	void RazerChromaUpdateThread();
     void CorsairKeyboardUpdateThread();
     void LEDStripUpdateThread();
 

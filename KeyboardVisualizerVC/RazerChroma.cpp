@@ -1,13 +1,13 @@
-#include "RazerKeyboard.h"
+#include "RazerChroma.h"
 
 #include <iostream>
 
-RazerKeyboard::RazerKeyboard()
+RazerChroma::RazerChroma()
 {
 }
 
 
-RazerKeyboard::~RazerKeyboard()
+RazerChroma::~RazerChroma()
 {
     if (hModule)
     {
@@ -19,7 +19,7 @@ RazerKeyboard::~RazerKeyboard()
     }
 }
 
-void RazerKeyboard::Initialize()
+void RazerChroma::Initialize()
 {
 	// Dynamically loads the Chroma SDK library.
 	hModule = LoadLibrary(CHROMASDKDLL);
@@ -34,9 +34,10 @@ void RazerKeyboard::Initialize()
     
 }
 static int red = 0;
-bool RazerKeyboard::SetLEDs(COLORREF pixels[64][256])
+bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 {
     CreateEffect = (CREATEEFFECT)GetProcAddress(hModule, "CreateEffect");
+    CreateMouseEffect = (CREATEMOUSEEFFECT)GetProcAddress(hModule, "CreateMouseEffect");
 
     if (CreateEffect == NULL)
     {
@@ -44,6 +45,9 @@ bool RazerKeyboard::SetLEDs(COLORREF pixels[64][256])
     }
     else
     {
+        //Blackwidow Chroma
+        CUSTOM_EFFECT_TYPE Grid;
+
         for (int x = 0; x < 22; x++)
         {
             for (int y = 0; y < 6; y++)
@@ -59,6 +63,25 @@ bool RazerKeyboard::SetLEDs(COLORREF pixels[64][256])
 
         CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &Grid, NULL);
 
+        //Blackwidow Chroma Tournament Edition
+        CUSTOM_EFFECT_TYPE Grid2;
+
+        for (int x = 0; x < 18; x++)
+        {
+            for (int y = 0; y < 6; y++)
+            {
+                int x_idx = x * (256 / 18);
+                int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
+                Grid2.Color[y][x] = (pixels[y_idx][x_idx] & 0x00FFFFFF);
+            }
+        }
+
+        //Set Razer "Three Headed Snake" logo to the background color of the 11th column
+        Grid2.Color[0][20] = pixels[3][11 * (256 / 22)];
+
+        CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &Grid2, NULL);
+
+        //Firefly Chroma
         ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE Effect = {};
 
         for (int x = 0; x < 15; x++)
@@ -76,6 +99,7 @@ bool RazerKeyboard::SetLEDs(COLORREF pixels[64][256])
 
         CreateEffect(ChromaSDK::FIREFLY_CHROMA, ChromaSDK::CHROMA_CUSTOM, &Effect, NULL);
 
+        //Mamba Chroma Tournament Edition
         ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE Effect2 = {};
 
         for (int x = 0; x < 7; x++)
@@ -90,6 +114,15 @@ bool RazerKeyboard::SetLEDs(COLORREF pixels[64][256])
 
         CreateEffect(ChromaSDK::MAMBA_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &Effect2, NULL);
 
+        //DeathAdder Chroma
+        ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE Effect3 = {};
+
+        //Set scroll wheel and logo LEDs to background color
+        Effect3.Color[2] = pixels[3][16 * 5];
+        Effect3.Color[1] = pixels[3][0];
+
+        CreateEffect(ChromaSDK::DEATHADDER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &Effect3, NULL);
+        //CreateMouseEffect(ChromaSDK::Mouse::CHROMA_CUSTOM, &Effect3, NULL);
         return TRUE;
     }
 };
