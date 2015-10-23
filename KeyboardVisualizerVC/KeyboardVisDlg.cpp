@@ -90,6 +90,20 @@ BOOL KeyboardVisDlg::OnInitDialog()
     frgdModeBox->AddString("Rainbow Inverse");
     frgdModeBox->SetCurSel(vis->frgd_mode);
 
+    CComboBox* snglClrModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_SNGL_CLR_MODE);
+    snglClrModeBox->AddString("None");
+    snglClrModeBox->AddString("Follow Foreground");
+    snglClrModeBox->AddString("Follow Background");
+    snglClrModeBox->AddString("White");
+    snglClrModeBox->AddString("Red");
+    snglClrModeBox->AddString("Orange");
+    snglClrModeBox->AddString("Yellow");
+    snglClrModeBox->AddString("Green");
+    snglClrModeBox->AddString("Cyan");
+    snglClrModeBox->AddString("Blue");
+    snglClrModeBox->AddString("Purple");
+    snglClrModeBox->SetCurSel(vis->single_color_mode);
+
     CComboBox* avgModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_AVG_MODE);
     avgModeBox->AddString("Binning");
     avgModeBox->AddString("Low Pass");
@@ -172,6 +186,7 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_WM_DESTROY()
     ON_MESSAGE(WM_TRAYICON_EVENT, OnTrayIconEvent)
     ON_CBN_SELCHANGE(IDC_COMBO_AVG_MODE, &KeyboardVisDlg::OnCbnSelchangeComboAvgMode)
+    ON_CBN_SELCHANGE(IDC_COMBO_SNGL_CLR_MODE, &KeyboardVisDlg::OnCbnSelchangeComboSnglClrMode)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
@@ -225,4 +240,10 @@ void KeyboardVisDlg::OnCbnSelchangeComboFrgdMode()
 void KeyboardVisDlg::OnCbnSelchangeComboAvgMode()
 {
     vis->avg_mode = ((CComboBox*)GetDlgItem(IDC_COMBO_AVG_MODE))->GetCurSel();
+}
+
+
+void KeyboardVisDlg::OnCbnSelchangeComboSnglClrMode()
+{
+    vis->single_color_mode = ((CComboBox*)GetDlgItem(IDC_COMBO_SNGL_CLR_MODE))->GetCurSel();
 }

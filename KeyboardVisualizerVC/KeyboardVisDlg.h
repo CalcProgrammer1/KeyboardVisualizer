@@ -43,4 +43,5 @@ public:
     afx_msg void OnCbnSelchangeComboFrgdMode();
     afx_msg void OnCbnSelchangeComboAudioDevice();
     afx_msg void OnCbnSelchangeComboAvgMode();
+    afx_msg void OnCbnSelchangeComboSnglClrMode();
 };

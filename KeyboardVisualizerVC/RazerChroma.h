@@ -12,6 +12,7 @@ typedef RZRESULT(*INIT)(void);
 typedef RZRESULT(*UNINIT)(void);
 typedef RZRESULT(*CREATEEFFECT)(RZDEVICEID DeviceId, ChromaSDK::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
 typedef RZRESULT(*CREATEMOUSEEFFECT)(ChromaSDK::Mouse::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
+typedef RZRESULT(*CREATEHEADSETEFFECT)(ChromaSDK::Headset::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
 
 #ifdef _WIN64
 #define CHROMASDKDLL        _T("RzChromaSDK64.dll")
@@ -32,6 +33,7 @@ private:
 	HMODULE hModule = NULL;
     CREATEEFFECT CreateEffect;
     CREATEMOUSEEFFECT CreateMouseEffect;
+    CREATEHEADSETEFFECT CreateHeadsetEffect;
 
     RZEFFECTID effect;
 };

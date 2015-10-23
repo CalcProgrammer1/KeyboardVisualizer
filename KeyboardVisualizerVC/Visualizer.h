@@ -31,7 +31,7 @@ public:
 	void Update();
 
     //Get Foreground Color From Amplitude
-    COLORREF GetAmplitudeColor(int amplitude, int range);
+    COLORREF GetAmplitudeColor(int amplitude, int range, int brightness);
 
 	//Calculated FFT
 	float fft[256];
@@ -50,6 +50,9 @@ public:
 	//Background Variables
 	int bkgd_bright;
 	int bkgd_mode;
+
+    //Single Color Mode
+    int single_color_mode;
 
     //Foreground Variables
     int frgd_mode;

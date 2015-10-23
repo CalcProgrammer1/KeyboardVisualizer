@@ -13,7 +13,7 @@
 
 RazerChroma rkb;
 CorsairKeyboard ckb;
-//LEDStrip str;
+LEDStrip str;
 
 //WASAPI objects
 IMMDeviceEnumerator *pMMDeviceEnumerator;
@@ -83,6 +83,7 @@ void Visualizer::Initialize()
 	window_mode = 1;
 	decay       = 80;
     frgd_mode   = 8;
+    single_color_mode = 2;
 
 	hanning(win_hanning, 256);
 	hamming(win_hamming, 256);
@@ -272,67 +273,93 @@ void Visualizer::StartThread()
     //_beginthread(lsthread, 0, this);
 }
 
-COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range)
+COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range, int brightness)
 {
     COLORREF color;
 
     int val = ((float)amplitude / (float)range) * 100.0f;
 
+    int red;
+    int grn;
+    int blu;
+
     switch (frgd_mode)
     {
     //White
     case 0:
-        color = RGB(255, 255, 255);
+        red = 255;
+        grn = 255;
+        blu = 255;
         break;
 
     //Red
     case 1:
-        color = RGB(255, 0, 0);
+        red = 255;
+        grn = 0;
+        blu = 0;
         break;
 
     //Orange
     case 2:
-        color = RGB(255, 128, 0);
+        red = 255;
+        grn = 128;
+        blu = 0;
         break;
 
     //Yellow
     case 3:
-        color = RGB(255, 255, 0);
+        red = 255;
+        grn = 255;
+        blu = 0;
         break;
 
     //Green
     case 4:
-        color = RGB(0, 255, 0);
+        red = 0;
+        grn = 255;
+        blu = 0;
         break;
 
     //Cyan
     case 5:
-        color = RGB(0, 255, 255);
+        red = 0;
+        grn = 255;
+        blu = 255;
         break;
 
     //Blue
     case 6:
-        color = RGB(0, 0, 255);
+        red = 0;
+        grn = 0;
+        blu = 255;
         break;
 
     //Purple
     case 7:
-        color = RGB(255, 0, 255);
+        red = 255;
+        grn = 0;
+        blu = 255;
         break;
 
     //Green/Yellow/Red
     case 8:
         if (val > 66)
         {
-            color = RGB(0, 255, 0);
+            red = 0;
+            grn = 255;
+            blu = 0;
         }
         else if (val > 33)
         {
-            color = RGB(255, 255, 0);
+            red = 255;
+            grn = 255;
+            blu = 0;
         }
         else
         {
-            color = RGB(255, 0, 0);
+            red = 255;
+            grn = 0;
+            blu = 0;
         }
         break;
 
@@ -340,15 +367,21 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range)
     case 9:
         if (val > 66)
         {
-            color = RGB(0, 0, 255);
+            red = 0;
+            grn = 0;
+            blu = 255;
         }
         else if (val > 33)
         {
-            color = RGB(0, 255, 255);
+            red = 0;
+            grn = 255;
+            blu = 255;
         }
         else
         {
-            color = RGB(255, 255, 255);
+            red = 255;
+            grn = 255;
+            blu = 255;
         }
         break;
 
@@ -356,15 +389,21 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range)
     case 10:
         if (val > 66)
         {
-            color = RGB(0, 0, 255);
+            red = 0;
+            grn = 0;
+            blu = 255;
         }
         else if (val > 33)
         {
-            color = RGB(255, 255, 255);
+            red = 255;
+            grn = 255;
+            blu = 255;
         }
         else
         {
-            color = RGB(255, 0, 0);
+            red = 255;
+            grn = 0;
+            blu = 0;
         }
         break;
 
@@ -372,27 +411,39 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range)
     case 11:
         if (val > 83)
         {
-            color = RGB(255, 0, 0);
+            red = 255;
+            grn = 0;
+            blu = 0;
         }
         else if (val > 66)
         {
-            color = RGB(255, 255, 0);
+            red = 255;
+            grn = 255;
+            blu = 0;
         }
         else if (val > 50)
         {
-            color = RGB(0, 255, 0);
+            red = 0;
+            grn = 255;
+            blu = 0;
         }
         else if (val > 33)
         {
-            color = RGB(0, 255, 255);
+            red = 0;
+            grn = 255;
+            blu = 255;
         }
         else if (val > 16)
         {
-            color = RGB(0, 0, 255);
+            red = 0;
+            grn = 0;
+            blu = 255;
         }
         else
         {
-            color = RGB(255, 0, 255);
+            red = 255;
+            grn = 0;
+            blu = 255;
         }
         break;
 
@@ -400,30 +451,45 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range)
     case 12:
         if (val > 83)
         {
-            color = RGB(255, 0, 255);
+            red = 255;
+            grn = 0;
+            blu = 255;
         }
         else if (val > 66)
         {
-            color = RGB(0, 0, 255);
+            red = 0;
+            grn = 0;
+            blu = 255;
         }
         else if (val > 50)
         {
-            color = RGB(0, 255, 255);
+            red = 0;
+            grn = 255;
+            blu = 255;
         }
         else if (val > 33)
         {
-            color = RGB(0, 255, 0);
+            red = 0;
+            grn = 255;
+            blu = 0;
         }
         else if (val > 16)
         {
-            color = RGB(255, 255, 0);
+            red = 255;
+            grn = 255;
+            blu = 0;
         }
         else
         {
-            color = RGB(255, 0, 0);
+            red = 255;
+            grn = 0;
+            blu = 0;
         }
         break;
     }
+
+    color = RGB((brightness * red)/256.0f, (brightness * grn)/256.0f, (brightness * blu)/256.0f);
+
     return(color);
 }
 
@@ -472,13 +538,18 @@ void Visualizer::VisThread()
                         pixels[y][x] = hsv2rgb(&hsv2);
                     }
                     break;
+
+                case 4:
+                    pixels[y][x] = GetAmplitudeColor(255 - (fft[5] * 255), 255, fft[5] * 255 * (bkgd_bright/100.0f));
+                    break;
 				}
 
+                //Draw foreground
                 if (y > 3)
                 {
                     if (fft[x] >((1 / 64.0f)*(64.0f - y)))
                     {
-                        pixels[y][x] = GetAmplitudeColor(y, 64);
+                        pixels[y][x] = GetAmplitudeColor(y, 64, 255);
                     }
                 }
 
@@ -488,15 +559,77 @@ void Visualizer::VisThread()
                     {
                         if ((fft[5] - 0.05f) >((1 / 128.0f)*(127-x)))
                         {
-                            pixels[y][x] = GetAmplitudeColor(x, 128);
+                            pixels[y][x] = GetAmplitudeColor(x, 128, 255);
                         }
                     }
                     else
                     {
                         if ((fft[5] - 0.05f) >((1 / 128.0f)*((x-128))))
                         {
-                            pixels[y][x] = GetAmplitudeColor(127-(x-128), 128);
+                            pixels[y][x] = GetAmplitudeColor(127-(x-128), 128, 255);
                         }
+                    }
+                }
+
+                //Draw brightness based visualizer for single LED devices
+                if (y == 3)
+                {
+                    float brightness = fft[5] * 255;
+                    switch (single_color_mode)
+                    {
+                    //None
+                    case 0:
+                        pixels[y][x] = RGB(0, 0, 0);
+                        break;
+
+                    //Follow Foreground
+                    case 1:
+                        pixels[y][x] = GetAmplitudeColor(255 - brightness, 255, brightness);
+                        break;
+
+                    //Follow Background:
+                    case 2:
+                        break;
+
+                    //White
+                    case 3:
+                        pixels[y][x] = RGB(brightness, brightness, brightness);
+                        break;
+
+                    //Red
+                    case 4:
+                        pixels[y][x] = RGB(brightness, 0, 0);
+                        break;
+
+                    //Orange
+                    case 5:
+                        pixels[y][x] = RGB(brightness, brightness / 2, 0);
+                        break;
+
+                    //Yellow
+                    case 6:
+                        pixels[y][x] = RGB(brightness, brightness, 0);
+                        break;
+
+                    //Green
+                    case 7:
+                        pixels[y][x] = RGB(0, brightness, 0);
+                        break;
+
+                    //Cyan
+                    case 8:
+                        pixels[y][x] = RGB(0, brightness, brightness);
+                        break;
+
+                    //Blue
+                    case 9:
+                        pixels[y][x] = RGB(0, 0, brightness);
+                        break;
+
+                    //Purple
+                    case 10:
+                        pixels[y][x] = RGB(brightness, 0, brightness);
+                        break;
                     }
                 }
 			}
@@ -529,7 +662,15 @@ void Visualizer::LEDStripUpdateThread()
 {
     while (TRUE)
     {
-//        str.SetLEDs(pixels);
-        Sleep(delay);
+        str.SetLEDs(pixels);
+        if (delay < 15)
+        {
+            Sleep(15);
+        }
+        else
+        {
+            Sleep(delay);
+        }
+
     }
 }

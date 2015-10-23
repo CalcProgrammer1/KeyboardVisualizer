@@ -34,10 +34,11 @@ void RazerChroma::Initialize()
     
 }
 static int red = 0;
-bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
+bool RazerChroma::SetLEDs(COLORREF pixels[64][256]) 
 {
     CreateEffect = (CREATEEFFECT)GetProcAddress(hModule, "CreateEffect");
     CreateMouseEffect = (CREATEMOUSEEFFECT)GetProcAddress(hModule, "CreateMouseEffect");
+    CreateHeadsetEffect = (CREATEHEADSETEFFECT)GetProcAddress(hModule, "CreateHeadsetEffect");
 
     if (CreateEffect == NULL)
     {
@@ -82,47 +83,61 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &Grid2, NULL);
 
         //Firefly Chroma
-        ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE Effect = {};
+        ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE FireflyEffect = {};
 
         for (int x = 0; x < 15; x++)
         {
             if (x < 8)
             {
-                Effect.Color[x - 1] = pixels[0][7 + (x * 16)];
+                FireflyEffect.Color[x - 1] = pixels[0][7 + (x * 16)];
             }
             else
             {
-                Effect.Color[x] = pixels[0][8 + (x * 16)];
+                FireflyEffect.Color[x] = pixels[0][8 + (x * 16)];
             }
         }
-        Effect.Color[7] = pixels[0][128];
+        FireflyEffect.Color[7] = pixels[0][128];
 
-        CreateEffect(ChromaSDK::FIREFLY_CHROMA, ChromaSDK::CHROMA_CUSTOM, &Effect, NULL);
+        CreateEffect(ChromaSDK::FIREFLY_CHROMA, ChromaSDK::CHROMA_CUSTOM, &FireflyEffect, NULL);
 
         //Mamba Chroma Tournament Edition
-        ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE Effect2 = {};
+        ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE MambaEffect = {};
 
         for (int x = 0; x < 7; x++)
         {
-            Effect2.Color[x + 4] = pixels[0][(16 * (x + 1))];
-            Effect2.Color[x + 11] = pixels[0][(16 * (x + 1))];
+            MambaEffect.Color[x + 4] = pixels[0][(16 * (x + 1))];
+            MambaEffect.Color[x + 11] = pixels[0][(16 * (x + 1))];
         }
 
         //Set scroll wheel and logo LEDs to background color
-        Effect2.Color[2] = pixels[3][16 * 5];
-        Effect2.Color[1] = pixels[3][0];
+        MambaEffect.Color[2] = pixels[3][16 * 5];
+        MambaEffect.Color[1] = pixels[3][0];
 
-        CreateEffect(ChromaSDK::MAMBA_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &Effect2, NULL);
+        //CreateEffect(ChromaSDK::MAMBA_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &MambaEffect, NULL);
+
+        CreateMouseEffect(ChromaSDK::Mouse::CHROMA_CUSTOM, &MambaEffect, NULL);
 
         //DeathAdder Chroma
-        ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE Effect3 = {};
+        //ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE DeathAdderEffect = {};
 
         //Set scroll wheel and logo LEDs to background color
-        Effect3.Color[2] = pixels[3][16 * 5];
-        Effect3.Color[1] = pixels[3][0];
+        //DeathAdderEffect.Color[2] = pixels[3][0];
+        //DeathAdderEffect.Color[1] = pixels[3][0];
 
-        CreateEffect(ChromaSDK::DEATHADDER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &Effect3, NULL);
-        //CreateMouseEffect(ChromaSDK::Mouse::CHROMA_CUSTOM, &Effect3, NULL);
+        //CreateEffect(ChromaSDK::DEATHADDER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &DeathAdderEffect, NULL);
+
+        //Kraken Chroma
+        ChromaSDK::Headset::STATIC_EFFECT_TYPE KrakenEffect;
+
+        KrakenEffect.Color = pixels[2][0];
+
+        CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &KrakenEffect, NULL);
+
+        //DeathStalker Chroma
+
+        //Tartarus Chroma
+
+        //Orbweaver Chroma
         return TRUE;
     }
 };

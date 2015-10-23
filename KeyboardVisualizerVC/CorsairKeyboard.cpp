@@ -135,11 +135,17 @@ int CorsairKeyboard::Initialize()
 {
 	char data_pkt[5][64] = { 0 };
 
+    //Look for K70 RGB
 	dev = GetDeviceHandle(0x1B1C, 0x1B13, 0x3);
 	if (dev == NULL)
 	{
-        init_ok = FALSE;
-		return 0;
+        //Look for K95 RGB
+        dev = GetDeviceHandle(0x1B1C, 0x1B11, 0x3);
+        if (dev == NULL)
+        {
+            init_ok = FALSE;
+            return 0;
+        }
 	}
 }
 
