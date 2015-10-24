@@ -11,6 +11,7 @@ using namespace ChromaSDK::Keyboard;
 typedef RZRESULT(*INIT)(void);
 typedef RZRESULT(*UNINIT)(void);
 typedef RZRESULT(*CREATEEFFECT)(RZDEVICEID DeviceId, ChromaSDK::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
+typedef RZRESULT(*CREATEKEYBOARDEFFECT)(ChromaSDK::Keyboard::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
 typedef RZRESULT(*CREATEMOUSEEFFECT)(ChromaSDK::Mouse::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
 typedef RZRESULT(*CREATEHEADSETEFFECT)(ChromaSDK::Headset::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
 
@@ -32,6 +33,7 @@ public:
 private:
 	HMODULE hModule = NULL;
     CREATEEFFECT CreateEffect;
+    CREATEKEYBOARDEFFECT CreateKeyboardEffect;
     CREATEMOUSEEFFECT CreateMouseEffect;
     CREATEHEADSETEFFECT CreateHeadsetEffect;
 

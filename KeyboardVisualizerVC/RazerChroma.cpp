@@ -19,6 +19,7 @@ RazerChroma::~RazerChroma()
     }
 }
 
+
 void RazerChroma::Initialize()
 {
 	// Dynamically loads the Chroma SDK library.
@@ -33,10 +34,12 @@ void RazerChroma::Initialize()
 	}
     
 }
-static int red = 0;
+
+
 bool RazerChroma::SetLEDs(COLORREF pixels[64][256]) 
 {
     CreateEffect = (CREATEEFFECT)GetProcAddress(hModule, "CreateEffect");
+    CreateKeyboardEffect = (CREATEKEYBOARDEFFECT)GetProcAddress(hModule, "CreateKeyboardEffect");
     CreateMouseEffect = (CREATEMOUSEEFFECT)GetProcAddress(hModule, "CreateMouseEffect");
     CreateHeadsetEffect = (CREATEHEADSETEFFECT)GetProcAddress(hModule, "CreateHeadsetEffect");
 
@@ -47,7 +50,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
     else
     {
         //Blackwidow Chroma
-        CUSTOM_EFFECT_TYPE Grid;
+        CUSTOM_EFFECT_TYPE BlackWidowEffect;
 
         for (int x = 0; x < 22; x++)
         {
@@ -55,17 +58,17 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             {
                 int x_idx = x * (256 / 22);
                 int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
-                Grid.Color[y][x] = (pixels[y_idx][x_idx] & 0x00FFFFFF);
+                BlackWidowEffect.Color[y][x] = (pixels[y_idx][x_idx] & 0x00FFFFFF);
             }
         }
 
         //Set Razer "Three Headed Snake" logo to the background color of the 11th column
-        Grid.Color[0][20] = pixels[3][11 * (256 / 22)];
+        BlackWidowEffect.Color[0][20] = pixels[3][11 * (256 / 22)];
 
-        CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &Grid, NULL);
+        CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
 
         //Blackwidow Chroma Tournament Edition
-        CUSTOM_EFFECT_TYPE Grid2;
+        CUSTOM_EFFECT_TYPE BlackWidowTEEffect;
 
         for (int x = 0; x < 18; x++)
         {
@@ -73,14 +76,14 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             {
                 int x_idx = x * (256 / 18);
                 int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
-                Grid2.Color[y][x] = (pixels[y_idx][x_idx] & 0x00FFFFFF);
+                BlackWidowTEEffect.Color[y][x] = (pixels[y_idx][x_idx] & 0x00FFFFFF);
             }
         }
 
         //Set Razer "Three Headed Snake" logo to the background color of the 11th column
-        Grid2.Color[0][20] = pixels[3][11 * (256 / 22)];
+        BlackWidowTEEffect.Color[0][20] = pixels[3][11 * (256 / 22)];
 
-        CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &Grid2, NULL);
+        CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &BlackWidowTEEffect, NULL);
 
         //Firefly Chroma
         ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE FireflyEffect = {};
@@ -129,15 +132,36 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         //Kraken Chroma
         ChromaSDK::Headset::STATIC_EFFECT_TYPE KrakenEffect;
 
-        KrakenEffect.Color = pixels[2][0];
+        KrakenEffect.Color = pixels[3][0];
 
+        CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_NONE, &KrakenEffect, NULL);
         CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &KrakenEffect, NULL);
 
         //DeathStalker Chroma
+        CreateEffect(ChromaSDK::DEATHSTALKER_CHROMA, ChromaSDK::CHROMA_STATIC, &BlackWidowEffect, NULL);
 
         //Tartarus Chroma
+        ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE TartarusEffect;
+
+        TartarusEffect.Color[0][0] = pixels[3][0];
+
+        CreateEffect(ChromaSDK::TARTARUS_CHROMA, ChromaSDK::CHROMA_CUSTOM, &TartarusEffect, NULL);
 
         //Orbweaver Chroma
+        ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE OrbweaverEffect;
+
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < 4; y++)
+            {
+                int x_idx = x * (256 / 5);
+                int y_idx = y * (64 / 4) + (0.5f * (64 / 4));
+                OrbweaverEffect.Color[y][x] = (pixels[y_idx][x_idx] & 0x00FFFFFF);
+            }
+        }
+
+        CreateEffect(ChromaSDK::ORBWEAVER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &OrbweaverEffect, NULL);
+
         return TRUE;
     }
 };
