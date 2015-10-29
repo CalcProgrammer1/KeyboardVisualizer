@@ -33,6 +33,9 @@ public:
     //Get Foreground Color From Amplitude
     COLORREF GetAmplitudeColor(int amplitude, int range, int brightness);
 
+    //Compute normalization line
+    void SetNormalization(int offset, int scale);
+
 	//Calculated FFT
 	float fft[256];
 	
@@ -53,6 +56,10 @@ public:
 
     //Single Color Mode
     int single_color_mode;
+
+    //Normalization Offset and Scale
+    int nrml_ofst;
+    int nrml_scl;
 
     //Foreground Variables
     int frgd_mode;

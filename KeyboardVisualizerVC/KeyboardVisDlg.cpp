@@ -59,6 +59,8 @@ BOOL KeyboardVisDlg::OnInitDialog()
 	SetDlgItemInt(IDC_EDIT_AVERAGE_SIZE, vis->avg_size);
 	SetDlgItemInt(IDC_EDIT_DECAY, vis->decay);
 	SetDlgItemInt(IDC_EDIT_DELAY, vis->delay);
+    SetDlgItemInt(IDC_EDIT_NRML_OFST, vis->nrml_ofst);
+    SetDlgItemInt(IDC_EDIT_NRML_SCL, vis->nrml_scl);
 
 	CComboBox* windowBox = (CComboBox*)GetDlgItem(IDC_COMBO_WINDOW);
 	windowBox->AddString("None");
@@ -72,6 +74,15 @@ BOOL KeyboardVisDlg::OnInitDialog()
 	bkgdModeBox->AddString("Original");
 	bkgdModeBox->AddString("Rainbow");
     bkgdModeBox->AddString("Color Wheel");
+    bkgdModeBox->AddString("Follow Foreground");
+    bkgdModeBox->AddString("White");
+    bkgdModeBox->AddString("Red");
+    bkgdModeBox->AddString("Orange");
+    bkgdModeBox->AddString("Yellow");
+    bkgdModeBox->AddString("Green");
+    bkgdModeBox->AddString("Cyan");
+    bkgdModeBox->AddString("Blue");
+    bkgdModeBox->AddString("Purple");
 	bkgdModeBox->SetCurSel(vis->bkgd_mode);
 
     CComboBox* frgdModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_FRGD_MODE);
@@ -187,6 +198,8 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_MESSAGE(WM_TRAYICON_EVENT, OnTrayIconEvent)
     ON_CBN_SELCHANGE(IDC_COMBO_AVG_MODE, &KeyboardVisDlg::OnCbnSelchangeComboAvgMode)
     ON_CBN_SELCHANGE(IDC_COMBO_SNGL_CLR_MODE, &KeyboardVisDlg::OnCbnSelchangeComboSnglClrMode)
+    ON_EN_CHANGE(IDC_EDIT_NRML_OFST, &KeyboardVisDlg::OnEnChangedEditNrmlOfst)
+    ON_EN_CHANGE(IDC_EDIT_NRML_SCL, &KeyboardVisDlg::OnEnChangedEditNrmlScl)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
@@ -246,4 +259,16 @@ void KeyboardVisDlg::OnCbnSelchangeComboAvgMode()
 void KeyboardVisDlg::OnCbnSelchangeComboSnglClrMode()
 {
     vis->single_color_mode = ((CComboBox*)GetDlgItem(IDC_COMBO_SNGL_CLR_MODE))->GetCurSel();
+}
+
+void KeyboardVisDlg::OnEnChangedEditNrmlOfst()
+{
+    vis->nrml_ofst = (int)GetDlgItemInt(IDC_EDIT_NRML_OFST, 0, 0);
+    vis->SetNormalization(vis->nrml_ofst, vis->nrml_scl);
+}
+
+void KeyboardVisDlg::OnEnChangedEditNrmlScl()
+{
+    vis->nrml_scl = (int)GetDlgItemInt(IDC_EDIT_NRML_SCL, 0, 0);
+    vis->SetNormalization(vis->nrml_ofst, vis->nrml_scl);
 }

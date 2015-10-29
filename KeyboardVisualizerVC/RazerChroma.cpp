@@ -50,7 +50,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
     else
     {
         //Blackwidow Chroma
-        CUSTOM_EFFECT_TYPE BlackWidowEffect;
+        ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowEffect;
 
         for (int x = 0; x < 22; x++)
         {
@@ -68,7 +68,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
 
         //Blackwidow Chroma Tournament Edition
-        CUSTOM_EFFECT_TYPE BlackWidowTEEffect;
+        ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowTEEffect;
 
         for (int x = 0; x < 18; x++)
         {
@@ -138,7 +138,16 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &KrakenEffect, NULL);
 
         //DeathStalker Chroma
-        CreateEffect(ChromaSDK::DEATHSTALKER_CHROMA, ChromaSDK::CHROMA_STATIC, &BlackWidowEffect, NULL);
+        static int DeathStalker_x_idx[] = { 1, 4, 8, 12, 15, 18 };
+        ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE DeathStalkerEffect;
+
+        for (int x = 0; x < 6; x++)
+        {
+            int x_idx = 128 + (x * (256 / 12));
+            DeathStalkerEffect.Color[1][DeathStalker_x_idx[x]] = (pixels[0][x_idx] & 0x00FFFFFF);
+        }
+
+        //CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_CUSTOM, &DeathStalkerEffect, NULL);
 
         //Tartarus Chroma
         ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE TartarusEffect;

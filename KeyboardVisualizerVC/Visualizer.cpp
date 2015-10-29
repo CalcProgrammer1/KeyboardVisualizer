@@ -83,17 +83,25 @@ void Visualizer::Initialize()
 	window_mode = 1;
 	decay       = 80;
     frgd_mode   = 8;
-    single_color_mode = 2;
+    single_color_mode = 1;
 
 	hanning(win_hanning, 256);
 	hamming(win_hamming, 256);
 	blackman(win_blackman, 256);
 
-	for (int i = 0; i < 256; i++)
-	{
-		fft[i] = 0.0f;
-		fft_nrml[i] = 0.040f + (0.5f * (i / 256.0f));
-	}
+    nrml_ofst   = 50;
+    nrml_scl    = 50;
+
+    SetNormalization(nrml_ofst, nrml_scl);
+}
+
+void Visualizer::SetNormalization(int offset, int scale)
+{
+    for (int i = 0; i < 256; i++)
+    {
+        fft[i] = 0.0f;
+        fft_nrml[i] = (offset / 100.0f) + ((scale / 100.0f) * (i / 256.0f));
+    }
 }
 
 void Visualizer::Update()
@@ -120,7 +128,7 @@ void Visualizer::Update()
         float *buf;
         pAudioCaptureClient->GetBuffer((BYTE**)&buf, &nextPacketSize, (DWORD *)&flags, NULL, NULL);
         
-        for (int i = 0; i < nextPacketSize; i+=5)
+        for (int i = 0; i < nextPacketSize; i+=7)
         {
             for (int j = 0; j < 255; j++)
             {
@@ -174,6 +182,7 @@ void Visualizer::Update()
 		//Compute magnitude from real and imaginary components of FFT and apply simple LPF
 		fftmag = (float)sqrt((fft_tmp[i] * fft_tmp[i]) + (fft_tmp[i + 1] * fft_tmp[i + 1]));
 
+        //Apply a slight logarithmic filter to minimize noise from very low amplitude frequencies
         fftmag = ( 0.5f * log10(1.1f * fftmag) ) + ( 0.9f * fftmag );
 
 		//Limit FFT magnitude to 1.0
@@ -509,20 +518,25 @@ void Visualizer::VisThread()
 		{
 			for (int y = 0; y < 64; y++)
 			{
+                float brightness = bkgd_bright * (255.0f / 100.0f);
+
 				//Draw active background
 				switch (bkgd_mode)
 				{
+                //None (black)
 				case 0:
 					pixels[y][x] = RGB(0, 0, 0);
 					break;
 
+                //Original
 				case 1:
 					red = (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1);
 					grn = (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1);
 					blu = (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) + (6.28f / 3)) + 1);
-					pixels[y][x] = RGB(bkgd_bright * red, bkgd_bright * grn, bkgd_bright * blu);
+					pixels[y][x] = RGB((bkgd_bright/2) * red, (bkgd_bright/2) * grn, (bkgd_bright/2) * blu);
 					break;
 
+                //Rainbow
 				case 2:
                     {
                         int hsv_h = ((bkgd_step + (256 - x)) % 360);
@@ -531,6 +545,7 @@ void Visualizer::VisThread()
                     }
 					break;
 
+                //Color Wheel
                 case 3:
                     {
                         float hue = bkgd_step + (int)(180 + atan2(y - 32.1, x - 128.1) * (180.0 / 3.14159))%360;
@@ -539,8 +554,49 @@ void Visualizer::VisThread()
                     }
                     break;
 
+                //Follow Foreground
                 case 4:
                     pixels[y][x] = GetAmplitudeColor(255 - (fft[5] * 255), 255, fft[5] * 255 * (bkgd_bright/100.0f));
+                    break;
+
+                //White
+                case 5:
+                    pixels[y][x] = RGB(brightness, brightness, brightness);
+                    break;
+
+                //Red
+                case 6:
+                    pixels[y][x] = RGB(brightness, 0, 0);
+                    break;
+
+                //Orange
+                case 7:
+                    pixels[y][x] = RGB(brightness, brightness / 2, 0);
+                    break;
+
+                //Yellow
+                case 8:
+                    pixels[y][x] = RGB(brightness, brightness, 0);
+                    break;
+
+                //Green
+                case 9:
+                    pixels[y][x] = RGB(0, brightness, 0);
+                    break;
+
+                //Cyan
+                case 10:
+                    pixels[y][x] = RGB(0, brightness, brightness);
+                    break;
+
+                //Blue
+                case 11:
+                    pixels[y][x] = RGB(0, 0, brightness);
+                    break;
+
+                //Purple
+                case 12:
+                    pixels[y][x] = RGB(brightness, 0, brightness);
                     break;
 				}
 
