@@ -14,6 +14,7 @@ public:
 	virtual BOOL OnInitDialog();
 
 	void SetVisualizer(Visualizer* v);
+    void StartMinimized(boolean startmin);
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -41,7 +42,6 @@ public:
 	afx_msg void OnEnChangeEditDecay();
 	afx_msg void OnEnChangeEditDelay();
     afx_msg void OnCbnSelchangeComboFrgdMode();
-    afx_msg void OnCbnSelchangeComboAudioDevice();
     afx_msg void OnCbnSelchangeComboAvgMode();
     afx_msg void OnCbnSelchangeComboSnglClrMode();
     afx_msg void OnEnChangedEditNrmlOfst();

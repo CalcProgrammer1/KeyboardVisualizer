@@ -20,10 +20,13 @@
 IMPLEMENT_DYNAMIC(KeyboardVisDlg, CDialogEx)
 
 Visualizer* vis;
+boolean startminimized;
+boolean firstrun;
 
 KeyboardVisDlg::KeyboardVisDlg(CWnd* pParent)
 	: CDialogEx(IDD_RAZER_CHROMA_DLG, pParent)
 {
+    startminimized = FALSE;
 }
 
 void KeyboardVisDlg::SetVisualizer(Visualizer* v)
@@ -54,13 +57,19 @@ BOOL KeyboardVisDlg::OnInitDialog()
 
     Shell_NotifyIcon(NIM_ADD, &Tray);
 
+    char nrml_ofst_str[64];
+    char nrml_scl_str[64];
+
+    snprintf(nrml_ofst_str, 64, "%f", vis->nrml_ofst);
+    snprintf(nrml_scl_str,  64, "%f", vis->nrml_scl);
+
 	SetDlgItemInt(IDC_EDIT_AMPLITUDE, vis->amplitude);
 	SetDlgItemInt(IDC_EDIT_BACKGROUND_BRIGHTNESS, vis->bkgd_bright);
 	SetDlgItemInt(IDC_EDIT_AVERAGE_SIZE, vis->avg_size);
 	SetDlgItemInt(IDC_EDIT_DECAY, vis->decay);
 	SetDlgItemInt(IDC_EDIT_DELAY, vis->delay);
-    SetDlgItemInt(IDC_EDIT_NRML_OFST, vis->nrml_ofst);
-    SetDlgItemInt(IDC_EDIT_NRML_SCL, vis->nrml_scl);
+    SetDlgItemText(IDC_EDIT_NRML_OFST, nrml_ofst_str);
+    SetDlgItemText(IDC_EDIT_NRML_SCL, nrml_scl_str);
 
 	CComboBox* windowBox = (CComboBox*)GetDlgItem(IDC_COMBO_WINDOW);
 	windowBox->AddString("None");
@@ -122,7 +131,14 @@ BOOL KeyboardVisDlg::OnInitDialog()
 
 	timer = SetTimer(1, 25, NULL);
 
+    firstrun = TRUE;
+
 	return TRUE;
+}
+
+void KeyboardVisDlg::StartMinimized(boolean startmin)
+{
+    startminimized = startmin;
 }
 
 void KeyboardVisDlg::OnDestroy()
@@ -142,6 +158,12 @@ void KeyboardVisDlg::OnDestroy()
 
 void KeyboardVisDlg::OnTimer(UINT nIDEvent)
 {
+    if (startminimized && firstrun)
+    {
+        firstrun = FALSE;
+        ShowWindow(SW_HIDE);
+    }
+
     COLORREF pixels_bgr[64][256];
 
     //CreateBitmap uses BGR color layout, convert from RGB
@@ -263,12 +285,16 @@ void KeyboardVisDlg::OnCbnSelchangeComboSnglClrMode()
 
 void KeyboardVisDlg::OnEnChangedEditNrmlOfst()
 {
-    vis->nrml_ofst = (int)GetDlgItemInt(IDC_EDIT_NRML_OFST, 0, 0);
+    char val[64];
+    GetDlgItemText(IDC_EDIT_NRML_OFST, (LPTSTR)&val, 64);
+    vis->nrml_ofst = strtod(val, NULL);
     vis->SetNormalization(vis->nrml_ofst, vis->nrml_scl);
 }
 
 void KeyboardVisDlg::OnEnChangedEditNrmlScl()
 {
-    vis->nrml_scl = (int)GetDlgItemInt(IDC_EDIT_NRML_SCL, 0, 0);
+    char val[64];
+    GetDlgItemText(IDC_EDIT_NRML_SCL, (LPTSTR)&val, 64);
+    vis->nrml_scl = strtod(val, NULL);
     vis->SetNormalization(vis->nrml_ofst, vis->nrml_scl);
 }

@@ -2,6 +2,29 @@
 
 #include <iostream>
 
+//Index lists for BlackWidow
+int BlackWidowXIndex[22];
+int BlackWidowYIndex[6];
+
+//Index lists for BlackWidow TE
+int BlackWidowTEXIndex[18];
+int BlackWidowTEYIndex[6];
+
+//Index list for Firefly
+int FireflyIndex[15];
+
+//Index list for mice (Mamba TE, DeathAdder)
+int MouseXIndex[18];
+int MouseYIndex[18];
+
+//Index list for DeathStalker
+static int DeathStalkerXLEDIndex[] = { 1, 4, 8, 12, 15, 18 };
+int DeathStalkerXIndex[6];
+
+//Index lists for Orbweaver
+int OrbweaverXIndex[5];
+int OrbweaverYIndex[4];
+
 RazerChroma::RazerChroma()
 {
 }
@@ -29,7 +52,91 @@ void RazerChroma::Initialize()
 		INIT Init = (INIT)GetProcAddress(hModule, "Init");
 		if (Init)
 		{
+            //Initialize the SDK
 			Init();
+
+            //Build index list for BlackWidow
+            for (int x = 0; x < 22; x++)
+            {
+                int x_idx = x * (256 / 22);
+                BlackWidowXIndex[x] = x_idx;
+            }
+            for (int y = 0; y < 6; y++)
+            {
+                int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
+                BlackWidowYIndex[y] = y_idx;
+            }
+
+            //Build index list for BlackWidow TE
+            for (int x = 0; x < 18; x++)
+            {
+                int x_idx = x * (256 / 18);
+                BlackWidowTEXIndex[x] = x_idx;
+            }
+            for (int y = 0; y < 6; y++)
+            {
+                int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
+                BlackWidowTEYIndex[y] = y_idx;
+            }
+
+            //Build index list for Firefly
+            for (int x = 0; x < 15; x++)
+            {
+                if (x == 7)
+                {
+                    FireflyIndex[x] = 128;
+                }
+                else if (x < 8)
+                {
+                    FireflyIndex[x] = 7 + (x * 16);
+                }
+                else
+                {
+                    FireflyIndex[x] = 8 + (x * 16);
+                }
+            }
+
+            //Build index list for mice
+            for (int x = 0; x < 18; x++)
+            {
+                //Set scroll wheel and logo LEDs to background color
+                if (x == 1)
+                {
+                    MouseXIndex[x] = 0;
+                    MouseYIndex[x] = 3;
+                }
+                else if (x == 2)
+                {
+                    MouseXIndex[x] = 16 * 5;
+                    MouseYIndex[x] = 3;
+                }
+                else if (x > 10)
+                {
+                    MouseXIndex[x] = 16 * ((x - 11) + 1);
+                    MouseYIndex[x] = 0;
+                }
+                else if (x > 3)
+                {
+                    MouseXIndex[x] = 16 * ((x - 4) + 1);
+                    MouseYIndex[x] = 0;
+                }
+            }
+
+            //Build index list for DeathStalker
+            for (int x = 0; x < 6; x++)
+            {
+                DeathStalkerXIndex[x] = 128 + (x * (256 / 12));
+            }
+
+            //Build index list for OrbWeaver
+            for (int x = 0; x < 5; x++)
+            {
+                OrbweaverXIndex[x] = x * (256 / 5);
+            }
+            for (int y = 0; y < 4; y++)
+            {
+                OrbweaverYIndex[y] = y * (64 / 4) + (0.5f * (64 / 4));
+            }
 		}
 	}
     
@@ -56,9 +163,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         {
             for (int y = 0; y < 6; y++)
             {
-                int x_idx = x * (256 / 22);
-                int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
-                BlackWidowEffect.Color[y][x] = (pixels[y_idx][x_idx] & 0x00FFFFFF);
+                BlackWidowEffect.Color[y][x] = (pixels[BlackWidowYIndex[y]][BlackWidowXIndex[x]] & 0x00FFFFFF);
             }
         }
 
@@ -74,9 +179,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         {
             for (int y = 0; y < 6; y++)
             {
-                int x_idx = x * (256 / 18);
-                int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
-                BlackWidowTEEffect.Color[y][x] = (pixels[y_idx][x_idx] & 0x00FFFFFF);
+                BlackWidowTEEffect.Color[y][x] = (pixels[BlackWidowTEYIndex[y]][BlackWidowTEXIndex[x]] & 0x00FFFFFF);
             }
         }
 
@@ -90,31 +193,18 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
         for (int x = 0; x < 15; x++)
         {
-            if (x < 8)
-            {
-                FireflyEffect.Color[x - 1] = pixels[0][7 + (x * 16)];
-            }
-            else
-            {
-                FireflyEffect.Color[x] = pixels[0][8 + (x * 16)];
-            }
+            FireflyEffect.Color[x] = pixels[0][FireflyIndex[x]];
         }
-        FireflyEffect.Color[7] = pixels[0][128];
 
         CreateEffect(ChromaSDK::FIREFLY_CHROMA, ChromaSDK::CHROMA_CUSTOM, &FireflyEffect, NULL);
 
         //Mamba Chroma Tournament Edition
         ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE MambaEffect = {};
 
-        for (int x = 0; x < 7; x++)
+        for (int x = 0; x < 18; x++)
         {
-            MambaEffect.Color[x + 4] = pixels[0][(16 * (x + 1))];
-            MambaEffect.Color[x + 11] = pixels[0][(16 * (x + 1))];
+            MambaEffect.Color[x] = pixels[MouseYIndex[x]][MouseXIndex[x]];
         }
-
-        //Set scroll wheel and logo LEDs to background color
-        MambaEffect.Color[2] = pixels[3][16 * 5];
-        MambaEffect.Color[1] = pixels[3][0];
 
         //CreateEffect(ChromaSDK::MAMBA_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &MambaEffect, NULL);
 
@@ -138,13 +228,12 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &KrakenEffect, NULL);
 
         //DeathStalker Chroma
-        static int DeathStalker_x_idx[] = { 1, 4, 8, 12, 15, 18 };
+        
         ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE DeathStalkerEffect;
 
         for (int x = 0; x < 6; x++)
         {
-            int x_idx = 128 + (x * (256 / 12));
-            DeathStalkerEffect.Color[1][DeathStalker_x_idx[x]] = (pixels[0][x_idx] & 0x00FFFFFF);
+            DeathStalkerEffect.Color[1][DeathStalkerXLEDIndex[x]] = (pixels[0][DeathStalkerXIndex[x]] & 0x00FFFFFF);
         }
 
         //CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_CUSTOM, &DeathStalkerEffect, NULL);
@@ -163,9 +252,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         {
             for (int y = 0; y < 4; y++)
             {
-                int x_idx = x * (256 / 5);
-                int y_idx = y * (64 / 4) + (0.5f * (64 / 4));
-                OrbweaverEffect.Color[y][x] = (pixels[y_idx][x_idx] & 0x00FFFFFF);
+                OrbweaverEffect.Color[y][x] = (pixels[OrbweaverYIndex[y]][OrbweaverXIndex[x]] & 0x00FFFFFF);
             }
         }
 

@@ -89,18 +89,18 @@ void Visualizer::Initialize()
 	hamming(win_hamming, 256);
 	blackman(win_blackman, 256);
 
-    nrml_ofst   = 50;
-    nrml_scl    = 50;
+    nrml_ofst   = 0.04f;
+    nrml_scl    = 0.5f;
 
     SetNormalization(nrml_ofst, nrml_scl);
 }
 
-void Visualizer::SetNormalization(int offset, int scale)
+void Visualizer::SetNormalization(float offset, float scale)
 {
     for (int i = 0; i < 256; i++)
     {
         fft[i] = 0.0f;
-        fft_nrml[i] = (offset / 100.0f) + ((scale / 100.0f) * (i / 256.0f));
+        fft_nrml[i] = offset + (scale * (i / 256.0f));
     }
 }
 
@@ -128,7 +128,7 @@ void Visualizer::Update()
         float *buf;
         pAudioCaptureClient->GetBuffer((BYTE**)&buf, &nextPacketSize, (DWORD *)&flags, NULL, NULL);
         
-        for (int i = 0; i < nextPacketSize; i+=7)
+        for (int i = 0; i < nextPacketSize; i+=4)
         {
             for (int j = 0; j < 255; j++)
             {

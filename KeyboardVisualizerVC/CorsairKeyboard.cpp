@@ -13,6 +13,10 @@ const static int led_matrix_c[7][22]
 
 static bool init_ok = TRUE;
 
+//Corsair Keyboard index lists
+int CorsairKeyboardXIndex[22];
+int CorsairKeyboardYIndex[7];
+
 CorsairKeyboard::CorsairKeyboard()
 {
 }
@@ -147,6 +151,20 @@ int CorsairKeyboard::Initialize()
             return 0;
         }
 	}
+
+    for (int x = 0; x < 22; x++)
+    {
+        CorsairKeyboardXIndex[x] = x * (256 / 22);
+    }
+    for (int y = 0; y < 7; y++)
+    {
+        CorsairKeyboardYIndex[y] = (y - 1) * (64 / 6) + (0.5f * (64 / 6));
+
+        if (y == 0)
+        {
+            CorsairKeyboardYIndex[y] = 0 * (64 / 6) + (0.5f * (64 / 6));
+        }
+    }
 }
 
 bool CorsairKeyboard::SetLEDs(COLORREF pixels[64][256])
@@ -164,17 +182,9 @@ bool CorsairKeyboard::SetLEDs(COLORREF pixels[64][256])
 
             if (led < 144)
             {
-                int x_idx = x * (256 / 22);
-                int y_idx = (y - 1) * (64 / 6) + (0.5f * (64 / 6));
-
-                if (y == 0)
-                {
-                    y_idx = 0 * (64 / 6) + (0.5f * (64 / 6));
-                }
-
-                red_val[led] = 7 - (GetRValue(pixels[y_idx][x_idx]) / 32);
-                grn_val[led] = 7 - (GetGValue(pixels[y_idx][x_idx]) / 32);
-                blu_val[led] = 7 - (GetBValue(pixels[y_idx][x_idx]) / 32);
+                red_val[led] = 7 - (GetRValue(pixels[CorsairKeyboardYIndex[y]][CorsairKeyboardXIndex[x]]) / 32);
+                grn_val[led] = 7 - (GetGValue(pixels[CorsairKeyboardYIndex[y]][CorsairKeyboardXIndex[x]]) / 32);
+                blu_val[led] = 7 - (GetBValue(pixels[CorsairKeyboardYIndex[y]][CorsairKeyboardXIndex[x]]) / 32);
             }
 		}
 	}

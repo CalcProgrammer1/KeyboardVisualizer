@@ -34,7 +34,7 @@ public:
     COLORREF GetAmplitudeColor(int amplitude, int range, int brightness);
 
     //Compute normalization line
-    void SetNormalization(int offset, int scale);
+    void SetNormalization(float offset, float scale);
 
 	//Calculated FFT
 	float fft[256];
@@ -58,8 +58,8 @@ public:
     int single_color_mode;
 
     //Normalization Offset and Scale
-    int nrml_ofst;
-    int nrml_scl;
+    float nrml_ofst;
+    float nrml_scl;
 
     //Foreground Variables
     int frgd_mode;
