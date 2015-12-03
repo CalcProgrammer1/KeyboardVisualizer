@@ -46,9 +46,8 @@ void KeyboardVisDlg::DoDataExchange(CDataExchange* pDX)
 BOOL KeyboardVisDlg::OnInitDialog()
 {
     NOTIFYICONDATA Tray;
-
     Tray.cbSize = sizeof(Tray);
-    Tray.hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_ICON));
+    Tray.hIcon = (HICON)::LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 16, 16, LR_SHARED);//LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_ICON));
     Tray.hWnd = GetSafeHwnd();
     strcpy(Tray.szTip, "Keyboard Visualizer");
     Tray.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;

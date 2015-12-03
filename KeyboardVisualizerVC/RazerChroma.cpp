@@ -14,8 +14,8 @@ int BlackWidowTEYIndex[6];
 int FireflyIndex[15];
 
 //Index list for mice (Mamba TE, DeathAdder)
-int MouseXIndex[18];
-int MouseYIndex[18];
+int MouseXIndex[9][7];
+int MouseYIndex[9][7];
 
 //Index list for DeathStalker
 static int DeathStalkerXLEDIndex[] = { 1, 4, 8, 12, 15, 18 };
@@ -88,7 +88,7 @@ void RazerChroma::Initialize()
                 }
                 else if (x < 8)
                 {
-                    FireflyIndex[x] = 7 + (x * 16);
+                    FireflyIndex[x] = 7 + ((x+1) * 16);
                 }
                 else
                 {
@@ -97,28 +97,33 @@ void RazerChroma::Initialize()
             }
 
             //Build index list for mice
-            for (int x = 0; x < 18; x++)
+            for (int x = 0; x < 7; x++)
             {
-                //Set scroll wheel and logo LEDs to background color
-                if (x == 1)
+                for (int y = 0; y < 9; y++)
                 {
-                    MouseXIndex[x] = 0;
-                    MouseYIndex[x] = 3;
-                }
-                else if (x == 2)
-                {
-                    MouseXIndex[x] = 16 * 5;
-                    MouseYIndex[x] = 3;
-                }
-                else if (x > 10)
-                {
-                    MouseXIndex[x] = 16 * ((x - 11) + 1);
-                    MouseYIndex[x] = 0;
-                }
-                else if (x > 3)
-                {
-                    MouseXIndex[x] = 16 * ((x - 4) + 1);
-                    MouseYIndex[x] = 0;
+                    //Set scroll wheel LED
+                    if ((x == 3) && (y == 2))
+                    {
+                        MouseXIndex[y][x] = 0;
+                        MouseYIndex[y][x] = 3;
+                    }
+                    //Set logo LED
+                    else if ((x == 3) && (y == 7))
+                    {
+                        MouseXIndex[y][x] = 16 * 5;
+                        MouseYIndex[y][x] = 3;
+                    }
+                    //Set keypad LED
+                    else if ((x == 3) && (y == 4))
+                    {
+                        MouseXIndex[y][x] = 16 * 5;
+                        MouseYIndex[y][x] = 3;
+                    }
+                    else if (((x == 0) || (x == 6)) && (y > 0) && (y < 8))
+                    {
+                        MouseXIndex[y][x] = 16 * y;
+                        MouseYIndex[y][x] = 0;
+                    }
                 }
             }
 
@@ -199,25 +204,17 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         CreateEffect(ChromaSDK::FIREFLY_CHROMA, ChromaSDK::CHROMA_CUSTOM, &FireflyEffect, NULL);
 
         //Mamba Chroma Tournament Edition
-        ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE MambaEffect = {};
+        ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE2 MouseEffect = {};
 
-        for (int x = 0; x < 18; x++)
+        for (int x = 0; x < 7; x++)
         {
-            MambaEffect.Color[x] = pixels[MouseYIndex[x]][MouseXIndex[x]];
+            for (int y = 0; y < 9; y++)
+            {
+                MouseEffect.Color[y][x] = pixels[MouseYIndex[y][x]][MouseXIndex[y][x]];
+            }
         }
 
-        //CreateEffect(ChromaSDK::MAMBA_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &MambaEffect, NULL);
-
-        CreateMouseEffect(ChromaSDK::Mouse::CHROMA_CUSTOM, &MambaEffect, NULL);
-
-        //DeathAdder Chroma
-        //ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE DeathAdderEffect = {};
-
-        //Set scroll wheel and logo LEDs to background color
-        //DeathAdderEffect.Color[2] = pixels[3][0];
-        //DeathAdderEffect.Color[1] = pixels[3][0];
-
-        //CreateEffect(ChromaSDK::DEATHADDER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &DeathAdderEffect, NULL);
+        CreateMouseEffect(ChromaSDK::Mouse::CHROMA_CUSTOM2, &MouseEffect, NULL);
 
         //Kraken Chroma
         ChromaSDK::Headset::STATIC_EFFECT_TYPE KrakenEffect;
@@ -236,7 +233,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             DeathStalkerEffect.Color[1][DeathStalkerXLEDIndex[x]] = (pixels[0][DeathStalkerXIndex[x]] & 0x00FFFFFF);
         }
 
-        //CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_CUSTOM, &DeathStalkerEffect, NULL);
+        CreateEffect(ChromaSDK::DEATHSTALKER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &DeathStalkerEffect, NULL);
 
         //Tartarus Chroma
         ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE TartarusEffect;
