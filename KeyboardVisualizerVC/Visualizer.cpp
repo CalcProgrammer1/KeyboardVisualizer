@@ -372,8 +372,30 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range, int brightness)
         }
         break;
 
-    //White/Cyan/Blue
+    //Green/White/Red
     case 9:
+        if (val > 66)
+        {
+            red = 0;
+            grn = 255;
+            blu = 0;
+        }
+        else if (val > 33)
+        {
+            red = 255;
+            grn = 255;
+            blu = 255;
+        }
+        else
+        {
+            red = 255;
+            grn = 0;
+            blu = 0;
+        }
+        break;
+
+    //White/Cyan/Blue
+    case 10:
         if (val > 66)
         {
             red = 0;
@@ -395,7 +417,7 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range, int brightness)
         break;
 
     //Red/White/Blue
-    case 10:
+    case 11:
         if (val > 66)
         {
             red = 0;
@@ -417,7 +439,7 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range, int brightness)
         break;
 
     //Rainbow
-    case 11:
+    case 12:
         if (val > 83)
         {
             red = 255;
@@ -457,7 +479,7 @@ COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range, int brightness)
         break;
 
     //Rainbow Inverse
-    case 12:
+    case 13:
         if (val > 83)
         {
             red = 255;

@@ -110,19 +110,39 @@ void RazerChroma::Initialize()
                     //Set logo LED
                     else if ((x == 3) && (y == 7))
                     {
-                        MouseXIndex[y][x] = 16 * 5;
+                        MouseXIndex[y][x] = 14 * 5;
                         MouseYIndex[y][x] = 3;
                     }
                     //Set keypad LED
                     else if ((x == 3) && (y == 4))
                     {
-                        MouseXIndex[y][x] = 16 * 5;
+                        MouseXIndex[y][x] = 14 * 5;
                         MouseYIndex[y][x] = 3;
                     }
+                    //Set side LEDs
                     else if (((x == 0) || (x == 6)) && (y > 0) && (y < 8))
                     {
-                        MouseXIndex[y][x] = 16 * y;
+                        MouseXIndex[y][x] = 14 * ( y );
                         MouseYIndex[y][x] = 0;
+                    }
+                    //Set bottom LEDs
+                    else if ((y == 8) && (x > 0) && (x < 6))
+                    {
+                        if ((x == 1) || (x == 5))
+                        {
+                            MouseXIndex[y][x] = 14 * (y);
+                            MouseYIndex[y][x] = 0;
+                        }
+                        else if ((x == 2) || (x == 4))
+                        {
+                            MouseXIndex[y][x] = 14 * (y + 1);
+                            MouseYIndex[y][x] = 0;
+                        }
+                        else if (x == 3)
+                        {
+                            MouseXIndex[y][x] = 14 * (y + 2);
+                            MouseYIndex[y][x] = 0;
+                        }
                     }
                 }
             }

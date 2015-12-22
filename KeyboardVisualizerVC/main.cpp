@@ -79,10 +79,11 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
             printf("                      - 6:  Blue\r\n");
             printf("                      - 7:  Purple\r\n");
             printf("                      - 8:  Green/Yellow/Red\r\n");
-            printf("                      - 9:  White/Cyan/Blue\r\n");
-            printf("                      - 10: Red/White/Blue\r\n");
-            printf("                      - 11: Rainbow\r\n");
-            printf("                      - 12: Rainbow Inverse\r\n");
+            printf("                      - 9:  Green/White/Red\r\n");
+            printf("                      - 10: White/Cyan/Blue\r\n");
+            printf("                      - 11: Red/White/Blue\r\n");
+            printf("                      - 12: Rainbow\r\n");
+            printf("                      - 13: Rainbow Inverse\r\n");
             printf("    single_color_mode - Single color mode, values are:\r\n");
             printf("                      - 0:  None (black)\r\n");
             printf("                      - 1:  Follow foreground effect\r\n");

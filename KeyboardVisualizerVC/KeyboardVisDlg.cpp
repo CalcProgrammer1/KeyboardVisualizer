@@ -103,6 +103,7 @@ BOOL KeyboardVisDlg::OnInitDialog()
     frgdModeBox->AddString("Blue");
     frgdModeBox->AddString("Purple");
     frgdModeBox->AddString("Green/Yellow/Red");
+    frgdModeBox->AddString("Green/White/Red");
     frgdModeBox->AddString("Blue/Cyan/White");
     frgdModeBox->AddString("Red/White/Blue");
     frgdModeBox->AddString("Rainbow");
