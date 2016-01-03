@@ -160,7 +160,7 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
 
         if (strcmp(argument, "frgd_mode") == 0)
         {
-            if ((atoi(value) >= 0) && (atoi(value) <= 12))
+            if ((atoi(value) >= 0) && (atoi(value) <= 13))
             {
                 vis.frgd_mode = atoi(value);
             }
