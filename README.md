@@ -1,6 +1,8 @@
 # KeyboardVisualizerVCUI
 Razer Chroma and Corsair RGB Keyboard Spectrograph Visualizer for Windows with Visual C++ UI
 
+Binary builds can be downloaded from the Release submodule.
+
 # Available Visual Effects
 
     * Spectrograph - Shows vertical bars for each frequency in the audio
