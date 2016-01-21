@@ -1,7 +1,9 @@
 # KeyboardVisualizerVCUI
 Razer Chroma and Corsair RGB Keyboard Spectrograph Visualizer for Windows with Visual C++ UI
 
-Binary builds can be downloaded from the Release submodule.
+Binary builds can be downloaded from the Release submodule or from Google Drive at the following link.
+
+https://drive.google.com/folderview?id=0B1Fq0HEJolPtWDNsNV93NVl5Vms&usp=sharing
 
 # Available Visual Effects
 
