@@ -1,0 +1,3 @@
+[submodule "Release"]
+	path = Release
+	url = https://github.com/CalcProgrammer1/KeyboardVisualizerVCUI_Release
