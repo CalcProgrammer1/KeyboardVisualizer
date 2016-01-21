@@ -8,6 +8,37 @@
 #include <string>
 #include <vector>
 
+typedef unsigned int VISUALIZER_PATTERN;
+enum
+{
+    //Static Solid Colors
+    VISUALIZER_PATTERN_SOLID_BLACK,
+    VISUALIZER_PATTERN_SOLID_WHITE,
+    VISUALIZER_PATTERN_SOLID_RED,
+    VISUALIZER_PATTERN_SOLID_ORANGE,
+    VISUALIZER_PATTERN_SOLID_YELLOW,
+    VISUALIZER_PATTERN_SOLID_GREEN,
+    VISUALIZER_PATTERN_SOLID_CYAN,
+    VISUALIZER_PATTERN_SOLID_BLUE,
+    VISUALIZER_PATTERN_SOLID_PURPLE,
+    //Static Color Patterns
+    VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED,
+    VISUALIZER_PATTERN_STATIC_GREEN_WHITE_RED,
+    VISUALIZER_PATTERN_STATIC_BLUE_CYAN_WHITE,
+    VISUALIZER_PATTERN_STATIC_RED_WHITE_BLUE,
+    VISUALIZER_PATTERN_STATIC_RAINBOW,
+    VISUALIZER_PATTERN_STATIC_RAINBOW_INVERSE,
+    //Animated Patterns
+    VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL,
+    VISUALIZER_PATTERN_ANIM_RAINBOW_HSV,
+    VISUALIZER_PATTERN_ANIM_COLOR_WHEEL
+};
+
+typedef struct
+{
+    COLORREF pixels[64][256];
+} vis_pixels;
+
 class Visualizer
 {
 public:
@@ -31,8 +62,8 @@ public:
 	//Update function
 	void Update();
 
-    //Get Foreground Color From Amplitude
-    COLORREF GetAmplitudeColor(int amplitude, int range, int brightness);
+    //Draw Pattern
+    void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels *pixels);
 
     //Add LED strip
     void AddLEDStrip(char* port);
@@ -52,8 +83,23 @@ public:
 	int decay;
 	int delay;
 
-	//Visualizer Image
-	COLORREF pixels[64][256];
+    //Visualizer Background
+    vis_pixels pixels_bg;
+
+    //Visualizer Foreground
+    vis_pixels pixels_fg;
+
+	//Visualizer Image 1
+    vis_pixels pixels_vs1;
+
+    //Visualizer Image 2
+    vis_pixels pixels_vs2;
+
+    //Visualizer Output Image Pointer
+    vis_pixels *pixels_out;
+
+    //Visualizer Render Image Pointer
+    vis_pixels *pixels_render;
 
 	//Background Variables
 	int bkgd_bright;

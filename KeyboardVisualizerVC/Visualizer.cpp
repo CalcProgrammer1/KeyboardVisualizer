@@ -115,6 +115,9 @@ void Visualizer::Initialize()
     nrml_ofst   = 0.04f;
     nrml_scl    = 0.5f;
 
+    pixels_render = &pixels_vs1;
+    pixels_out = &pixels_vs2;
+
     SetNormalization(nrml_ofst, nrml_scl);
 }
 
@@ -306,258 +309,279 @@ void Visualizer::StartThread()
     _beginthread(lsthread, 0, this);
 }
 
-COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range, int brightness)
+void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels *pixels)
 {
-    COLORREF color;
-
-    int val = ((float)amplitude / (float)range) * 100.0f;
-
-    int red;
-    int grn;
-    int blu;
-
-    switch (frgd_mode)
+    for (int x = 0; x < 256; x++)
     {
-    //White
-    case 0:
-        red = 255;
-        grn = 255;
-        blu = 255;
-        break;
+        for (int y = 0; y < 64; y++)
+        {
+            int red;
+            int grn;
+            int blu;
 
-    //Red
-    case 1:
-        red = 255;
-        grn = 0;
-        blu = 0;
-        break;
+            switch (pattern)
+            {
+            case VISUALIZER_PATTERN_SOLID_BLACK:
+                red = 0;
+                grn = 0;
+                blu = 0;
+                break;
 
-    //Orange
-    case 2:
-        red = 255;
-        grn = 128;
-        blu = 0;
-        break;
+            case VISUALIZER_PATTERN_SOLID_WHITE:
+                red = 255;
+                grn = 255;
+                blu = 255;
+                break;
 
-    //Yellow
-    case 3:
-        red = 255;
-        grn = 255;
-        blu = 0;
-        break;
+            case VISUALIZER_PATTERN_SOLID_RED:
+                red = 255;
+                grn = 0;
+                blu = 0;
+                break;
 
-    //Green
-    case 4:
-        red = 0;
-        grn = 255;
-        blu = 0;
-        break;
+            case VISUALIZER_PATTERN_SOLID_ORANGE:
+                red = 255;
+                grn = 128;
+                blu = 0;
+                break;
 
-    //Cyan
-    case 5:
-        red = 0;
-        grn = 255;
-        blu = 255;
-        break;
+            case VISUALIZER_PATTERN_SOLID_YELLOW:
+                red = 255;
+                grn = 255;
+                blu = 0;
+                break;
 
-    //Blue
-    case 6:
-        red = 0;
-        grn = 0;
-        blu = 255;
-        break;
+            case VISUALIZER_PATTERN_SOLID_GREEN:
+                red = 0;
+                grn = 255;
+                blu = 0;
+                break;
 
-    //Purple
-    case 7:
-        red = 255;
-        grn = 0;
-        blu = 255;
-        break;
+            case VISUALIZER_PATTERN_SOLID_CYAN:
+                red = 0;
+                grn = 255;
+                blu = 255;
+                break;
 
-    //Green/Yellow/Red
-    case 8:
-        if (val > 66)
-        {
-            red = 0;
-            grn = 255;
-            blu = 0;
-        }
-        else if (val > 33)
-        {
-            red = 255;
-            grn = 255;
-            blu = 0;
-        }
-        else
-        {
-            red = 255;
-            grn = 0;
-            blu = 0;
-        }
-        break;
+            case VISUALIZER_PATTERN_SOLID_BLUE:
+                red = 0;
+                grn = 0;
+                blu = 255;
+                break;
 
-    //Green/White/Red
-    case 9:
-        if (val > 66)
-        {
-            red = 0;
-            grn = 255;
-            blu = 0;
-        }
-        else if (val > 33)
-        {
-            red = 255;
-            grn = 255;
-            blu = 255;
-        }
-        else
-        {
-            red = 255;
-            grn = 0;
-            blu = 0;
-        }
-        break;
+            case VISUALIZER_PATTERN_SOLID_PURPLE:
+                red = 255;
+                grn = 0;
+                blu = 255;
+                break;
 
-    //White/Cyan/Blue
-    case 10:
-        if (val > 66)
-        {
-            red = 0;
-            grn = 0;
-            blu = 255;
-        }
-        else if (val > 33)
-        {
-            red = 0;
-            grn = 255;
-            blu = 255;
-        }
-        else
-        {
-            red = 255;
-            grn = 255;
-            blu = 255;
-        }
-        break;
+            case VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED:
+                if (y > 171)
+                {
+                    red = 0;
+                    grn = 255;
+                    blu = 0;
+                }
+                else if (y > 85)
+                {
+                    red = 255;
+                    grn = 255;
+                    blu = 0;
+                }
+                else
+                {
+                    red = 255;
+                    grn = 0;
+                    blu = 0;
+                }
+                break;
 
-    //Red/White/Blue
-    case 11:
-        if (val > 66)
-        {
-            red = 0;
-            grn = 0;
-            blu = 255;
-        }
-        else if (val > 33)
-        {
-            red = 255;
-            grn = 255;
-            blu = 255;
-        }
-        else
-        {
-            red = 255;
-            grn = 0;
-            blu = 0;
-        }
-        break;
+            case VISUALIZER_PATTERN_STATIC_GREEN_WHITE_RED:
+                if (y > 171)
+                {
+                    red = 0;
+                    grn = 255;
+                    blu = 0;
+                }
+                else if (y > 85)
+                {
+                    red = 255;
+                    grn = 255;
+                    blu = 255;
+                }
+                else
+                {
+                    red = 255;
+                    grn = 0;
+                    blu = 0;
+                }
+                break;
 
-    //Rainbow
-    case 12:
-        if (val > 83)
-        {
-            red = 255;
-            grn = 0;
-            blu = 0;
-        }
-        else if (val > 66)
-        {
-            red = 255;
-            grn = 255;
-            blu = 0;
-        }
-        else if (val > 50)
-        {
-            red = 0;
-            grn = 255;
-            blu = 0;
-        }
-        else if (val > 33)
-        {
-            red = 0;
-            grn = 255;
-            blu = 255;
-        }
-        else if (val > 16)
-        {
-            red = 0;
-            grn = 0;
-            blu = 255;
-        }
-        else
-        {
-            red = 255;
-            grn = 0;
-            blu = 255;
-        }
-        break;
+            case VISUALIZER_PATTERN_STATIC_BLUE_CYAN_WHITE:
+                if (y > 171)
+                {
+                    red = 0;
+                    grn = 0;
+                    blu = 255;
+                }
+                else if (y > 85)
+                {
+                    red = 0;
+                    grn = 255;
+                    blu = 255;
+                }
+                else
+                {
+                    red = 255;
+                    grn = 255;
+                    blu = 255;
+                }
+                break;
 
-    //Rainbow Inverse
-    case 13:
-        if (val > 83)
-        {
-            red = 255;
-            grn = 0;
-            blu = 255;
+            case VISUALIZER_PATTERN_STATIC_RED_WHITE_BLUE:
+                if (y > 171)
+                {
+                    red = 0;
+                    grn = 0;
+                    blu = 255;
+                }
+                else if (y > 171)
+                {
+                    red = 255;
+                    grn = 255;
+                    blu = 255;
+                }
+                else
+                {
+                    red = 255;
+                    grn = 0;
+                    blu = 0;
+                }
+                break;
+
+            case VISUALIZER_PATTERN_STATIC_RAINBOW:
+                if (y > 213)
+                {
+                    red = 255;
+                    grn = 0;
+                    blu = 0;
+                }
+                else if (y > 170)
+                {
+                    red = 255;
+                    grn = 255;
+                    blu = 0;
+                }
+                else if (y > 128)
+                {
+                    red = 0;
+                    grn = 255;
+                    blu = 0;
+                }
+                else if (y > 85)
+                {
+                    red = 0;
+                    grn = 255;
+                    blu = 255;
+                }
+                else if (y > 43)
+                {
+                    red = 0;
+                    grn = 0;
+                    blu = 255;
+                }
+                else
+                {
+                    red = 255;
+                    grn = 0;
+                    blu = 255;
+                }
+                break;
+
+            case VISUALIZER_PATTERN_STATIC_RAINBOW_INVERSE:
+                if (y > 213)
+                {
+                    red = 255;
+                    grn = 0;
+                    blu = 255;
+                }
+                else if (y > 170)
+                {
+                    red = 0;
+                    grn = 0;
+                    blu = 255;
+                }
+                else if (y > 128)
+                {
+                    red = 0;
+                    grn = 255;
+                    blu = 255;
+                }
+                else if (y > 85)
+                {
+                    red = 0;
+                    grn = 255;
+                    blu = 0;
+                }
+                else if (y > 43)
+                {
+                    red = 255;
+                    grn = 255;
+                    blu = 0;
+                }
+                else
+                {
+                    red = 255;
+                    grn = 0;
+                    blu = 0;
+                }
+                break;
+
+            case VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL:
+                red = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1);
+                grn = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1);
+                blu = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) + (6.28f / 3)) + 1);
+                break;
+
+            case VISUALIZER_PATTERN_ANIM_RAINBOW_HSV:
+                {
+                    int hsv_h = ((bkgd_step + (256 - x)) % 360);
+                    hsv_t hsv = { hsv_h, 255, bright };
+                    pixels->pixels[y][x] = hsv2rgb(&hsv);
+                }
+                break;
+
+            case VISUALIZER_PATTERN_ANIM_COLOR_WHEEL:
+                {
+                    float hue = bkgd_step + (int)(180 + atan2(y - 32.1, x - 128.1) * (180.0 / 3.14159)) % 360;
+                    hsv_t hsv2 = { hue, 255, bright };
+                    pixels->pixels[y][x] = hsv2rgb(&hsv2);
+                }
+                break;
+            }
+
+            if (pattern < VISUALIZER_PATTERN_ANIM_RAINBOW_HSV)
+            {
+                pixels->pixels[y][x] = RGB(((bright * red)/256), ((bright * grn)/256), ((bright * blu)/256));
+            }
         }
-        else if (val > 66)
-        {
-            red = 0;
-            grn = 0;
-            blu = 255;
-        }
-        else if (val > 50)
-        {
-            red = 0;
-            grn = 255;
-            blu = 255;
-        }
-        else if (val > 33)
-        {
-            red = 0;
-            grn = 255;
-            blu = 0;
-        }
-        else if (val > 16)
-        {
-            red = 255;
-            grn = 255;
-            blu = 0;
-        }
-        else
-        {
-            red = 255;
-            grn = 0;
-            blu = 0;
-        }
-        break;
     }
-
-    color = RGB((brightness * red)/256.0f, (brightness * grn)/256.0f, (brightness * blu)/256.0f);
-
-    return(color);
 }
 
 void Visualizer::VisThread()
 {
-	float red, grn, blu;
-
 	while (1)
 	{
 		Update();
 
 		//Overflow background step
 		if (bkgd_step >= 360) bkgd_step = 0;
+
+        //Draw active background
+        DrawPattern(bkgd_mode, bkgd_bright, &pixels_bg);
+
+        //Draw active foreground
+        DrawPattern(frgd_mode, 255, &pixels_fg);
 
 		//Loop through all 256x64 pixels in visualization image
 		for (int x = 0; x < 256; x++)
@@ -566,109 +590,42 @@ void Visualizer::VisThread()
 			{
                 float brightness = bkgd_bright * (255.0f / 100.0f);
 
-				//Draw active background
-				switch (bkgd_mode)
-				{
-                //None (black)
-				case 0:
-					pixels[y][x] = RGB(0, 0, 0);
-					break;
-
-                //Original
-				case 1:
-					red = (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1);
-					grn = (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1);
-					blu = (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) + (6.28f / 3)) + 1);
-					pixels[y][x] = RGB((bkgd_bright/2) * red, (bkgd_bright/2) * grn, (bkgd_bright/2) * blu);
-					break;
-
-                //Rainbow
-				case 2:
-                    {
-                        int hsv_h = ((bkgd_step + (256 - x)) % 360);
-                        hsv_t hsv = { hsv_h, 255, bkgd_bright };
-                        pixels[y][x] = hsv2rgb(&hsv);
-                    }
-					break;
-
-                //Color Wheel
-                case 3:
-                    {
-                        float hue = bkgd_step + (int)(180 + atan2(y - 32.1, x - 128.1) * (180.0 / 3.14159))%360;
-                        hsv_t hsv2 = { hue, 255, bkgd_bright };
-                        pixels[y][x] = hsv2rgb(&hsv2);
-                    }
-                    break;
-
-                //Follow Foreground
-                case 4:
-                    pixels[y][x] = GetAmplitudeColor(255 - (fft[5] * 255), 255, fft[5] * 255 * (bkgd_bright/100.0f));
-                    break;
-
-                //White
-                case 5:
-                    pixels[y][x] = RGB(brightness, brightness, brightness);
-                    break;
-
-                //Red
-                case 6:
-                    pixels[y][x] = RGB(brightness, 0, 0);
-                    break;
-
-                //Orange
-                case 7:
-                    pixels[y][x] = RGB(brightness, brightness / 2, 0);
-                    break;
-
-                //Yellow
-                case 8:
-                    pixels[y][x] = RGB(brightness, brightness, 0);
-                    break;
-
-                //Green
-                case 9:
-                    pixels[y][x] = RGB(0, brightness, 0);
-                    break;
-
-                //Cyan
-                case 10:
-                    pixels[y][x] = RGB(0, brightness, brightness);
-                    break;
-
-                //Blue
-                case 11:
-                    pixels[y][x] = RGB(0, 0, brightness);
-                    break;
-
-                //Purple
-                case 12:
-                    pixels[y][x] = RGB(brightness, 0, brightness);
-                    break;
-				}
-
-                //Draw foreground
+                //Draw Spectrograph Foreground
                 if (y > 3)
                 {
                     if (fft[x] >((1 / 64.0f)*(64.0f - y)))
                     {
-                        pixels[y][x] = GetAmplitudeColor(y, 64, 255);
+                        pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
+                    }
+                    else
+                    {
+                        pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
                     }
                 }
 
+                //Draw Bar Graph Foreground
                 if (y < 2)
                 {
                     if (x < 128)
                     {
                         if ((fft[5] - 0.05f) >((1 / 128.0f)*(127-x)))
                         {
-                            pixels[y][x] = GetAmplitudeColor(x, 128, 255);
+                            pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
+                        }
+                        else
+                        {
+                            pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
                         }
                     }
                     else
                     {
                         if ((fft[5] - 0.05f) >((1 / 128.0f)*((x-128))))
                         {
-                            pixels[y][x] = GetAmplitudeColor(127-(x-128), 128, 255);
+                            pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
+                        }
+                        else
+                        {
+                            pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
                         }
                     }
                 }
@@ -681,12 +638,12 @@ void Visualizer::VisThread()
                     {
                     //None
                     case 0:
-                        pixels[y][x] = RGB(0, 0, 0);
+                        pixels_render->pixels[y][x] = RGB(0, 0, 0);
                         break;
 
                     //Follow Foreground
                     case 1:
-                        pixels[y][x] = GetAmplitudeColor(255 - brightness, 255, brightness);
+                        //(*pixels_render)[y][x] = GetAmplitudeColor(255 - brightness, 255, brightness);
                         break;
 
                     //Follow Background:
@@ -695,58 +652,71 @@ void Visualizer::VisThread()
 
                     //White
                     case 3:
-                        pixels[y][x] = RGB(brightness, brightness, brightness);
+                        //(*pixels_render)[y][x] = RGB(brightness, brightness, brightness);
                         break;
 
                     //Red
                     case 4:
-                        pixels[y][x] = RGB(brightness, 0, 0);
+                        //(*pixels_render)[y][x] = RGB(brightness, 0, 0);
                         break;
 
                     //Orange
                     case 5:
-                        pixels[y][x] = RGB(brightness, brightness / 2, 0);
+                        //(*pixels_render)[y][x] = RGB(brightness, brightness / 2, 0);
                         break;
 
                     //Yellow
                     case 6:
-                        pixels[y][x] = RGB(brightness, brightness, 0);
+                        //(*pixels_render)[y][x] = RGB(brightness, brightness, 0);
                         break;
 
                     //Green
                     case 7:
-                        pixels[y][x] = RGB(0, brightness, 0);
+                        //(*pixels_render)[y][x] = RGB(0, brightness, 0);
                         break;
 
                     //Cyan
                     case 8:
-                        pixels[y][x] = RGB(0, brightness, brightness);
+                        //(*pixels_render)[y][x] = RGB(0, brightness, brightness);
                         break;
 
                     //Blue
                     case 9:
-                        pixels[y][x] = RGB(0, 0, brightness);
+                        //(*pixels_render)[y][x] = RGB(0, 0, brightness);
                         break;
 
                     //Purple
                     case 10:
-                        pixels[y][x] = RGB(brightness, 0, brightness);
+                        //(*pixels_render)[y][x] = RGB(brightness, 0, brightness);
                         break;
                     }
                 }
 			}
 		}
 
+        //Swap buffers
+        if (pixels_render == &pixels_vs1)
+        {
+            pixels_render = &pixels_vs2;
+            pixels_out = &pixels_vs1;
+        }
+        else
+        {
+            pixels_render = &pixels_vs1;
+            pixels_out = &pixels_vs2;
+        }
+
 		//Increment background step
 		bkgd_step++;
 
+        //Wait 15ms (~60fps)
         Sleep(15);
 	}
 }
 
 void Visualizer::RazerChromaUpdateThread()
 {
-	while (rkb.SetLEDs(pixels))
+	while (rkb.SetLEDs(pixels_out->pixels))
 	{
 		Sleep(delay);
 	}
@@ -754,7 +724,7 @@ void Visualizer::RazerChromaUpdateThread()
 
 void Visualizer::CorsairKeyboardUpdateThread()
 {
-    while (ckb.SetLEDs(pixels))
+    while (ckb.SetLEDs(pixels_out->pixels))
     {
         Sleep(delay);
     }
@@ -762,7 +732,7 @@ void Visualizer::CorsairKeyboardUpdateThread()
 
 void Visualizer::MSIKeyboardUpdateThread()
 {
-    while (mkb.SetLEDs(pixels))
+    while (mkb.SetLEDs(pixels_out->pixels))
     {
         Sleep(delay);
     }
@@ -776,12 +746,12 @@ void Visualizer::LEDStripUpdateThread()
         {
             for (int i = 0; i < str.size(); i++)
             {
-                str[i]->SetLEDs(pixels);
+                str[i]->SetLEDs(pixels_out->pixels);
             }
         
             for (int i = 0; i < xmas.size(); i++)
             {
-                xmas[i]->SetLEDsXmas(pixels);
+                xmas[i]->SetLEDsXmas(pixels_out->pixels);
             }
 
             if (delay < 15)

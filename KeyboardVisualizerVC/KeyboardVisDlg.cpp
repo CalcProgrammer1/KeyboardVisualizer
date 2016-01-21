@@ -78,11 +78,7 @@ BOOL KeyboardVisDlg::OnInitDialog()
 	windowBox->SetCurSel(vis->window_mode);
 
 	CComboBox* bkgdModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_BKGD_MODE);
-	bkgdModeBox->AddString("None");
-	bkgdModeBox->AddString("Original");
-	bkgdModeBox->AddString("Rainbow");
-    bkgdModeBox->AddString("Color Wheel");
-    bkgdModeBox->AddString("Follow Foreground");
+	bkgdModeBox->AddString("Black");
     bkgdModeBox->AddString("White");
     bkgdModeBox->AddString("Red");
     bkgdModeBox->AddString("Orange");
@@ -91,9 +87,21 @@ BOOL KeyboardVisDlg::OnInitDialog()
     bkgdModeBox->AddString("Cyan");
     bkgdModeBox->AddString("Blue");
     bkgdModeBox->AddString("Purple");
+    bkgdModeBox->AddString("Green/Yellow/Red");
+    bkgdModeBox->AddString("Green/White/Red");
+    bkgdModeBox->AddString("Blue/Cyan/White");
+    bkgdModeBox->AddString("Red/White/Blue");
+    bkgdModeBox->AddString("Rainbow");
+    bkgdModeBox->AddString("Rainbow Inverse");
+    bkgdModeBox->AddString("Original");
+	bkgdModeBox->AddString("Rainbow");
+    bkgdModeBox->AddString("Color Wheel");
+    //bkgdModeBox->AddString("Follow Foreground");
+
 	bkgdModeBox->SetCurSel(vis->bkgd_mode);
 
     CComboBox* frgdModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_FRGD_MODE);
+    frgdModeBox->AddString("Black");
     frgdModeBox->AddString("White");
     frgdModeBox->AddString("Red");
     frgdModeBox->AddString("Orange");
@@ -108,6 +116,9 @@ BOOL KeyboardVisDlg::OnInitDialog()
     frgdModeBox->AddString("Red/White/Blue");
     frgdModeBox->AddString("Rainbow");
     frgdModeBox->AddString("Rainbow Inverse");
+    frgdModeBox->AddString("Original");
+    frgdModeBox->AddString("Rainbow");
+    frgdModeBox->AddString("Color Wheel");
     frgdModeBox->SetCurSel(vis->frgd_mode);
 
     CComboBox* snglClrModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_SNGL_CLR_MODE);
@@ -171,7 +182,10 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
     {
         for (int y = 0; y < 64; y++)
         {
-            pixels_bgr[y][x] = RGB2BGR(vis->pixels[y][x]);
+            if (vis->pixels_out != NULL)
+            {
+                pixels_bgr[y][x] = RGB2BGR(vis->pixels_out->pixels[y][x]);
+            }
         }
     }
 

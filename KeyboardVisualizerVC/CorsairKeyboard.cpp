@@ -169,85 +169,87 @@ int CorsairKeyboard::Initialize()
 
 bool CorsairKeyboard::SetLEDs(COLORREF pixels[64][256])
 {
-	char red_val[144];
-	char grn_val[144];
-	char blu_val[144];
-	char data_pkt[5][64] = { 0 };
+    if (pixels != NULL)
+    {
+        char red_val[144];
+        char grn_val[144];
+        char blu_val[144];
+        char data_pkt[5][64] = { 0 };
 
-	for (int x = 0; x < 22; x++)
-	{
-		for (int y = 0; y < 7; y++)
-		{
-			int led = led_matrix_c[y][x];
-
-            if (led < 144)
+        for (int x = 0; x < 22; x++)
+        {
+            for (int y = 0; y < 7; y++)
             {
-                red_val[led] = 7 - (GetRValue(pixels[CorsairKeyboardYIndex[y]][CorsairKeyboardXIndex[x]]) / 32);
-                grn_val[led] = 7 - (GetGValue(pixels[CorsairKeyboardYIndex[y]][CorsairKeyboardXIndex[x]]) / 32);
-                blu_val[led] = 7 - (GetBValue(pixels[CorsairKeyboardYIndex[y]][CorsairKeyboardXIndex[x]]) / 32);
+                int led = led_matrix_c[y][x];
+
+                if (led < 144)
+                {
+                    red_val[led] = 7 - (GetRValue(pixels[CorsairKeyboardYIndex[y]][CorsairKeyboardXIndex[x]]) / 32);
+                    grn_val[led] = 7 - (GetGValue(pixels[CorsairKeyboardYIndex[y]][CorsairKeyboardXIndex[x]]) / 32);
+                    blu_val[led] = 7 - (GetBValue(pixels[CorsairKeyboardYIndex[y]][CorsairKeyboardXIndex[x]]) / 32);
+                }
             }
-		}
-	}
+        }
 
-	data_pkt[0][0] = 0x7F;
-	data_pkt[0][1] = 0x01;
-	data_pkt[0][2] = 0x3C;
+        data_pkt[0][0] = 0x7F;
+        data_pkt[0][1] = 0x01;
+        data_pkt[0][2] = 0x3C;
 
-	data_pkt[1][0] = 0x7F;
-	data_pkt[1][1] = 0x02;
-	data_pkt[1][2] = 0x3C;
+        data_pkt[1][0] = 0x7F;
+        data_pkt[1][1] = 0x02;
+        data_pkt[1][2] = 0x3C;
 
-	data_pkt[2][0] = 0x7F;
-	data_pkt[2][1] = 0x03;
-	data_pkt[2][2] = 0x3C;
+        data_pkt[2][0] = 0x7F;
+        data_pkt[2][1] = 0x03;
+        data_pkt[2][2] = 0x3C;
 
-	data_pkt[3][0] = 0x7F;
-	data_pkt[3][1] = 0x04;
-	data_pkt[3][2] = 0x24;
+        data_pkt[3][0] = 0x7F;
+        data_pkt[3][1] = 0x04;
+        data_pkt[3][2] = 0x24;
 
-	data_pkt[4][0] = 0x07;
-	data_pkt[4][1] = 0x27;
-	data_pkt[4][4] = 0xD8;
+        data_pkt[4][0] = 0x07;
+        data_pkt[4][1] = 0x27;
+        data_pkt[4][4] = 0xD8;
 
-	for (int i = 0; i < 60; i++)
-	{
-		data_pkt[0][i + 4] = red_val[i * 2 + 1] << 4 | red_val[i * 2];
-	}
+        for (int i = 0; i < 60; i++)
+        {
+            data_pkt[0][i + 4] = red_val[i * 2 + 1] << 4 | red_val[i * 2];
+        }
 
-	for (int i = 0; i < 12; i++)
-	{
-		data_pkt[1][i + 4] = red_val[i * 2 + 121] << 4 | red_val[i * 2 + 120];
-	}
+        for (int i = 0; i < 12; i++)
+        {
+            data_pkt[1][i + 4] = red_val[i * 2 + 121] << 4 | red_val[i * 2 + 120];
+        }
 
-	for (int i = 0; i < 48; i++)
-	{
-		data_pkt[1][i + 16] = grn_val[i * 2 + 1] << 4 | grn_val[i * 2];
-	}
+        for (int i = 0; i < 48; i++)
+        {
+            data_pkt[1][i + 16] = grn_val[i * 2 + 1] << 4 | grn_val[i * 2];
+        }
 
-	for (int i = 0; i < 24; i++)
-	{
-		data_pkt[2][i + 4] = grn_val[i * 2 + 97] << 4 | grn_val[i * 2 + 96];
-	}
+        for (int i = 0; i < 24; i++)
+        {
+            data_pkt[2][i + 4] = grn_val[i * 2 + 97] << 4 | grn_val[i * 2 + 96];
+        }
 
-	for (int i = 0; i < 36; i++)
-	{
-		data_pkt[2][i + 28] = blu_val[i * 2 + 1] << 4 | blu_val[i * 2];
-	}
+        for (int i = 0; i < 36; i++)
+        {
+            data_pkt[2][i + 28] = blu_val[i * 2 + 1] << 4 | blu_val[i * 2];
+        }
 
-	for (int i = 0; i < 36; i++)
-	{
-		data_pkt[3][i + 4] = blu_val[i * 2 + 73] << 4 | blu_val[i * 2 + 72];
-	}
+        for (int i = 0; i < 36; i++)
+        {
+            data_pkt[3][i + 4] = blu_val[i * 2 + 73] << 4 | blu_val[i * 2 + 72];
+        }
 
-	send_usb_msg(data_pkt[0]);
-	Sleep(1);
-	send_usb_msg(data_pkt[1]);
-	Sleep(1);
-	send_usb_msg(data_pkt[2]);
-	Sleep(1);
-	send_usb_msg(data_pkt[3]);
-	Sleep(1);
-	send_usb_msg(data_pkt[4]);
-
+        send_usb_msg(data_pkt[0]);
+        Sleep(1);
+        send_usb_msg(data_pkt[1]);
+        Sleep(1);
+        send_usb_msg(data_pkt[2]);
+        Sleep(1);
+        send_usb_msg(data_pkt[3]);
+        Sleep(1);
+        send_usb_msg(data_pkt[4]);
+    }
     return init_ok;
 }

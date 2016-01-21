@@ -191,7 +191,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
     CreateMouseEffect = (CREATEMOUSEEFFECT)GetProcAddress(hModule, "CreateMouseEffect");
     CreateHeadsetEffect = (CREATEHEADSETEFFECT)GetProcAddress(hModule, "CreateHeadsetEffect");
 
-    if (CreateEffect == NULL)
+    if (CreateEffect == NULL || pixels == NULL)
     {
         return FALSE;
     }
