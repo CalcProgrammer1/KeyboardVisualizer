@@ -33,6 +33,9 @@ public:
     //Get Foreground Color From Amplitude
     COLORREF GetAmplitudeColor(int amplitude, int range, int brightness);
 
+    //Add LED strip
+    void AddLEDStrip(char* port);
+
     //Compute normalization line
     void SetNormalization(float offset, float scale);
 

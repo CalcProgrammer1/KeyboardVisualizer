@@ -17,10 +17,6 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
 	afxCurrentResourceHandle = hInst;
 	app.m_hInstance = hInst;
 
-    //Initialize Visualizer
-	vis.Initialize();
-	vis.StartThread();
-
     //Parse Command Line
     LPTSTR  argument;
     LPTSTR  value;
@@ -99,6 +95,7 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
             printf("    avg_mode          - Visualizer averaging mode\r\n");
             printf("                      - 0:  Binning\r\n");
             printf("                      - 1:  Low-pass filtering\r\n");
+            printf("    ledstrip          - COM port, ex. ledstrip=COM1\r\n");
             return 0;
         }
 
@@ -182,8 +179,17 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
             }
         }
 
+        if (strcmp(argument, "ledstrip") == 0)
+        {
+            vis.AddLEDStrip(value);
+        }
+
         value = strtok_s(next, " ", &next);
     }
+
+    //Initialize Visualizer
+    vis.Initialize();
+    vis.StartThread();
 
     //Create Dialog
 	KeyboardVisDlg dlg;

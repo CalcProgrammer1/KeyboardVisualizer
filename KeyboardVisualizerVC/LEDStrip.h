@@ -9,7 +9,7 @@ public:
     LEDStrip();
     ~LEDStrip();
 
-    void Initialize();
+    void Initialize(char* portname);
     void SetLEDs(COLORREF pixels[64][256]);
 
 private:

@@ -13,7 +13,7 @@
 
 RazerChroma rkb;
 CorsairKeyboard ckb;
-LEDStrip str;
+std::vector<LEDStrip *> str;
 
 //WASAPI objects
 IMMDeviceEnumerator *pMMDeviceEnumerator;
@@ -53,6 +53,13 @@ Visualizer::Visualizer()
 
 }
 
+void Visualizer::AddLEDStrip(char* port)
+{
+    LEDStrip *newstr = new LEDStrip();
+    newstr->Initialize(port);
+    str.push_back(newstr);
+}
+
 float fft_nrml[256];
 
 void Visualizer::Initialize()
@@ -71,7 +78,6 @@ void Visualizer::Initialize()
     
     rkb.Initialize();
 	ckb.Initialize();
-    //str.Initialize();
 
 	amplitude   = 100;
     avg_mode    = 0;
@@ -279,7 +285,7 @@ void Visualizer::StartThread()
 	_beginthread(thread, 0, this);
 	_beginthread(rkbthread, 0, this);
     _beginthread(ckbthread, 0, this);
-    //_beginthread(lsthread, 0, this);
+    _beginthread(lsthread, 0, this);
 }
 
 COLORREF Visualizer::GetAmplitudeColor(int amplitude, int range, int brightness)
@@ -740,7 +746,11 @@ void Visualizer::LEDStripUpdateThread()
 {
     while (TRUE)
     {
-        str.SetLEDs(pixels);
+        for (int i = 0; i < str.size(); i++)
+        {
+            str[i]->SetLEDs(pixels);
+        }
+
         if (delay < 15)
         {
             Sleep(15);
