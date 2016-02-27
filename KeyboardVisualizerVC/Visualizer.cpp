@@ -744,21 +744,23 @@ void Visualizer::CorsairKeyboardUpdateThread()
 
 void Visualizer::LEDStripUpdateThread()
 {
-    while (TRUE)
+    if( str.size() > 0 )
     {
-        for (int i = 0; i < str.size(); i++)
+        while (TRUE)
         {
-            str[i]->SetLEDs(pixels);
-        }
+            for (int i = 0; i < str.size(); i++)
+            {
+                str[i]->SetLEDs(pixels);
+            }
 
-        if (delay < 15)
-        {
-            Sleep(15);
+            if (delay < 15)
+            {
+                Sleep(15);
+            }
+            else
+            {
+                Sleep(delay);
+            }
         }
-        else
-        {
-            Sleep(delay);
-        }
-
     }
 }

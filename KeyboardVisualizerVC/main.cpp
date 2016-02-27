@@ -17,6 +17,9 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
 	afxCurrentResourceHandle = hInst;
 	app.m_hInstance = hInst;
 
+    //Initialize Visualizer
+    vis.Initialize();
+
     //Parse Command Line
     LPTSTR  argument;
     LPTSTR  value;
@@ -187,8 +190,7 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
         value = strtok_s(next, " ", &next);
     }
 
-    //Initialize Visualizer
-    vis.Initialize();
+    //Start Visualizer Threads
     vis.StartThread();
 
     //Create Dialog
