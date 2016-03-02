@@ -10,6 +10,10 @@ int BlackWidowYIndex[6];
 int BlackWidowTEXIndex[18];
 int BlackWidowTEYIndex[6];
 
+//Index lists for Blade Stealth
+int BladeStealthXIndex[16];
+int BladeStealthYIndex[6];
+
 //Index list for Firefly
 int FireflyIndex[15];
 
@@ -77,6 +81,18 @@ void RazerChroma::Initialize()
             {
                 int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
                 BlackWidowTEYIndex[y] = y_idx;
+            }
+
+            //Build index list for Blade Stealth
+            for (int x = 0; x < 16; x++)
+            {
+                int x_idx = x * (256 / 16);
+                BladeStealthXIndex[x] = x_idx;
+            }
+            for (int y = 0; y < 6; y++)
+            {
+                int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
+                BladeStealthYIndex[y] = y_idx;
             }
 
             //Build index list for Firefly
@@ -212,6 +228,19 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         BlackWidowTEEffect.Color[0][20] = pixels[3][11 * (256 / 22)];
 
         CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &BlackWidowTEEffect, NULL);
+
+        //Blade Stealth
+        ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BladeStealthEffect;
+
+        for (int x = 0; x < 16; x++)
+        {
+            for (int y = 0; y < 6; y++)
+            {
+                BladeStealthEffect.Color[y][x] = (pixels[BladeStealthYIndex[y]][BladeStealthXIndex[x]] & 0x00FFFFFF);
+            }
+        }
+
+        CreateEffect(ChromaSDK::BLADE_STEALTH, ChromaSDK::CHROMA_CUSTOM, &BladeStealthEffect, NULL);
 
         //Firefly Chroma
         ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE FireflyEffect = {};
