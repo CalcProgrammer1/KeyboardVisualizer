@@ -213,6 +213,10 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
         CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
 
+        CreateEffect(ChromaSDK::BLACKWIDOW_X_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
+        CreateEffect(ChromaSDK::BLACKWIDOW_X_TE_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
+        CreateEffect(ChromaSDK::OVERWATCH_KEYBOARD, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
+
         //Blackwidow Chroma Tournament Edition
         ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowTEEffect;
 
