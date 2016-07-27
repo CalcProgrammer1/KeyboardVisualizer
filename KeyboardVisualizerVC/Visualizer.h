@@ -34,6 +34,7 @@ public:
 	//Keyboard Update Thread
 	void RazerChromaUpdateThread();
     void CorsairKeyboardUpdateThread();
+    void CmKeyboardUpdateThread();
     void SteelSeriesKeyboardUpdateThread();
     void MSIKeyboardUpdateThread();
     void LEDStripUpdateThread();
