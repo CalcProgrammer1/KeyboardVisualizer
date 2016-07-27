@@ -1,6 +1,7 @@
 #include "Visualizer.h"
 #include "RazerChroma.h"
 #include "CorsairKeyboard.h"
+#include "CmKeyboard.h"
 #include "LEDStrip.h"
 
 //WASAPI includes
@@ -13,6 +14,7 @@
 
 RazerChroma rkb;
 CorsairKeyboard ckb;
+CmKeyboard cmkb;
 std::vector<LEDStrip *> str;
 
 //WASAPI objects
@@ -40,6 +42,12 @@ static void ckbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->CorsairKeyboardUpdateThread();
+}
+
+static void cmkbthread(void *param)
+{
+	Visualizer* vis = static_cast<Visualizer*>(param);
+	vis->CmKeyboardUpdateThread();
 }
 
 static void lsthread(void *param)
@@ -78,17 +86,18 @@ void Visualizer::Initialize()
     
     rkb.Initialize();
 	ckb.Initialize();
+	cmkb.Initialize();
 
-	amplitude   = 100;
-    avg_mode    = 0;
+	amplitude   = 200;
+    avg_mode    = 1;
     avg_size    = 8;
 	bkgd_step   = 0;
-	bkgd_bright = 10;
-	bkgd_mode   = 0;
-	delay       = 50;
+	bkgd_bright = 80;
+	bkgd_mode   = 3;
+	delay       = 17;
 	window_mode = 1;
-	decay       = 80;
-    frgd_mode   = 8;
+	decay       = 90;
+    frgd_mode   = 5;
     single_color_mode = 1;
 
 	hanning(win_hanning, 256);
@@ -96,7 +105,7 @@ void Visualizer::Initialize()
 	blackman(win_blackman, 256);
 
     nrml_ofst   = 0.04f;
-    nrml_scl    = 0.5f;
+    nrml_scl    = 0.6f;
 
     SetNormalization(nrml_ofst, nrml_scl);
 }
@@ -285,6 +294,7 @@ void Visualizer::StartThread()
 	_beginthread(thread, 0, this);
 	_beginthread(rkbthread, 0, this);
     _beginthread(ckbthread, 0, this);
+	_beginthread(cmkbthread, 0, this);
     _beginthread(lsthread, 0, this);
 }
 
@@ -742,6 +752,14 @@ void Visualizer::CorsairKeyboardUpdateThread()
     }
 }
 
+void Visualizer::CmKeyboardUpdateThread()
+{
+	while (cmkb.SetLEDs(pixels))
+	{
+		Sleep(delay);
+	}
+}
+
 void Visualizer::LEDStripUpdateThread()
 {
     if( str.size() > 0 )
@@ -753,9 +771,9 @@ void Visualizer::LEDStripUpdateThread()
                 str[i]->SetLEDs(pixels);
             }
 
-            if (delay < 15)
+            if (delay < 5)
             {
-                Sleep(15);
+                Sleep(5);
             }
             else
             {
