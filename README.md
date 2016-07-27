@@ -12,28 +12,34 @@ https://drive.google.com/folderview?id=0B1Fq0HEJolPtWDNsNV93NVl5Vms&usp=sharing
     * Single Color - Brightness and color represent strength of bass frequencies
 
 # Supported Devices
-    
+
     * Razer Chroma
-    
+
         Keyboards
         - BlackWidow Chroma (spectrograph)
         - BlackWidow Chroma Tournament Edition (spectrograph)
         - DeathStalker Chroma (horizontal bar)
-        
+
         Mice
         - Diamondback Chroma (bar and single color)
         - Mamba Tournament Edition (bar and single color)
         - DeathAdder Chroma (single color)
         - Naga Epic Chroma (single color, wired only)
         - Naga Chroma (single color)
-        
+
         Headsets
         - Kraken 7.1 Chroma (single color)
-        
+
         Mouse Mats
         - Firefly (bar)
-    
+
     * Corsair RGB
-    
+
         Keyboards
         - K70 RGB (spectrograph)
+
+    * Cooler Master RGB
+
+    	Keyboards
+    	- Masterkeys Pro L
+    	- Masterkeys Pro S
