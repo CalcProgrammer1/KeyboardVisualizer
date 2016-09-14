@@ -216,6 +216,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         CreateEffect(ChromaSDK::BLACKWIDOW_X_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
         CreateEffect(ChromaSDK::BLACKWIDOW_X_TE_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
         CreateEffect(ChromaSDK::OVERWATCH_KEYBOARD, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
+        CreateEffect(ChromaSDK::ORNATA_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
 
         //Blackwidow Chroma Tournament Edition
         ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowTEEffect;
@@ -233,7 +234,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
         CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &BlackWidowTEEffect, NULL);
 
-        //Blade Stealth
+        //Blade Stealth and Blade 14
         ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BladeStealthEffect;
 
         for (int x = 0; x < 16; x++)
@@ -245,6 +246,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         }
 
         CreateEffect(ChromaSDK::BLADE_STEALTH, ChromaSDK::CHROMA_CUSTOM, &BladeStealthEffect, NULL);
+        CreateEffect(ChromaSDK::BLADE, ChromaSDK::CHROMA_CUSTOM, &BladeStealthEffect, NULL);
 
         //Firefly Chroma
         ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE FireflyEffect = {};
