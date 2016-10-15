@@ -178,6 +178,7 @@
     <ClCompile Include="LEDStrip.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="KeyboardVisDlg.cpp" />
+    <ClCompile Include="MSIKeyboard.cpp" />
     <ClCompile Include="RazerChroma.cpp" />
     <ClCompile Include="serial_port.cpp" />
     <ClCompile Include="Visualizer.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="hsv.h" />
     <ClInclude Include="KeyboardVisDlg.h" />
     <ClInclude Include="LEDStrip.h" />
+    <ClInclude Include="MSIKeyboard.h" />
     <ClInclude Include="RazerChroma.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="serial_port.h" />

@@ -1,6 +1,7 @@
 #include "Visualizer.h"
 #include "RazerChroma.h"
 #include "CorsairKeyboard.h"
+#include "MSIKeyboard.h"
 #include "LEDStrip.h"
 
 //WASAPI includes
@@ -13,6 +14,7 @@
 
 RazerChroma rkb;
 CorsairKeyboard ckb;
+MSIKeyboard mkb;
 std::vector<LEDStrip *> str;
 
 //WASAPI objects
@@ -40,6 +42,12 @@ static void ckbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->CorsairKeyboardUpdateThread();
+}
+
+static void mkbthread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->MSIKeyboardUpdateThread();
 }
 
 static void lsthread(void *param)
@@ -78,6 +86,7 @@ void Visualizer::Initialize()
     
     rkb.Initialize();
 	ckb.Initialize();
+    mkb.Initialize();
 
 	amplitude   = 100;
     avg_mode    = 0;
@@ -285,6 +294,7 @@ void Visualizer::StartThread()
 	_beginthread(thread, 0, this);
 	_beginthread(rkbthread, 0, this);
     _beginthread(ckbthread, 0, this);
+    _beginthread(mkbthread, 0, this);
     _beginthread(lsthread, 0, this);
 }
 
@@ -737,6 +747,14 @@ void Visualizer::RazerChromaUpdateThread()
 void Visualizer::CorsairKeyboardUpdateThread()
 {
     while (ckb.SetLEDs(pixels))
+    {
+        Sleep(delay);
+    }
+}
+
+void Visualizer::MSIKeyboardUpdateThread()
+{
+    while (mkb.SetLEDs(pixels))
     {
         Sleep(delay);
     }

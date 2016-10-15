@@ -25,6 +25,7 @@ public:
 	//Keyboard Update Thread
 	void RazerChromaUpdateThread();
     void CorsairKeyboardUpdateThread();
+    void MSIKeyboardUpdateThread();
     void LEDStripUpdateThread();
 
 	//Update function

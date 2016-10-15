@@ -33,7 +33,7 @@ CorsairKeyboard::~CorsairKeyboard()
 //==================================================================================================
 // Code by http://www.reddit.com/user/chrisgzy
 //==================================================================================================
-bool IsMatchingDevice(wchar_t *pDeviceID, unsigned int uiVID, unsigned int uiPID, unsigned int uiMI)
+static bool IsMatchingDevice(wchar_t *pDeviceID, unsigned int uiVID, unsigned int uiPID, unsigned int uiMI)
 {
 	unsigned int uiLocalVID = 0, uiLocalPID = 0, uiLocalMI = 0;
 
@@ -70,7 +70,7 @@ bool IsMatchingDevice(wchar_t *pDeviceID, unsigned int uiVID, unsigned int uiPID
 //==================================================================================================
 // Code by http://www.reddit.com/user/chrisgzy
 //==================================================================================================
-HANDLE GetDeviceHandle(unsigned int uiVID, unsigned int uiPID, unsigned int uiMI)
+static HANDLE GetDeviceHandle(unsigned int uiVID, unsigned int uiPID, unsigned int uiMI)
 {
 	const GUID GUID_DEVINTERFACE_HID = { 0x4D1E55B2L, 0xF16F, 0x11CF, 0x88, 0xCB, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30 };
 	HDEVINFO hDevInfo = SetupDiGetClassDevs(&GUID_DEVINTERFACE_HID, 0, 0, DIGCF_DEVICEINTERFACE | DIGCF_PRESENT);
