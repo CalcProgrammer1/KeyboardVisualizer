@@ -99,6 +99,7 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
             printf("                      - 0:  Binning\r\n");
             printf("                      - 1:  Low-pass filtering\r\n");
             printf("    ledstrip          - COM port, ex. ledstrip=COM1\r\n");
+            printf("    xmas              - COM port, ex. xmas=COM2\r\n");
             return 0;
         }
 
@@ -185,6 +186,11 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
         if (strcmp(argument, "ledstrip") == 0)
         {
             vis.AddLEDStrip(value);
+        }
+
+        if (strcmp(argument, "xmas") == 0)
+        {
+            vis.AddLEDStripXmas(value);
         }
 
         value = strtok_s(next, " ", &next);

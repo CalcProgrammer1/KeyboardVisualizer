@@ -36,6 +36,7 @@ public:
 
     //Add LED strip
     void AddLEDStrip(char* port);
+    void AddLEDStripXmas(char * port);
 
     //Compute normalization line
     void SetNormalization(float offset, float scale);

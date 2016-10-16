@@ -11,6 +11,7 @@ public:
 
     void Initialize(char* portname);
     void SetLEDs(COLORREF pixels[64][256]);
+    void SetLEDsXmas(COLORREF pixels[64][256]);
 
 private:
     serial_port *port;

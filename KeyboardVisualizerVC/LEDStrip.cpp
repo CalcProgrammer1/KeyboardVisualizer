@@ -40,28 +40,31 @@ void LEDStrip::SetLEDs(COLORREF pixels[64][256])
 
         port->serial_write((char *)serial_buf, 92);
         port->serial_flush_tx();
-
-        //unsigned char xmas_buf[5*25];
-
-        //for (int idx = 0; idx < 25; idx++)
-        //{
-        //    unsigned int xmas_color = ((GetBValue(pixels[0][(int)(idx * 5.12f)])/16)<<8)
-        //                            | ((GetGValue(pixels[0][(int)(idx * 5.12f)])/16)<<4)
-        //                            | ((GetRValue(pixels[0][(int)(idx * 5.12f)])/16));
-
-        //    xmas_buf[(idx * 5)] = 0x00;
-        //    xmas_buf[(idx * 5) + 1] = idx + 1;
-        //    xmas_buf[(idx * 5) + 2] = xmas_color >> 8;
-        //    xmas_buf[(idx * 5) + 3] = xmas_color & 0xFF;
-        //    xmas_buf[(idx * 5) + 4] = 0xFE;
-        //    
-        //    if (idx == 24)
-        //    {
-        //        xmas_buf[(idx * 5) + 4] = 0xFF;
-        //    }
-        //}
-
-        //port->serial_write((char *)xmas_buf, 5*25);
-        //port->serial_flush_tx();
     }
+}
+
+void LEDStrip::SetLEDsXmas(COLORREF pixels[64][256])
+{
+    unsigned char xmas_buf[5*25];
+
+    for (int idx = 0; idx < 25; idx++)
+    {
+        unsigned int xmas_color = ((GetBValue(pixels[0][(int)(idx * 5.12f)])/16)<<8)
+                                | ((GetGValue(pixels[0][(int)(idx * 5.12f)])/16)<<4)
+                                | ((GetRValue(pixels[0][(int)(idx * 5.12f)])/16));
+
+        xmas_buf[(idx * 5)] = 0x00;
+        xmas_buf[(idx * 5) + 1] = idx + 1;
+        xmas_buf[(idx * 5) + 2] = xmas_color >> 8;
+        xmas_buf[(idx * 5) + 3] = xmas_color & 0xFF;
+        xmas_buf[(idx * 5) + 4] = 0xFE;
+        
+        if (idx == 24)
+        {
+            xmas_buf[(idx * 5) + 4] = 0xFF;
+        }
+    }
+
+    port->serial_write((char *)xmas_buf, 5*25);
+    port->serial_flush_tx();
 };

@@ -16,6 +16,7 @@ RazerChroma rkb;
 CorsairKeyboard ckb;
 MSIKeyboard mkb;
 std::vector<LEDStrip *> str;
+std::vector<LEDStrip *> xmas;
 
 //WASAPI objects
 IMMDeviceEnumerator *pMMDeviceEnumerator;
@@ -66,6 +67,13 @@ void Visualizer::AddLEDStrip(char* port)
     LEDStrip *newstr = new LEDStrip();
     newstr->Initialize(port);
     str.push_back(newstr);
+}
+
+void Visualizer::AddLEDStripXmas(char* port)
+{
+    LEDStrip *newstr = new LEDStrip();
+    newstr->Initialize(port);
+    xmas.push_back(newstr);
 }
 
 float fft_nrml[256];
@@ -762,13 +770,18 @@ void Visualizer::MSIKeyboardUpdateThread()
 
 void Visualizer::LEDStripUpdateThread()
 {
-    if( str.size() > 0 )
+    if (str.size() > 0 || xmas.size() > 0)
     {
         while (TRUE)
         {
             for (int i = 0; i < str.size(); i++)
             {
                 str[i]->SetLEDs(pixels);
+            }
+        
+            for (int i = 0; i < xmas.size(); i++)
+            {
+                xmas[i]->SetLEDsXmas(pixels);
             }
 
             if (delay < 15)
