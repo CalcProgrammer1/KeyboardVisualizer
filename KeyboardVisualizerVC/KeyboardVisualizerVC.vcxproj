@@ -172,6 +172,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AppSettings.cpp" />
     <ClCompile Include="chuck_fft.c" />
     <ClCompile Include="CorsairKeyboard.cpp" />
     <ClCompile Include="hsv.cpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="Visualizer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AppSettings.h" />
     <ClInclude Include="chuck_fft.h" />
     <ClInclude Include="CorsairKeyboard.h" />
     <ClInclude Include="hsv.h" />

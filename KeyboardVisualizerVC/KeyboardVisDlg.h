@@ -41,9 +41,13 @@ public:
 	afx_msg void OnCbnSelchangeComboBkgdMode();
 	afx_msg void OnEnChangeEditDecay();
 	afx_msg void OnEnChangeEditDelay();
-    afx_msg void OnCbnSelchangeComboFrgdMode();
-    afx_msg void OnCbnSelchangeComboAvgMode();
-    afx_msg void OnCbnSelchangeComboSnglClrMode();
-    afx_msg void OnEnChangedEditNrmlOfst();
-    afx_msg void OnEnChangedEditNrmlScl();
+	afx_msg void OnCbnSelchangeComboFrgdMode();
+	afx_msg void OnCbnSelchangeComboAvgMode();
+	afx_msg void OnCbnSelchangeComboSnglClrMode();
+	afx_msg void OnEnChangedEditNrmlOfst();
+	afx_msg void OnEnChangedEditNrmlScl();
+	afx_msg void OnBnSaveClicked();
+	afx_msg void OnEnChangeEditLEDPos();
+	afx_msg void OnCbnSelchangeComboFireflyMode();
+	afx_msg void OnCbnSelchangeComboBlackwidowMode();
 };

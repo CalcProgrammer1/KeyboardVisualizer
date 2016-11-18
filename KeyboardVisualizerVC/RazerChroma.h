@@ -5,6 +5,7 @@
 #include "RzChromaSDKDefines.h"
 #include "RzChromaSDKTypes.h"
 #include "RzErrors.h"
+#include "AppSettings.h"
 
 using namespace ChromaSDK::Keyboard;
 
@@ -25,10 +26,12 @@ class RazerChroma
 {
 public:
 	RazerChroma();
+	RazerChroma(AppSettings*);
 	~RazerChroma();
 
 	void Initialize();
 	bool SetLEDs(COLORREF pixels[64][256]);
+	void updatedSettings(AppSettings*);
 
 private:
 	HMODULE hModule = NULL;
