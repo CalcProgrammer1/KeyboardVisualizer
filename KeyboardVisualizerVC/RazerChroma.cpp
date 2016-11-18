@@ -1,6 +1,9 @@
 #include "RazerChroma.h"
-
+#include "Visualizer.h"
 #include <iostream>
+
+//Settings
+AppSettings appset;
 
 //Index lists for BlackWidow
 int BlackWidowXIndex[22];
@@ -33,7 +36,6 @@ RazerChroma::RazerChroma()
 {
 }
 
-
 RazerChroma::~RazerChroma()
 {
     if (hModule)
@@ -44,6 +46,10 @@ RazerChroma::~RazerChroma()
             UnInit();
         }
     }
+}
+
+void RazerChroma::updatedSettings(AppSettings *settings) {
+	appset = *settings;
 }
 
 
@@ -200,16 +206,67 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         //Blackwidow Chroma
         ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowEffect;
 
-        for (int x = 0; x < 22; x++)
-        {
-            for (int y = 0; y < 6; y++)
-            {
-                BlackWidowEffect.Color[y][x] = (pixels[BlackWidowYIndex[y]][BlackWidowXIndex[x]] & 0x00FFFFFF);
-            }
-        }
+		switch (appset.blkwdwmode) {
+		case 0:
+			// Normal visualizer mode
+			for (int x = 0; x < 22; x++) {
+				for (int y = 0; y < 6; y++) {
+					BlackWidowEffect.Color[y][x] = (pixels[BlackWidowYIndex[y]][BlackWidowXIndex[x]] & 0x00FFFFFF);
+				}
+			}
 
-        //Set Razer "Three Headed Snake" logo to the background color of the 11th column
-        BlackWidowEffect.Color[0][20] = pixels[3][11 * (256 / 22)];
+			//Set Razer "Three Headed Snake" logo to the background color of the 11th column
+			BlackWidowEffect.Color[0][20] = pixels[3][11 * (256 / 22)];
+			break;
+		case 1:
+			// Single color mode
+			for (int x = 0; x < 22; x++) {
+				for (int y = 0; y < 6; y++) {
+					BlackWidowEffect.Color[y][x] = (pixels[3][0] & 0x00FFFFFF);
+				}
+			}
+			BlackWidowEffect.Color[0][20] = pixels[3][0];
+			break;
+		case 2:
+			// Bottom Up color mode
+			for (int x = 0; x < 22; x++) {
+				for (int y = 0; y < 6; y++) {
+					BlackWidowEffect.Color[y][x] = (pixels[0][FireflyIndex[y]] & 0x00FFFFFF);
+				}
+			}
+			BlackWidowEffect.Color[0][20] = pixels[3][0];
+			break;
+		case 3:
+			// Upper Bottom color mode
+			for (int x = 0; x < 22; x++) {
+				for (int y = 0; y < 6; y++) {
+					BlackWidowEffect.Color[y][x] = (pixels[0][FireflyIndex[y + 9]] & 0x00FFFFFF);
+				}
+			}
+			BlackWidowEffect.Color[0][20] = pixels[3][0];
+			break;
+		case 4:
+			// Mid to side color mode
+			for (int x = 0; x < 22; x++) {
+				for (int y = 0; y < 6; y++) {
+					BlackWidowEffect.Color[y][x] = (pixels[0][BlackWidowXIndex[x + 1]] & 0x00FFFFFF);
+				}
+			}
+			BlackWidowEffect.Color[0][20] = pixels[3][0];
+			break;
+		case 5:
+			// Side to mid color mode
+			for (int x = 0; x < 22; x++) {
+				for (int y = 0; y < 6; y++) {
+					if (x <= 11)
+						BlackWidowEffect.Color[y][x] = (pixels[0][BlackWidowXIndex[x + 1 + 11]] & 0x00FFFFFF);
+					else if (x > 11)
+						BlackWidowEffect.Color[y][x] = (pixels[0][BlackWidowXIndex[x + 2 - 11]] & 0x00FFFFFF);
+				}
+			}
+			BlackWidowEffect.Color[0][20] = pixels[3][0];
+			break;
+		}
 
         CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
 
@@ -251,10 +308,29 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         //Firefly Chroma
         ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE FireflyEffect = {};
 
-        for (int x = 0; x < 15; x++)
-        {
-            FireflyEffect.Color[x] = pixels[0][FireflyIndex[x]];
-        }
+		switch (appset.fireflymode) {
+		case 0:
+			// Normal bottom-up led strip mode
+			for (int x = 0; x < 15; x++)
+				FireflyEffect.Color[x] = pixels[0][FireflyIndex[x]];
+			break;
+		case 1:
+			// Normal upper-bottom led strip mode
+			for (int x = 0; x < 15; x++) {
+				if (x == 7)
+					FireflyEffect.Color[x] = pixels[0][20];
+				else if (x < 7)
+					FireflyEffect.Color[x] = pixels[0][FireflyIndex[x + 8]];
+				else
+					FireflyEffect.Color[x] = pixels[0][FireflyIndex[x - 8]];
+			}
+			break;
+		case 2:
+			// Single color mode
+			for (int x = 0; x < 15; x++)
+				FireflyEffect.Color[x] = pixels[3][0];
+			break;
+		}
 
         CreateEffect(ChromaSDK::FIREFLY_CHROMA, ChromaSDK::CHROMA_CUSTOM, &FireflyEffect, NULL);
 

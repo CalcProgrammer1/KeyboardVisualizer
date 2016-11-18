@@ -4,6 +4,11 @@
 #include <math.h>
 #include "chuck_fft.h"
 #include "hsv.h"
+#include "AppSettings.h"
+#include "RazerChroma.h"
+#include "CorsairKeyboard.h"
+#include "LEDStrip.h"
+#include "MSIKeyboard.h"
 
 #include <string>
 #include <vector>
@@ -21,6 +26,13 @@ public:
 
 	//Visualizer Thread
 	void VisThread();
+
+	//for visibility
+	RazerChroma rkb;
+	CorsairKeyboard ckb;
+	MSIKeyboard mkb;
+	std::vector<LEDStrip *> str;
+	std::vector<LEDStrip *> xmas;
 
 	//Keyboard Update Thread
 	void RazerChromaUpdateThread();
@@ -40,6 +52,11 @@ public:
 
     //Compute normalization line
     void SetNormalization(float offset, float scale);
+
+	//Visualizer settings
+	AppSettings appsettings;
+	void initializeAppSettings();
+	void saveAppSettings();
 
 	//Calculated FFT
 	float fft[256];
@@ -68,6 +85,17 @@ public:
 
     //Foreground Variables
     int frgd_mode;
+
+	//Settings
+	bool rememberSettingsOnExit;
+
+	//LED Strip offset position and indicator fucntion
+	int ldstrp_pos;
+	void drawLEDStripLine();
+
+	//Device specific display mode
+	int fireflymode;
+	int blkwdwmode;
 
 private:
 	//Background Step

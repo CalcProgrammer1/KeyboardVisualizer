@@ -1,8 +1,4 @@
 #include "Visualizer.h"
-#include "RazerChroma.h"
-#include "CorsairKeyboard.h"
-#include "MSIKeyboard.h"
-#include "LEDStrip.h"
 
 //WASAPI includes
 #include <mmsystem.h>
@@ -11,12 +7,6 @@
 #include <initguid.h>
 #include <mmdeviceapi.h>
 #include <functiondiscoverykeys_devpkey.h>
-
-RazerChroma rkb;
-CorsairKeyboard ckb;
-MSIKeyboard mkb;
-std::vector<LEDStrip *> str;
-std::vector<LEDStrip *> xmas;
 
 //WASAPI objects
 IMMDeviceEnumerator *pMMDeviceEnumerator;
@@ -91,31 +81,47 @@ void Visualizer::Initialize()
     pAudioClient->GetService(__uuidof(IAudioCaptureClient), (void**)&pAudioCaptureClient);
     
     pAudioClient->Start();
+
+	initializeAppSettings();
     
-    rkb.Initialize();
+	rkb.Initialize();
 	ckb.Initialize();
     mkb.Initialize();
 
-	amplitude   = 100;
-    avg_mode    = 0;
-    avg_size    = 8;
-	bkgd_step   = 0;
-	bkgd_bright = 10;
-	bkgd_mode   = 0;
-	delay       = 50;
-	window_mode = 1;
-	decay       = 80;
-    frgd_mode   = 8;
-    single_color_mode = 1;
+	//Passing settings
+	rkb.updatedSettings(&appsettings);
 
 	hanning(win_hanning, 256);
 	hamming(win_hamming, 256);
 	blackman(win_blackman, 256);
 
-    nrml_ofst   = 0.04f;
-    nrml_scl    = 0.5f;
-
     SetNormalization(nrml_ofst, nrml_scl);
+}
+
+void Visualizer::saveAppSettings() {
+	appsettings.saveSettings();
+}
+
+void Visualizer::initializeAppSettings() {
+	appsettings.loadSettings();
+
+	rememberSettingsOnExit = appsettings.rememberSettingsOnExit;
+	amplitude = appsettings.amplitude;
+	avg_mode = appsettings.avg_mode;
+	avg_size = appsettings.avg_size;
+	bkgd_step = appsettings.bkgd_step;
+	bkgd_bright = appsettings.bkgd_bright;
+	bkgd_mode = appsettings.bkgd_mode;
+	delay = appsettings.delay;
+	window_mode = appsettings.window_mode;
+	decay = appsettings.decay;
+	frgd_mode = appsettings.frgd_mode;
+	single_color_mode = appsettings.single_color_mode;
+	ldstrp_pos = appsettings.ldstrp_pos;
+	fireflymode = appsettings.fireflymode;
+	blkwdwmode = appsettings.blkwdwmode;
+	nrml_ofst = appsettings.nrml_ofst;
+	nrml_scl = appsettings.nrml_scl;
 }
 
 void Visualizer::SetNormalization(float offset, float scale)
@@ -655,18 +661,19 @@ void Visualizer::VisThread()
                     }
                 }
 
+				//Draw LED Strip
                 if (y < 2)
                 {
                     if (x < 128)
                     {
-                        if ((fft[5] - 0.05f) >((1 / 128.0f)*(127-x)))
+                        if ((fft[ldstrp_pos] - 0.05f) >((1 / 128.0f)*(127-x)))
                         {
                             pixels[y][x] = GetAmplitudeColor(x, 128, 255);
                         }
                     }
                     else
                     {
-                        if ((fft[5] - 0.05f) >((1 / 128.0f)*((x-128))))
+                        if ((fft[ldstrp_pos] - 0.05f) >((1 / 128.0f)*((x-128))))
                         {
                             pixels[y][x] = GetAmplitudeColor(127-(x-128), 128, 255);
                         }
@@ -676,7 +683,7 @@ void Visualizer::VisThread()
                 //Draw brightness based visualizer for single LED devices
                 if (y == 3)
                 {
-                    float brightness = fft[5] * 255;
+                    float brightness = fft[ldstrp_pos] * 255;
                     switch (single_color_mode)
                     {
                     //None
@@ -737,10 +744,18 @@ void Visualizer::VisThread()
 			}
 		}
 
+		drawLEDStripLine();
+
 		//Increment background step
 		bkgd_step++;
 
         Sleep(15);
+	}
+}
+
+void Visualizer::drawLEDStripLine() {
+	for (int y = 3; y < 64; y++) {
+		pixels[y][ldstrp_pos] = RGB(255, 0, 0);
 	}
 }
 
