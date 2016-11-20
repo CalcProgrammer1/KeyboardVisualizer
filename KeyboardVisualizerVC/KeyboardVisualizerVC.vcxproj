@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{11970D07-B63F-487B-AA02-2EDCAD2F71A0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>RazerChromaVisualizerVC</RootNamespace>
+    <RootNamespace>KeyboardVisualizerVC</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <ProjectName>KeyboardVisualizerVC</ProjectName>
   </PropertyGroup>
@@ -94,7 +94,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-1.8.3\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-1.8.3\inc;C:\KeyboardVisualizerVCUI\dependencies\corsair-cue-1.15.28\include</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -105,7 +105,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\KeyboardVisualizerVCUI\dependencies\corsair-cue-1.15.28\lib\i386;C:\KeyboardVisualizerVCUI\dependencies\corsair-cue-1.15.28\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -137,7 +137,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-1.8.3\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-1.8.3\inc;C:\KeyboardVisualizerVCUI\dependencies\corsair-cue-1.15.28\include</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
@@ -146,7 +146,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\KeyboardVisualizerVCUI\dependencies\corsair-cue-1.15.28\lib\i386;C:\KeyboardVisualizerVCUI\dependencies\corsair-cue-1.15.28\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -173,7 +173,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="chuck_fft.c" />
-    <ClCompile Include="CorsairKeyboard.cpp" />
+    <ClCompile Include="CorsairCUE.cpp" />
     <ClCompile Include="hsv.cpp" />
     <ClCompile Include="LEDStrip.cpp" />
     <ClCompile Include="main.cpp" />
@@ -185,7 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chuck_fft.h" />
-    <ClInclude Include="CorsairKeyboard.h" />
+    <ClInclude Include="CorsairCUE.h" />
     <ClInclude Include="hsv.h" />
     <ClInclude Include="KeyboardVisDlg.h" />
     <ClInclude Include="LEDStrip.h" />

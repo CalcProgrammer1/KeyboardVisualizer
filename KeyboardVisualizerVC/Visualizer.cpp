@@ -1,6 +1,6 @@
 #include "Visualizer.h"
 #include "RazerChroma.h"
-#include "CorsairKeyboard.h"
+#include "CorsairCUE.h"
 #include "MSIKeyboard.h"
 #include "LEDStrip.h"
 
@@ -13,7 +13,7 @@
 #include <functiondiscoverykeys_devpkey.h>
 
 RazerChroma rkb;
-CorsairKeyboard ckb;
+CorsairCUE ckb;
 MSIKeyboard mkb;
 std::vector<LEDStrip *> str;
 std::vector<LEDStrip *> xmas;

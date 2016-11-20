@@ -24,7 +24,7 @@ boolean startminimized;
 boolean firstrun;
 
 KeyboardVisDlg::KeyboardVisDlg(CWnd* pParent)
-	: CDialogEx(IDD_RAZER_CHROMA_DLG, pParent)
+	: CDialogEx(IDD_KEYBOARD_VISUALIZER_DLG, pParent)
 {
     startminimized = FALSE;
 }
