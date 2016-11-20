@@ -1,9 +1,7 @@
 # KeyboardVisualizerVCUI
 Razer Chroma and Corsair RGB Keyboard Spectrograph Visualizer for Windows with Visual C++ UI
 
-Binary builds can be downloaded from the Release submodule or from Google Drive at the following link.
-
-https://drive.google.com/folderview?id=0B1Fq0HEJolPtWDNsNV93NVl5Vms&usp=sharing
+Binary builds can be downloaded from the Release submodule
 
 # Available Visual Effects
 
@@ -13,12 +11,17 @@ https://drive.google.com/folderview?id=0B1Fq0HEJolPtWDNsNV93NVl5Vms&usp=sharing
 
 # Supported Devices
     
-    * Razer Chroma
+    * Razer Chroma SDK
     
         Keyboards
         - BlackWidow Chroma (spectrograph)
         - BlackWidow Chroma Tournament Edition (spectrograph)
         - DeathStalker Chroma (horizontal bar)
+        - BlackWidow X Chroma (spectrograph)
+        - BlackWidow X Chroma Tournament Edition (spectrograph)
+        - Razer Blade Stealth (spectrograph)
+        - Razer Blade (spectrograph)
+        - Razer Ornata Chroma (spectrograph)
         
         Mice
         - Diamondback Chroma (bar and single color)
@@ -29,11 +32,22 @@ https://drive.google.com/folderview?id=0B1Fq0HEJolPtWDNsNV93NVl5Vms&usp=sharing
         
         Headsets
         - Kraken 7.1 Chroma (single color)
+        - Kraken 7.1 Chroma V2 (single color)
         
         Mouse Mats
         - Firefly (bar)
     
-    * Corsair RGB
+    * Corsair CUE SDK
     
         Keyboards
         - K70 RGB (spectrograph)
+        - Likely other CUE SDK supported keyboards (spectrograph), untested
+        
+    * MSI SteelSeries
+        
+        Keyboards
+        - MSI 3-zone laptop keyboards (MSI GS63VR, etc) (bar)
+        
+    * DIY LED Strips
+    
+       Requires Arduino and WS2811/WS2812b LED strips, 30 LEDs per strip supported via included sketch
