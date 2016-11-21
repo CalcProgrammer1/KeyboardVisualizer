@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <string>
 
 CWinApp app;
 Visualizer vis;
@@ -242,9 +243,13 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
     //Initialize Visualizer
     vis.Initialize();
 
-    //Parse Settings File
-    parse_settings_file("settings.txt");
-
+    //Parse Settings File in Executable Directory
+    char filename[2048];
+    GetModuleFileName(NULL, filename, 2048);
+    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
+    strcat(filename, "\\settings.txt");
+    parse_settings_file(filename);
+    
     //Parse Command Line
     if (!parse_command_line(lpCmdLine))
     {
