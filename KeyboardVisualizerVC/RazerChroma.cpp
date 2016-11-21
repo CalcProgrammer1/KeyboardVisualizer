@@ -47,6 +47,43 @@ RazerChroma::~RazerChroma()
 }
 
 
+void SetupKeyboardGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list)
+{
+    for (int x = 0; x < x_count; x++)
+    {
+        x_idx_list[x] = x * (256 / x_count);
+    }
+    for (int y = 0; y < y_count; y++)
+    {
+        y_idx_list[y] = y * (64 / y_count) + (0.5f * (64 / y_count));
+    }
+}
+
+
+void FillKeyboardGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list, ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE * effect, COLORREF pixels[64][256])
+{
+    for (int x = 0; x < x_count; x++)
+    {
+        for (int y = 0; y < y_count; y++)
+        {
+            effect->Color[y][x] = (pixels[y_idx_list[y]][x_idx_list[x]] & 0x00FFFFFF);
+        }
+    }
+}
+
+
+void FillKeypadGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list, ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE * effect, COLORREF pixels[64][256])
+{
+    for (int x = 0; x < x_count; x++)
+    {
+        for (int y = 0; y < y_count; y++)
+        {
+            effect->Color[y][x] = (pixels[y_idx_list[y]][x_idx_list[x]] & 0x00FFFFFF);
+        }
+    }
+}
+
+
 void RazerChroma::Initialize()
 {
 	// Dynamically loads the Chroma SDK library.
@@ -60,40 +97,16 @@ void RazerChroma::Initialize()
 			Init();
 
             //Build index list for BlackWidow
-            for (int x = 0; x < 22; x++)
-            {
-                int x_idx = x * (256 / 22);
-                BlackWidowXIndex[x] = x_idx;
-            }
-            for (int y = 0; y < 6; y++)
-            {
-                int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
-                BlackWidowYIndex[y] = y_idx;
-            }
+            SetupKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex);
 
             //Build index list for BlackWidow TE
-            for (int x = 0; x < 18; x++)
-            {
-                int x_idx = x * (256 / 18);
-                BlackWidowTEXIndex[x] = x_idx;
-            }
-            for (int y = 0; y < 6; y++)
-            {
-                int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
-                BlackWidowTEYIndex[y] = y_idx;
-            }
+            SetupKeyboardGrid(18, 6, BlackWidowTEXIndex, BlackWidowTEYIndex);
 
             //Build index list for Blade Stealth
-            for (int x = 0; x < 16; x++)
-            {
-                int x_idx = x * (256 / 16);
-                BladeStealthXIndex[x] = x_idx;
-            }
-            for (int y = 0; y < 6; y++)
-            {
-                int y_idx = y * (64 / 6) + (0.5f * (64 / 6));
-                BladeStealthYIndex[y] = y_idx;
-            }
+            SetupKeyboardGrid(16, 6, BladeStealthXIndex, BladeStealthYIndex);
+
+            //Build index list for OrbWeaver
+            SetupKeyboardGrid(5, 4, OrbweaverXIndex, OrbweaverYIndex);
 
             //Build index list for Firefly
             for (int x = 0; x < 15; x++)
@@ -168,19 +181,8 @@ void RazerChroma::Initialize()
             {
                 DeathStalkerXIndex[x] = 128 + (x * (256 / 12));
             }
-
-            //Build index list for OrbWeaver
-            for (int x = 0; x < 5; x++)
-            {
-                OrbweaverXIndex[x] = x * (256 / 5);
-            }
-            for (int y = 0; y < 4; y++)
-            {
-                OrbweaverYIndex[y] = y * (64 / 4) + (0.5f * (64 / 4));
-            }
 		}
 	}
-    
 }
 
 
@@ -200,13 +202,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         //Blackwidow Chroma
         ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowEffect;
 
-        for (int x = 0; x < 22; x++)
-        {
-            for (int y = 0; y < 6; y++)
-            {
-                BlackWidowEffect.Color[y][x] = (pixels[BlackWidowYIndex[y]][BlackWidowXIndex[x]] & 0x00FFFFFF);
-            }
-        }
+        FillKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex, &BlackWidowEffect, pixels);
 
         //Set Razer "Three Headed Snake" logo to the background color of the 11th column
         BlackWidowEffect.Color[0][20] = pixels[3][11 * (256 / 22)];
@@ -221,13 +217,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         //Blackwidow Chroma Tournament Edition
         ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowTEEffect;
 
-        for (int x = 0; x < 18; x++)
-        {
-            for (int y = 0; y < 6; y++)
-            {
-                BlackWidowTEEffect.Color[y][x] = (pixels[BlackWidowTEYIndex[y]][BlackWidowTEXIndex[x]] & 0x00FFFFFF);
-            }
-        }
+        FillKeyboardGrid(18, 6, BlackWidowTEXIndex, BlackWidowTEYIndex, &BlackWidowTEEffect, pixels);
 
         //Set Razer "Three Headed Snake" logo to the background color of the 11th column
         BlackWidowTEEffect.Color[0][20] = pixels[3][11 * (256 / 22)];
@@ -237,17 +227,18 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         //Blade Stealth and Blade 14
         ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BladeStealthEffect;
 
-        for (int x = 0; x < 16; x++)
-        {
-            for (int y = 0; y < 6; y++)
-            {
-                BladeStealthEffect.Color[y][x] = (pixels[BladeStealthYIndex[y]][BladeStealthXIndex[x]] & 0x00FFFFFF);
-            }
-        }
+        FillKeyboardGrid(16, 6, BladeStealthXIndex, BladeStealthYIndex, &BladeStealthEffect, pixels);
 
         CreateEffect(ChromaSDK::BLADE_STEALTH, ChromaSDK::CHROMA_CUSTOM, &BladeStealthEffect, NULL);
         CreateEffect(ChromaSDK::BLADE, ChromaSDK::CHROMA_CUSTOM, &BladeStealthEffect, NULL);
 
+        //Orbweaver Chroma
+        ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE OrbweaverEffect;
+
+        FillKeypadGrid(5, 4, OrbweaverXIndex, OrbweaverYIndex, &OrbweaverEffect, pixels);
+
+        CreateEffect(ChromaSDK::ORBWEAVER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &OrbweaverEffect, NULL);
+        
         //Firefly Chroma
         ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE FireflyEffect = {};
 
@@ -296,19 +287,6 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         TartarusEffect.Color[0][0] = pixels[3][0];
 
         CreateEffect(ChromaSDK::TARTARUS_CHROMA, ChromaSDK::CHROMA_CUSTOM, &TartarusEffect, NULL);
-
-        //Orbweaver Chroma
-        ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE OrbweaverEffect;
-
-        for (int x = 0; x < 5; x++)
-        {
-            for (int y = 0; y < 4; y++)
-            {
-                OrbweaverEffect.Color[y][x] = (pixels[OrbweaverYIndex[y]][OrbweaverXIndex[x]] & 0x00FFFFFF);
-            }
-        }
-
-        CreateEffect(ChromaSDK::ORBWEAVER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &OrbweaverEffect, NULL);
 
         return TRUE;
     }
