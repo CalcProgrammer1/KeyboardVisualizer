@@ -3,30 +3,114 @@
 #include "KeyboardVisDlg.h"
 #include "Visualizer.h"
 
+#include <fstream>
+#include <iostream>
+
 CWinApp app;
 Visualizer vis;
+static boolean startminimized;
 
-int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmdShow)
+
+void parse_argument_string(char * argument, char * value)
 {
-    AttachConsole(-1);
-    freopen("CONIN$", "r", stdin);
-    freopen("CONOUT$", "w", stdout);
-    freopen("CONOUT$", "w", stderr);
+    if (strcmp(argument, "startminimized") == 0)
+    {
+        startminimized = TRUE;
+    }
 
-	afxCurrentInstanceHandle = hInst;
-	afxCurrentResourceHandle = hInst;
-	app.m_hInstance = hInst;
+    if (strcmp(argument, "amplitude") == 0)
+    {
+        vis.amplitude = atoi(value);
+    }
 
-    //Initialize Visualizer
-    vis.Initialize();
+    if (strcmp(argument, "bkgd_bright") == 0)
+    {
+        vis.bkgd_bright = atoi(value);
+    }
 
-    //Parse Command Line
+    if (strcmp(argument, "avg_size") == 0)
+    {
+        vis.avg_size = atoi(value);
+    }
+
+    if (strcmp(argument, "decay") == 0)
+    {
+        vis.decay = atoi(value);
+    }
+
+    if (strcmp(argument, "delay") == 0)
+    {
+        vis.delay = atoi(value);
+    }
+
+    if (strcmp(argument, "nrml_ofst") == 0)
+    {
+        vis.nrml_ofst = strtod(value, NULL);
+    }
+
+    if (strcmp(argument, "nrml_scl") == 0)
+    {
+        vis.nrml_scl = strtod(value, NULL);
+    }
+
+    if (strcmp(argument, "window_mode") == 0)
+    {
+        if ((atoi(value) >= 0) && (atoi(value) <= 4))
+        {
+            vis.window_mode = atoi(value);
+        }
+    }
+
+    if (strcmp(argument, "bkgd_mode") == 0)
+    {
+        if ((atoi(value) >= 0) && (atoi(value) <= 12))
+        {
+            vis.bkgd_mode = atoi(value);
+        }
+    }
+
+    if (strcmp(argument, "frgd_mode") == 0)
+    {
+        if ((atoi(value) >= 0) && (atoi(value) <= 13))
+        {
+            vis.frgd_mode = atoi(value);
+        }
+    }
+
+    if (strcmp(argument, "single_color_mode") == 0)
+    {
+        if ((atoi(value) >= 0) && (atoi(value) <= 10))
+        {
+            vis.single_color_mode = atoi(value);
+        }
+    }
+
+    if (strcmp(argument, "avg_mode") == 0)
+    {
+        if ((atoi(value) >= 0) && (atoi(value) <= 1))
+        {
+            vis.avg_mode = atoi(value);
+        }
+    }
+
+    if (strcmp(argument, "ledstrip") == 0)
+    {
+        vis.AddLEDStrip(value);
+    }
+
+    if (strcmp(argument, "xmas") == 0)
+    {
+        vis.AddLEDStripXmas(value);
+    }
+}
+
+boolean parse_command_line(char * command_line)
+{
     LPTSTR  argument;
     LPTSTR  value;
     LPTSTR  next;
-    boolean startminimized = FALSE;
-    value = strtok_s(lpCmdLine, " ", &next);
-    
+    value = strtok_s(command_line, " ", &next);
+
     while (value != NULL)
     {
         argument = strtok_s(value, "=", &value);
@@ -100,100 +184,71 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
             printf("                      - 1:  Low-pass filtering\r\n");
             printf("    ledstrip          - COM port, ex. ledstrip=COM1\r\n");
             printf("    xmas              - COM port, ex. xmas=COM2\r\n");
-            return 0;
+            return FALSE;
         }
 
-        if (strcmp(argument, "startminimized") == 0)
-        {
-            startminimized = TRUE;
-        }
-
-        if (strcmp(argument, "amplitude") == 0)
-        {
-            vis.amplitude = atoi(value);
-        }
-    
-        if (strcmp(argument, "bkgd_bright") == 0)
-        {
-            vis.bkgd_bright = atoi(value);
-        }
-
-        if (strcmp(argument, "avg_size") == 0)
-        {
-            vis.avg_size = atoi(value);
-        }
-
-        if (strcmp(argument, "decay") == 0)
-        {
-            vis.decay = atoi(value);
-        }
-
-        if (strcmp(argument, "delay") == 0)
-        {
-            vis.delay = atoi(value);
-        }
-        
-        if (strcmp(argument, "nrml_ofst") == 0)
-        {
-            vis.nrml_ofst = strtod(value, NULL);
-        }
-
-        if (strcmp(argument, "nrml_scl") == 0)
-        {
-            vis.nrml_scl = strtod(value, NULL);
-        }
-
-        if (strcmp(argument, "window_mode") == 0)
-        {
-            if ((atoi(value) >= 0) && (atoi(value) <= 4))
-            {
-                vis.window_mode = atoi(value);
-            }
-        }
-
-        if (strcmp(argument, "bkgd_mode") == 0)
-        {
-            if ((atoi(value) >= 0) && (atoi(value) <= 12))
-            {
-                vis.bkgd_mode = atoi(value);
-            }
-        }
-
-        if (strcmp(argument, "frgd_mode") == 0)
-        {
-            if ((atoi(value) >= 0) && (atoi(value) <= 13))
-            {
-                vis.frgd_mode = atoi(value);
-            }
-        }
-
-        if (strcmp(argument, "single_color_mode") == 0)
-        {
-            if ((atoi(value) >= 0) && (atoi(value) <= 10))
-            {
-                vis.single_color_mode = atoi(value);
-            }
-        }
-
-        if (strcmp(argument, "avg_mode") == 0)
-        {
-            if ((atoi(value) >= 0) && (atoi(value) <= 1))
-            {
-                vis.avg_mode = atoi(value);
-            }
-        }
-
-        if (strcmp(argument, "ledstrip") == 0)
-        {
-            vis.AddLEDStrip(value);
-        }
-
-        if (strcmp(argument, "xmas") == 0)
-        {
-            vis.AddLEDStripXmas(value);
-        }
+        parse_argument_string(argument, value);
 
         value = strtok_s(next, " ", &next);
+    }
+    return TRUE;
+}
+
+
+void parse_settings_file(char * filename)
+{
+    std::ifstream infile;
+
+    //Open settings file
+    infile.open(filename);
+
+    if (infile.good())
+    {
+        for (std::string line; std::getline(infile, line); )
+        {
+            if (line == "")
+            {
+                continue;
+            }
+            if ((line[0] != ';') && (line[0] != '#') && (line[0] != '/'))
+            {
+                LPSTR argument;
+                LPSTR value;
+
+                value = (LPSTR)line.c_str();
+
+                argument = strtok_s(value, "=", &value);
+
+                parse_argument_string(argument, value);
+            }
+        }
+    }
+}
+
+
+int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmdShow)
+{
+    AttachConsole(-1);
+    freopen("CONIN$", "r", stdin);
+    freopen("CONOUT$", "w", stdout);
+    freopen("CONOUT$", "w", stderr);
+
+	afxCurrentInstanceHandle = hInst;
+	afxCurrentResourceHandle = hInst;
+	app.m_hInstance = hInst;
+
+    startminimized = FALSE;
+
+    //Initialize Visualizer
+    vis.Initialize();
+
+    //Parse Settings File
+    parse_settings_file("settings.txt");
+
+    //Parse Command Line
+    if (!parse_command_line(lpCmdLine))
+    {
+        return 0;
     }
 
     //Start Visualizer Threads
