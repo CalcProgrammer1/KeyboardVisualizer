@@ -232,7 +232,7 @@ void KeyboardVisDlg::OnEnChangeEditAmplitude()
 
 void KeyboardVisDlg::OnEnChangeEditBackgroundBrightness()
 {
-	vis->bkgd_bright = (int)((GetDlgItemInt(IDC_EDIT_BACKGROUND_BRIGHTNESS, 0, 0) / 100.0f) * 255.0f);
+	vis->bkgd_bright = (int)(GetDlgItemInt(IDC_EDIT_BACKGROUND_BRIGHTNESS, 0, 0));
 }
 
 

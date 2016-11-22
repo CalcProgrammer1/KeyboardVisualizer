@@ -12,6 +12,9 @@
 #include <mmdeviceapi.h>
 #include <functiondiscoverykeys_devpkey.h>
 
+//File includes
+#include <fstream>
+
 RazerChroma rkb;
 CorsairCUE ckb;
 MSIKeyboard mkb;
@@ -116,6 +119,88 @@ void Visualizer::Initialize()
     nrml_scl    = 0.5f;
 
     SetNormalization(nrml_ofst, nrml_scl);
+}
+
+void Visualizer::SaveSettings()
+{
+    std::ofstream outfile;
+    char filename[2048];
+    char out_str[1024];
+
+    //Get file path in executable directory
+    GetModuleFileName(NULL, filename, 2048);
+    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
+    strcat(filename, "\\settings.txt");
+    
+    //Open settings file
+    outfile.open(filename);
+
+    //Save Amplitude
+    snprintf(out_str, 1024, "amplitude=%d\r\n", amplitude);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Background Brightness
+    snprintf(out_str, 1024, "bkgd_bright=%d\r\n", bkgd_bright);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Average Size
+    snprintf(out_str, 1024, "avg_size=%d\r\n", avg_size);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Decay
+    snprintf(out_str, 1024, "decay=%d\r\n", decay);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Delay
+    snprintf(out_str, 1024, "delay=%d\r\n", delay);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Normalization Offset
+    snprintf(out_str, 1024, "nrml_ofst=%f\r\n", nrml_ofst);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Normalization Scale
+    snprintf(out_str, 1024, "nrml_scl=%f\r\n", nrml_scl);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Window Mode
+    snprintf(out_str, 1024, "window_mode=%d\r\n", window_mode);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Background Mode
+    snprintf(out_str, 1024, "bkgd_mode=%d\r\n", bkgd_mode);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Foreground Mode
+    snprintf(out_str, 1024, "frgd_mode=%d\r\n", frgd_mode);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Single Color Mode
+    snprintf(out_str, 1024, "single_color_mode=%d\r\n", single_color_mode);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Averaging Mode
+    snprintf(out_str, 1024, "avg_mode=%d\r\n", avg_mode);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save LED Strip Configurations
+    for (int i = 0; i < str.size(); i++)
+    {
+        //Save LED Strip Configuration
+        snprintf(out_str, 1024, "ledstrip=%s\r\n", str[i]->GetPortName());
+        outfile.write(out_str, strlen(out_str));
+    }
+
+    //Save Xmas Strip Configurations
+    for (int i = 0; i < xmas.size(); i++)
+    {
+        //Save Xmas Strip Configuration
+        snprintf(out_str, 1024, "xmas=%s\r\n", xmas[i]->GetPortName());
+        outfile.write(out_str, strlen(out_str));
+    }
+
+    //Close Output File
+    outfile.close();
 }
 
 void Visualizer::SetNormalization(float offset, float scale)
@@ -579,14 +664,14 @@ void Visualizer::VisThread()
 					red = (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1);
 					grn = (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1);
 					blu = (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) + (6.28f / 3)) + 1);
-					pixels[y][x] = RGB((bkgd_bright/2) * red, (bkgd_bright/2) * grn, (bkgd_bright/2) * blu);
+					pixels[y][x] = RGB((brightness /2) * red, (brightness /2) * grn, (brightness /2) * blu);
 					break;
 
                 //Rainbow
 				case 2:
                     {
                         int hsv_h = ((bkgd_step + (256 - x)) % 360);
-                        hsv_t hsv = { hsv_h, 255, bkgd_bright };
+                        hsv_t hsv = { hsv_h, 255, brightness };
                         pixels[y][x] = hsv2rgb(&hsv);
                     }
 					break;
@@ -595,7 +680,7 @@ void Visualizer::VisThread()
                 case 3:
                     {
                         float hue = bkgd_step + (int)(180 + atan2(y - 32.1, x - 128.1) * (180.0 / 3.14159))%360;
-                        hsv_t hsv2 = { hue, 255, bkgd_bright };
+                        hsv_t hsv2 = { hue, 255, brightness };
                         pixels[y][x] = hsv2rgb(&hsv2);
                     }
                     break;

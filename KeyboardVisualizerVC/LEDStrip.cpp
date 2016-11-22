@@ -11,7 +11,13 @@ LEDStrip::~LEDStrip()
 
 void LEDStrip::Initialize(char* portname)
 {
-    port = new serial_port(portname, 115200);
+    strcpy(port_name, portname);
+    port = new serial_port(port_name, 115200);
+}
+
+char* LEDStrip::GetPortName()
+{
+    return(port_name);
 }
 
 void LEDStrip::SetLEDs(COLORREF pixels[64][256])

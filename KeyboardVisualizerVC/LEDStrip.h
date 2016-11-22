@@ -10,10 +10,12 @@ public:
     ~LEDStrip();
 
     void Initialize(char* portname);
+    char* GetPortName();
     void SetLEDs(COLORREF pixels[64][256]);
     void SetLEDsXmas(COLORREF pixels[64][256]);
 
 private:
+    char port_name[128];
     serial_port *port;
 };
 
