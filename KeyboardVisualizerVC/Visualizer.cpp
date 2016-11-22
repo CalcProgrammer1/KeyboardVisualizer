@@ -67,6 +67,23 @@ Visualizer::Visualizer()
 
 void Visualizer::AddLEDStrip(char* port)
 {
+    //Scan through already registered LED strips and
+    //verify that the port name is not already in use
+    for (int i = 0; i < str.size(); i++)
+    {
+        if (strcmp(str[i]->GetPortName(), port) == 0)
+        {
+            return;
+        }
+    }
+    for (int i = 0; i < xmas.size(); i++)
+    {
+        if (strcmp(xmas[i]->GetPortName(), port) == 0)
+        {
+            return;
+        }
+    }
+
     LEDStrip *newstr = new LEDStrip();
     newstr->Initialize(port);
     str.push_back(newstr);
@@ -74,6 +91,23 @@ void Visualizer::AddLEDStrip(char* port)
 
 void Visualizer::AddLEDStripXmas(char* port)
 {
+    //Scan through already registered LED strips and
+    //verify that the port name is not already in use
+    for (int i = 0; i < str.size(); i++)
+    {
+        if (strcmp(str[i]->GetPortName(), port) == 0)
+        {
+            return;
+        }
+    }
+    for (int i = 0; i < xmas.size(); i++)
+    {
+        if (strcmp(xmas[i]->GetPortName(), port) == 0)
+        {
+            return;
+        }
+    }
+
     LEDStrip *newstr = new LEDStrip();
     newstr->Initialize(port);
     xmas.push_back(newstr);
