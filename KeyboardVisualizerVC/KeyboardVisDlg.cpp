@@ -222,6 +222,7 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_CBN_SELCHANGE(IDC_COMBO_SNGL_CLR_MODE, &KeyboardVisDlg::OnCbnSelchangeComboSnglClrMode)
     ON_EN_CHANGE(IDC_EDIT_NRML_OFST, &KeyboardVisDlg::OnEnChangedEditNrmlOfst)
     ON_EN_CHANGE(IDC_EDIT_NRML_SCL, &KeyboardVisDlg::OnEnChangedEditNrmlScl)
+    ON_BN_CLICKED(IDC_BUTTON_SAVE, &KeyboardVisDlg::OnClickedSave)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
@@ -297,4 +298,9 @@ void KeyboardVisDlg::OnEnChangedEditNrmlScl()
     GetDlgItemText(IDC_EDIT_NRML_SCL, (LPTSTR)&val, 64);
     vis->nrml_scl = strtod(val, NULL);
     vis->SetNormalization(vis->nrml_ofst, vis->nrml_scl);
+}
+
+void KeyboardVisDlg::OnClickedSave()
+{
+    vis->SaveSettings();
 }
