@@ -64,7 +64,7 @@ void parse_argument_string(char * argument, char * value)
 
     if (strcmp(argument, "bkgd_mode") == 0)
     {
-        if ((atoi(value) >= 0) && (atoi(value) <= 12))
+        if ((atoi(value) >= 0) && (atoi(value) <= 17))
         {
             vis.bkgd_mode = atoi(value);
         }
@@ -72,7 +72,7 @@ void parse_argument_string(char * argument, char * value)
 
     if (strcmp(argument, "frgd_mode") == 0)
     {
-        if ((atoi(value) >= 0) && (atoi(value) <= 13))
+        if ((atoi(value) >= 0) && (atoi(value) <= 17))
         {
             vis.frgd_mode = atoi(value);
         }
