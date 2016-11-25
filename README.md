@@ -3,6 +3,8 @@ Razer Chroma and Corsair RGB Keyboard Spectrograph Visualizer for Windows with V
 
 Binary builds can be downloaded from the Release submodule
 
+You must have the Microsoft Visual C++ 2015 32-bit redistributable package installed to run this program.
+
 # Settings
 
 There are many settings you can tweak to make Keyboard Visualizer work with your audio setup and to personalize it to your liking.
