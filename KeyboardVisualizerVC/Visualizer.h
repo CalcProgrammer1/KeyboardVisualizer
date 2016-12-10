@@ -35,8 +35,8 @@ public:
     COLORREF GetAmplitudeColor(int amplitude, int range, int brightness);
 
     //Add LED strip
-    void AddLEDStrip(char* port);
-    void AddLEDStripXmas(char * port);
+    void AddLEDStrip(char* ledstring);
+    void AddLEDStripXmas(char * ledstring);
 
     //Save Settings File
     void SaveSettings();

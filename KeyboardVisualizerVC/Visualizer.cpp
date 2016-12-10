@@ -65,51 +65,51 @@ Visualizer::Visualizer()
 
 }
 
-void Visualizer::AddLEDStrip(char* port)
+void Visualizer::AddLEDStrip(char* ledstring)
 {
     //Scan through already registered LED strips and
     //verify that the port name is not already in use
     for (int i = 0; i < str.size(); i++)
     {
-        if (strcmp(str[i]->GetPortName(), port) == 0)
+        if (strcmp(str[i]->GetLEDString(), ledstring) == 0)
         {
             return;
         }
     }
     for (int i = 0; i < xmas.size(); i++)
     {
-        if (strcmp(xmas[i]->GetPortName(), port) == 0)
+        if (strcmp(xmas[i]->GetLEDString(), ledstring) == 0)
         {
             return;
         }
     }
 
     LEDStrip *newstr = new LEDStrip();
-    newstr->Initialize(port);
+    newstr->Initialize(ledstring);
     str.push_back(newstr);
 }
 
-void Visualizer::AddLEDStripXmas(char* port)
+void Visualizer::AddLEDStripXmas(char* ledstring)
 {
     //Scan through already registered LED strips and
     //verify that the port name is not already in use
     for (int i = 0; i < str.size(); i++)
     {
-        if (strcmp(str[i]->GetPortName(), port) == 0)
+        if (strcmp(str[i]->GetLEDString(), ledstring) == 0)
         {
             return;
         }
     }
     for (int i = 0; i < xmas.size(); i++)
     {
-        if (strcmp(xmas[i]->GetPortName(), port) == 0)
+        if (strcmp(xmas[i]->GetLEDString(), ledstring) == 0)
         {
             return;
         }
     }
 
     LEDStrip *newstr = new LEDStrip();
-    newstr->Initialize(port);
+    newstr->Initialize(ledstring);
     xmas.push_back(newstr);
 }
 
@@ -221,7 +221,7 @@ void Visualizer::SaveSettings()
     for (int i = 0; i < str.size(); i++)
     {
         //Save LED Strip Configuration
-        snprintf(out_str, 1024, "ledstrip=%s\r\n", str[i]->GetPortName());
+        snprintf(out_str, 1024, "ledstrip=%s\r\n", str[i]->GetLEDString());
         outfile.write(out_str, strlen(out_str));
     }
 
@@ -229,7 +229,7 @@ void Visualizer::SaveSettings()
     for (int i = 0; i < xmas.size(); i++)
     {
         //Save Xmas Strip Configuration
-        snprintf(out_str, 1024, "xmas=%s\r\n", xmas[i]->GetPortName());
+        snprintf(out_str, 1024, "xmas=%s\r\n", xmas[i]->GetLEDString());
         outfile.write(out_str, strlen(out_str));
     }
 

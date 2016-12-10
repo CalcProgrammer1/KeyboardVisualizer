@@ -10,10 +10,10 @@ public:
     LEDStrip();
     ~LEDStrip();
 
-    void Initialize(char* led_string);
+    void Initialize(char* ledstring);
     void InitializeSerial(char* portname, int baud);
     void InitializeUDP(char* clientname, char* port);
-    char* GetPortName();
+    char* GetLEDString();
     void SetNumLEDs(int numleds);
     void SetLEDs(COLORREF pixels[64][256]);
     void SetLEDsXmas(COLORREF pixels[64][256]);
@@ -21,6 +21,7 @@ public:
 private:
     int baud_rate;
     int num_leds;
+    char led_string[1024];
     char port_name[128];
     char client_name[1024];
     serial_port *serialport;

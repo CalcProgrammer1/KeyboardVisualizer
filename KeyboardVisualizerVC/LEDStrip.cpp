@@ -14,15 +14,17 @@ LEDStrip::~LEDStrip()
 {
 }
 
-void LEDStrip::Initialize(char* led_string)
+void LEDStrip::Initialize(char* ledstring)
 {
+    strcpy(led_string, ledstring);
+
     bool    serial      = TRUE;
     LPSTR   numleds     = NULL;
     LPSTR   source      = NULL;
     LPSTR   udpport_baud= NULL;
     LPSTR   next        = NULL;
 
-    source = strtok_s(led_string, ",", &next);
+    source = strtok_s(ledstring, ",", &next);
 
     //Check if we are setting up a UDP or Serial interface
     //UDP is denoted by udp:
@@ -94,9 +96,9 @@ void LEDStrip::InitializeUDP(char * clientname, char * port)
     serialport = NULL;
 }
 
-char* LEDStrip::GetPortName()
+char* LEDStrip::GetLEDString()
 {
-    return(port_name);
+    return(led_string);
 }
 
 void LEDStrip::SetNumLEDs(int numleds)
