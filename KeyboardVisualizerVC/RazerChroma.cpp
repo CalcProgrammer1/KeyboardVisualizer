@@ -21,6 +21,9 @@ int FireflyIndex[15];
 int MouseXIndex[9][7];
 int MouseYIndex[9][7];
 
+//Index list for Razer Core
+int CoreXIndex[8];
+
 //Index list for DeathStalker
 static int DeathStalkerXLEDIndex[] = { 1, 4, 8, 12, 15, 18 };
 int DeathStalkerXIndex[6];
@@ -176,6 +179,12 @@ void RazerChroma::Initialize()
                 }
             }
 
+            //Build index list for Core
+            for (int x = 0; x < 8; x++)
+            {
+                CoreXIndex[x] = (x * (256 / 8)) + (256 / 16);
+            }
+
             //Build index list for DeathStalker
             for (int x = 0; x < 6; x++)
             {
@@ -213,7 +222,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         CreateEffect(ChromaSDK::BLACKWIDOW_X_TE_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
         CreateEffect(ChromaSDK::OVERWATCH_KEYBOARD, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
         CreateEffect(ChromaSDK::ORNATA_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
-
+        
         //Blackwidow Chroma Tournament Edition
         ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowTEEffect;
 
@@ -248,6 +257,16 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         }
 
         CreateEffect(ChromaSDK::FIREFLY_CHROMA, ChromaSDK::CHROMA_CUSTOM, &FireflyEffect, NULL);
+
+        //Razer Core
+        ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE CoreEffect = {};
+
+        for (int x = 0; x < 8; x++)
+        {
+            CoreEffect.Color[x+3] = pixels[0][CoreXIndex[x]];
+        }
+
+        CreateEffect(ChromaSDK::CORE_CHROMA, ChromaSDK::CHROMA_CUSTOM, &CoreEffect, NULL);
 
         //Mamba Chroma Tournament Edition
         ChromaSDK::Mouse::CUSTOM_EFFECT_TYPE2 MouseEffect = {};
