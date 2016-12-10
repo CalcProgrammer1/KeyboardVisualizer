@@ -183,7 +183,11 @@ boolean parse_command_line(char * command_line)
             printf("    avg_mode          - Visualizer averaging mode\r\n");
             printf("                      - 0:  Binning\r\n");
             printf("                      - 1:  Low-pass filtering\r\n");
-            printf("    ledstrip          - COM port, ex. ledstrip=COM1\r\n");
+            printf("    ledstrip          - LED config strings :\r\n");
+            printf("                      - Serial : ledstrip = port, baud, num_leds\r\n");
+            printf("                      - (ex.ledstrip = COM1, 115200, 30)\r\n");
+            printf("                      - UDP : ledstrip = client, port, num_leds\r\n");
+            printf("                      - (ex.ledstrip = 192.168.1.5, 1234, 30)\r\n");
             printf("    xmas              - COM port, ex. xmas=COM2\r\n");
             return FALSE;
         }

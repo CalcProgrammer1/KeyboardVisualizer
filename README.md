@@ -96,7 +96,11 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         avg_mode          - Visualizer averaging mode
                           - 0:  Binning
                           - 1:  Low-pass filtering
-        ledstrip          - COM port, ex. ledstrip=COM1
+        ledstrip          - LED config strings:
+                          - Serial: ledstrip=port,baud,num_leds
+                          -         (ex. ledstrip=COM1,115200,30)
+                          - UDP:    ledstrip=client,port,num_leds
+                          -         (ex. ledstrip=192.168.1.5,1234,30)
         xmas              - COM port, ex. xmas=COM2
 
 # Available Visual Effects
@@ -133,6 +137,9 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         Mouse Mats
         - Firefly (bar)
     
+        External Graphics Dock
+        - Razer Core (bar)
+
     * Corsair CUE SDK
     
         Keyboards
@@ -144,6 +151,16 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         Keyboards
         - MSI 3-zone laptop keyboards (MSI GS63VR, etc) (bar)
         
-    * DIY LED Strips
+    * WS28XX Pixel LED Strips
     
-       Requires Arduino and WS2811/WS2812b LED strips, 30 LEDs per strip supported via included sketch
+        - Arduino (Serial/USB-Serial) or ESP8266 (UDP over WiFi) may be used for controller
+        - WS2812B, WS2811, and compatible LED strips/strings supported
+        - Adjust the LEDs value in the Arduino sketch to match the number of LEDs on your LED strip/string
+        - Recommended maximum of 90 or so LEDs on Arduino using 115200 baud rate
+        - Configure LED strip using the ledstrip command line/settings file parameter
+        - Number of LEDs in Arduino sketch must match num_leds parameter in LED command string
+        - For serial connected LEDs, -ledstrip=port,baud,num_leds (ex. -ledstrip=COM1,115200,30)
+        - For WiFi connected LEDs, -ledstrip=client,port,num_leds (ex. -ledstrip=192.168.1.5,1234,30)
+
+        - For up to 200 LEDs on Arduino using 1000000 baud rate, see my pixel_controller repository
+        - This requires AVR Studio 4 + WinAVR to build, but is more efficient by skipping Arduino IDE
