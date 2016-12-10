@@ -1,7 +1,12 @@
 #include "LEDStrip.h"
 
+#include <fstream>
+#include <iostream>
+#include <string>
+
 LEDStrip::LEDStrip()
 {
+    num_leds = 30;
 }
 
 
@@ -9,10 +14,84 @@ LEDStrip::~LEDStrip()
 {
 }
 
-void LEDStrip::Initialize(char* portname)
+void LEDStrip::Initialize(char* led_string)
+{
+    bool    serial      = TRUE;
+    LPSTR   numleds     = NULL;
+    LPSTR   source      = NULL;
+    LPSTR   udpport_baud= NULL;
+    LPSTR   next        = NULL;
+
+    source = strtok_s(led_string, ",", &next);
+
+    //Check if we are setting up a UDP or Serial interface
+    //UDP is denoted by udp:
+    if (strncmp(source, "udp:", 4) == 0)
+    {
+        source = source + 4;
+        serial = FALSE;
+    }
+
+    //Check for either the UDP port or the serial baud rate
+    if (strlen(next))
+    {
+        udpport_baud = strtok_s(next, ",", &next);
+    }
+
+    //Check for the number of LEDs
+    if (strlen(next))
+    {
+        numleds = strtok_s(next, ",", &next);
+    }
+
+    if (serial)
+    {
+        if (udpport_baud == NULL)
+        {
+            //Initialize with default baud rate
+            InitializeSerial(source, 115200);
+        }
+        else
+        {
+            //Initialize with custom baud rate
+            InitializeSerial(source, atoi(udpport_baud));
+        }
+    }
+    else
+    {
+        if (udpport_baud == NULL)
+        {
+            //Do something
+        }
+        else
+        {
+            //Initialize UDP port
+            InitializeUDP(source, udpport_baud);
+        }
+    }
+
+    if (strlen(numleds))
+    {
+        SetNumLEDs(atoi(numleds));
+    }
+
+}
+
+void LEDStrip::InitializeSerial(char* portname, int baud)
 {
     strcpy(port_name, portname);
-    port = new serial_port(port_name, 115200);
+    baud_rate = baud;
+    serialport = new serial_port(port_name, baud_rate);
+    udpport = NULL;
+}
+
+void LEDStrip::InitializeUDP(char * clientname, char * port)
+{
+    strcpy(client_name, clientname);
+    strcpy(port_name, port);
+
+    udpport = new udp_port(client_name, port_name);
+    serialport = NULL;
 }
 
 char* LEDStrip::GetPortName()
@@ -20,32 +99,49 @@ char* LEDStrip::GetPortName()
     return(port_name);
 }
 
+void LEDStrip::SetNumLEDs(int numleds)
+{
+    num_leds = numleds;
+}
+
 void LEDStrip::SetLEDs(COLORREF pixels[64][256])
 {
-    if (port != NULL)
+    if (serialport != NULL || udpport != NULL)
     {
-        unsigned char serial_buf[92] = { 0 };
+        unsigned char *serial_buf;
+
+        serial_buf = new unsigned char[(num_leds * 3) + 3];
 
         serial_buf[0] = 0xAA;
 
-        for (int idx = 0; idx < 90; idx += 3)
+        for (int idx = 0; idx < (num_leds * 3); idx += 3)
         {
-            serial_buf[idx + 1] = GetRValue(pixels[1][(int)(idx * 2.84f)]);
-            serial_buf[idx + 2] = GetGValue(pixels[1][(int)(idx * 2.84f)]);
-            serial_buf[idx + 3] = GetBValue(pixels[1][(int)(idx * 2.84f)]);
+            serial_buf[idx + 1] = GetRValue(pixels[1][(int)(idx * (256.0f / (3.0f * num_leds)))]);
+            serial_buf[idx + 2] = GetGValue(pixels[1][(int)(idx * (256.0f / (3.0f * num_leds)))]);
+            serial_buf[idx + 3] = GetBValue(pixels[1][(int)(idx * (256.0f / (3.0f * num_leds)))]);
         }
 
-        unsigned char sum = 0;
+        unsigned __int16 sum = 0;
 
-        for (int i = 0; i < 91; i++)
+        for (int i = 0; i < (num_leds * 3) + 1; i++)
         {
             sum += serial_buf[i];
         }
 
-        serial_buf[91] = sum;
+        serial_buf[(num_leds * 3) + 1] = sum >> 8;
+        serial_buf[(num_leds * 3) + 2] = sum & 0x00FF;
 
-        port->serial_write((char *)serial_buf, 92);
-        port->serial_flush_tx();
+        if (serialport != NULL)
+        {
+            serialport->serial_write((char *)serial_buf, (num_leds * 3) + 3);
+            serialport->serial_flush_tx();
+        }
+        else if (udpport != NULL)
+        {
+            udpport->udp_write((char *)serial_buf, (num_leds * 3) + 3);
+        }
+
+        delete[] serial_buf;
     }
 }
 
@@ -71,6 +167,6 @@ void LEDStrip::SetLEDsXmas(COLORREF pixels[64][256])
         }
     }
 
-    port->serial_write((char *)xmas_buf, 5*25);
-    port->serial_flush_tx();
+    serialport->serial_write((char *)xmas_buf, 5*25);
+    serialport->serial_flush_tx();
 };
