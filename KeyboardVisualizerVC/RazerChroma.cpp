@@ -1,3 +1,9 @@
+/*---------------------------------------------------------*\
+|  Processing Code for Razer Chroma SDK Interface           |
+|                                                           |
+|  Adam Honse (calcprogrammer1@gmail.com), 12/11/2016       |
+\*---------------------------------------------------------*/
+
 #include "RazerChroma.h"
 
 #include <iostream>
@@ -137,25 +143,25 @@ void RazerChroma::Initialize()
                     if ((x == 3) && (y == 2))
                     {
                         MouseXIndex[y][x] = 0;
-                        MouseYIndex[y][x] = 3;
+                        MouseYIndex[y][x] = ROW_IDX_SINGLE_COLOR;
                     }
                     //Set logo LED
                     else if ((x == 3) && (y == 7))
                     {
                         MouseXIndex[y][x] = 14 * 5;
-                        MouseYIndex[y][x] = 3;
+                        MouseYIndex[y][x] = ROW_IDX_SINGLE_COLOR;
                     }
                     //Set keypad LED
                     else if ((x == 3) && (y == 4))
                     {
                         MouseXIndex[y][x] = 14 * 5;
-                        MouseYIndex[y][x] = 3;
+                        MouseYIndex[y][x] = ROW_IDX_SINGLE_COLOR;
                     }
                     //Set side LEDs
                     else if (((x == 0) || (x == 6)) && (y > 0) && (y < 8))
                     {
                         MouseXIndex[y][x] = 14 * ( y );
-                        MouseYIndex[y][x] = 0;
+                        MouseYIndex[y][x] = ROW_IDX_BAR_GRAPH;
                     }
                     //Set bottom LEDs
                     else if ((y == 8) && (x > 0) && (x < 6))
@@ -163,17 +169,17 @@ void RazerChroma::Initialize()
                         if ((x == 1) || (x == 5))
                         {
                             MouseXIndex[y][x] = 14 * (y);
-                            MouseYIndex[y][x] = 0;
+                            MouseYIndex[y][x] = ROW_IDX_BAR_GRAPH;
                         }
                         else if ((x == 2) || (x == 4))
                         {
                             MouseXIndex[y][x] = 14 * (y + 1);
-                            MouseYIndex[y][x] = 0;
+                            MouseYIndex[y][x] = ROW_IDX_BAR_GRAPH;
                         }
                         else if (x == 3)
                         {
                             MouseXIndex[y][x] = 14 * (y + 2);
-                            MouseYIndex[y][x] = 0;
+                            MouseYIndex[y][x] = ROW_IDX_BAR_GRAPH;
                         }
                     }
                 }
@@ -214,7 +220,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         FillKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex, &BlackWidowEffect, pixels);
 
         //Set Razer "Three Headed Snake" logo to the background color of the 11th column
-        BlackWidowEffect.Color[0][20] = pixels[3][11 * (256 / 22)];
+        BlackWidowEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
 
         CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
 
@@ -229,7 +235,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         FillKeyboardGrid(18, 6, BlackWidowTEXIndex, BlackWidowTEYIndex, &BlackWidowTEEffect, pixels);
 
         //Set Razer "Three Headed Snake" logo to the background color of the 11th column
-        BlackWidowTEEffect.Color[0][20] = pixels[3][11 * (256 / 22)];
+        BlackWidowTEEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
 
         CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &BlackWidowTEEffect, NULL);
 
@@ -253,7 +259,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
         for (int x = 0; x < 15; x++)
         {
-            FireflyEffect.Color[x] = pixels[0][FireflyIndex[x]];
+            FireflyEffect.Color[x] = pixels[ROW_IDX_BAR_GRAPH][FireflyIndex[x]];
         }
 
         CreateEffect(ChromaSDK::FIREFLY_CHROMA, ChromaSDK::CHROMA_CUSTOM, &FireflyEffect, NULL);
@@ -263,7 +269,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
         for (int x = 0; x < 8; x++)
         {
-            CoreEffect.Color[x+3] = pixels[0][CoreXIndex[x]];
+            CoreEffect.Color[x+3] = pixels[ROW_IDX_BAR_GRAPH][CoreXIndex[x]];
         }
 
         CreateEffect(ChromaSDK::CORE_CHROMA, ChromaSDK::CHROMA_CUSTOM, &CoreEffect, NULL);
@@ -284,7 +290,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         //Kraken Chroma
         ChromaSDK::Headset::STATIC_EFFECT_TYPE KrakenEffect;
 
-        KrakenEffect.Color = pixels[3][0];
+        KrakenEffect.Color = pixels[ROW_IDX_SINGLE_COLOR][0];
 
         CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_NONE, &KrakenEffect, NULL);
         CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &KrakenEffect, NULL);
@@ -295,7 +301,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
         for (int x = 0; x < 6; x++)
         {
-            DeathStalkerEffect.Color[1][DeathStalkerXLEDIndex[x]] = (pixels[0][DeathStalkerXIndex[x]] & 0x00FFFFFF);
+            DeathStalkerEffect.Color[1][DeathStalkerXLEDIndex[x]] = (pixels[ROW_IDX_BAR_GRAPH][DeathStalkerXIndex[x]] & 0x00FFFFFF);
         }
 
         CreateEffect(ChromaSDK::DEATHSTALKER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &DeathStalkerEffect, NULL);
@@ -303,7 +309,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         //Tartarus Chroma
         ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE TartarusEffect;
 
-        TartarusEffect.Color[0][0] = pixels[3][0];
+        TartarusEffect.Color[0][0] = pixels[ROW_IDX_SINGLE_COLOR][0];
 
         CreateEffect(ChromaSDK::TARTARUS_CHROMA, ChromaSDK::CHROMA_CUSTOM, &TartarusEffect, NULL);
 

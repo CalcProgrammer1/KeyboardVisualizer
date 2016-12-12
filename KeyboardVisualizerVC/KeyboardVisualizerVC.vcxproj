@@ -197,6 +197,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="udp_port.h" />
     <ClInclude Include="Visualizer.h" />
+    <ClInclude Include="VisualizerDefines.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

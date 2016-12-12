@@ -1,10 +1,19 @@
-#pragma once
+/*---------------------------------------------------------*\
+|  Definitions for Razer Chroma SDK Interface               |
+|                                                           |
+|  Adam Honse (calcprogrammer1@gmail.com), 12/11/2016       |
+\*---------------------------------------------------------*/
+
+#ifndef RAZER_CHROMA_H
+#define RAZER_CHROMA_H
 
 #include "stdafx.h"
 
 #include "RzChromaSDKDefines.h"
 #include "RzChromaSDKTypes.h"
 #include "RzErrors.h"
+
+#include "VisualizerDefines.h"
 
 using namespace ChromaSDK::Keyboard;
 
@@ -40,3 +49,4 @@ private:
     RZEFFECTID effect;
 };
 
+#endif

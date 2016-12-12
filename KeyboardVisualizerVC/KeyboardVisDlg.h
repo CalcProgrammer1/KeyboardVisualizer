@@ -1,4 +1,11 @@
-#pragma once
+/*---------------------------------------------------------*\
+|  Definitions for Keyboard Visualizer Dialog               |
+|                                                           |
+|  Adam Honse (calcprogrammer1@gmail.com), 12/11/2016       |
+\*---------------------------------------------------------*/
+
+#ifndef KEYBOARD_VIS_DLG_H
+#define KEYBOARD_VIS_DLG_H
 
 #include "stdafx.h"
 #include "Visualizer.h"
@@ -48,3 +55,5 @@ public:
     afx_msg void OnEnChangedEditNrmlScl();
     afx_msg void OnClickedSave();
 };
+
+#endif

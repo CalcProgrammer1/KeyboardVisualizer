@@ -1,4 +1,11 @@
-#pragma once
+/*---------------------------------------------------------*\
+|  Definitions for Keyboard Visualizer                      |
+|                                                           |
+|  Adam Honse (calcprogrammer1@gmail.com), 12/11/2016       |
+\*---------------------------------------------------------*/
+
+#ifndef VISUALIZER_H
+#define VISUALIZER_H
 
 #include "stdafx.h"
 #include <math.h>
@@ -8,36 +15,7 @@
 #include <string>
 #include <vector>
 
-typedef unsigned int VISUALIZER_PATTERN;
-enum
-{
-    //Static Solid Colors
-    VISUALIZER_PATTERN_SOLID_BLACK,
-    VISUALIZER_PATTERN_SOLID_WHITE,
-    VISUALIZER_PATTERN_SOLID_RED,
-    VISUALIZER_PATTERN_SOLID_ORANGE,
-    VISUALIZER_PATTERN_SOLID_YELLOW,
-    VISUALIZER_PATTERN_SOLID_GREEN,
-    VISUALIZER_PATTERN_SOLID_CYAN,
-    VISUALIZER_PATTERN_SOLID_BLUE,
-    VISUALIZER_PATTERN_SOLID_PURPLE,
-    //Static Color Patterns
-    VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED,
-    VISUALIZER_PATTERN_STATIC_GREEN_WHITE_RED,
-    VISUALIZER_PATTERN_STATIC_BLUE_CYAN_WHITE,
-    VISUALIZER_PATTERN_STATIC_RED_WHITE_BLUE,
-    VISUALIZER_PATTERN_STATIC_RAINBOW,
-    VISUALIZER_PATTERN_STATIC_RAINBOW_INVERSE,
-    //Animated Patterns
-    VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL,
-    VISUALIZER_PATTERN_ANIM_RAINBOW_HSV,
-    VISUALIZER_PATTERN_ANIM_COLOR_WHEEL
-};
-
-typedef struct
-{
-    COLORREF pixels[64][256];
-} vis_pixels;
+#include "VisualizerDefines.h"
 
 class Visualizer
 {
@@ -131,3 +109,5 @@ private:
 	//Audio Sample Buffer
 	unsigned char buffer[256];
 };
+
+#endif

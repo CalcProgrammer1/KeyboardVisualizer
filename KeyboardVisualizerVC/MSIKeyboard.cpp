@@ -1,3 +1,9 @@
+/*---------------------------------------------------------*\
+|  Processing Code for MSI SteelSeries Keyboard Interface   |
+|                                                           |
+|  Adam Honse (calcprogrammer1@gmail.com), 12/11/2016       |
+\*---------------------------------------------------------*/
+
 #include "MSIKeyboard.h"
 
 static bool init_ok = TRUE;
@@ -142,24 +148,24 @@ bool MSIKeyboard::SetLEDs(COLORREF pixels[64][256])
     buf[1] = 2;
     buf[2] = 64;
     buf[3] = 1;
-    buf[4] = GetRValue(pixels[1][160]);
-    buf[5] = GetGValue(pixels[1][160]);
-    buf[6] = GetBValue(pixels[1][160]);
+    buf[4] = GetRValue(pixels[ROW_IDX_BAR_GRAPH][160]);
+    buf[5] = GetGValue(pixels[ROW_IDX_BAR_GRAPH][160]);
+    buf[6] = GetBValue(pixels[ROW_IDX_BAR_GRAPH][160]);
     buf[7] = 236;
 
     send_usb_msg(buf);
 
     buf[3] = 2;
-    buf[4] = GetRValue(pixels[1][192]);
-    buf[5] = GetGValue(pixels[1][192]);
-    buf[6] = GetBValue(pixels[1][192]);
+    buf[4] = GetRValue(pixels[ROW_IDX_BAR_GRAPH][192]);
+    buf[5] = GetGValue(pixels[ROW_IDX_BAR_GRAPH][192]);
+    buf[6] = GetBValue(pixels[ROW_IDX_BAR_GRAPH][192]);
 
     send_usb_msg(buf);
 
     buf[3] = 3;
-    buf[4] = GetRValue(pixels[1][224]);
-    buf[5] = GetGValue(pixels[1][224]);
-    buf[6] = GetBValue(pixels[1][224]);
+    buf[4] = GetRValue(pixels[ROW_IDX_BAR_GRAPH][224]);
+    buf[5] = GetGValue(pixels[ROW_IDX_BAR_GRAPH][224]);
+    buf[6] = GetBValue(pixels[ROW_IDX_BAR_GRAPH][224]);
 
     send_usb_msg(buf);
 

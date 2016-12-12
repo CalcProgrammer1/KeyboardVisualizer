@@ -1,3 +1,9 @@
+/*---------------------------------------------------------*\
+|  Processing Code for Keyboard Visualizer                  |
+|                                                           |
+|  Adam Honse (calcprogrammer1@gmail.com), 12/11/2016       |
+\*---------------------------------------------------------*/
+
 #include "Visualizer.h"
 #include "RazerChroma.h"
 #include "CorsairCUE.h"
@@ -428,264 +434,270 @@ void Visualizer::StartThread()
     _beginthread(lsthread, 0, this);
 }
 
-void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels *pixels)
+void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)
 {
     bright = bright * (255.0f / 100.0f);
-
     for (int x = 0; x < 256; x++)
     {
         for (int y = 0; y < 64; y++)
         {
-            int red;
-            int grn;
-            int blu;
+            pixels->pixels[y][x] = RGB(((bright * GetRValue(color)) / 256), ((bright * GetGValue(color)) / 256), ((bright * GetBValue(color)) / 256));
+        }
+    }
+}
 
-            switch (pattern)
+void DrawVerticalBars(int bright, COLORREF * colors, int num_colors, vis_pixels *pixels)
+{
+    bright = bright * (255.0f / 100.0f);
+    for (int x = 0; x < 256; x++)
+    {
+        for (int y = 0; y < 64; y++)
+        {
+            int idx = (float)x * ((float)num_colors / 255.0f);
+            pixels->pixels[y][x] = RGB(((bright * GetRValue(colors[idx])) / 256), ((bright * GetGValue(colors[idx])) / 256), ((bright * GetBValue(colors[idx])) / 256));
+        }
+    }
+}
+
+void DrawHorizontalBars(int bright, COLORREF * colors, int num_colors, vis_pixels *pixels)
+{
+    bright = bright * (255.0f / 100.0f);
+    for (int x = 0; x < 256; x++)
+    {
+        for (int y = 0; y < 64; y++)
+        {
+            if (y == ROW_IDX_BAR_GRAPH)
             {
-            case VISUALIZER_PATTERN_SOLID_BLACK:
-                red = 0;
-                grn = 0;
-                blu = 0;
-                break;
-
-            case VISUALIZER_PATTERN_SOLID_WHITE:
-                red = 255;
-                grn = 255;
-                blu = 255;
-                break;
-
-            case VISUALIZER_PATTERN_SOLID_RED:
-                red = 255;
-                grn = 0;
-                blu = 0;
-                break;
-
-            case VISUALIZER_PATTERN_SOLID_ORANGE:
-                red = 255;
-                grn = 128;
-                blu = 0;
-                break;
-
-            case VISUALIZER_PATTERN_SOLID_YELLOW:
-                red = 255;
-                grn = 255;
-                blu = 0;
-                break;
-
-            case VISUALIZER_PATTERN_SOLID_GREEN:
-                red = 0;
-                grn = 255;
-                blu = 0;
-                break;
-
-            case VISUALIZER_PATTERN_SOLID_CYAN:
-                red = 0;
-                grn = 255;
-                blu = 255;
-                break;
-
-            case VISUALIZER_PATTERN_SOLID_BLUE:
-                red = 0;
-                grn = 0;
-                blu = 255;
-                break;
-
-            case VISUALIZER_PATTERN_SOLID_PURPLE:
-                red = 255;
-                grn = 0;
-                blu = 255;
-                break;
-
-            case VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED:
-                if (y > 171)
+                if (x < 128)
                 {
-                    red = 0;
-                    grn = 255;
-                    blu = 0;
-                }
-                else if (y > 85)
-                {
-                    red = 255;
-                    grn = 255;
-                    blu = 0;
+                    int idx = num_colors - ((float)x * ((float)num_colors / 128.0f));
+                    pixels->pixels[y][x] = RGB(((bright * GetRValue(colors[idx])) / 256), ((bright * GetGValue(colors[idx])) / 256), ((bright * GetBValue(colors[idx])) / 256));
                 }
                 else
                 {
-                    red = 255;
-                    grn = 0;
-                    blu = 0;
+                    int idx = ((float)(x - 128) * ((float)num_colors / 128.0f));
+                    pixels->pixels[y][x] = RGB(((bright * GetRValue(colors[idx])) / 256), ((bright * GetGValue(colors[idx])) / 256), ((bright * GetBValue(colors[idx])) / 256));
                 }
-                break;
-
-            case VISUALIZER_PATTERN_STATIC_GREEN_WHITE_RED:
-                if (y > 171)
-                {
-                    red = 0;
-                    grn = 255;
-                    blu = 0;
-                }
-                else if (y > 85)
-                {
-                    red = 255;
-                    grn = 255;
-                    blu = 255;
-                }
-                else
-                {
-                    red = 255;
-                    grn = 0;
-                    blu = 0;
-                }
-                break;
-
-            case VISUALIZER_PATTERN_STATIC_BLUE_CYAN_WHITE:
-                if (y > 171)
-                {
-                    red = 0;
-                    grn = 0;
-                    blu = 255;
-                }
-                else if (y > 85)
-                {
-                    red = 0;
-                    grn = 255;
-                    blu = 255;
-                }
-                else
-                {
-                    red = 255;
-                    grn = 255;
-                    blu = 255;
-                }
-                break;
-
-            case VISUALIZER_PATTERN_STATIC_RED_WHITE_BLUE:
-                if (y > 171)
-                {
-                    red = 0;
-                    grn = 0;
-                    blu = 255;
-                }
-                else if (y > 171)
-                {
-                    red = 255;
-                    grn = 255;
-                    blu = 255;
-                }
-                else
-                {
-                    red = 255;
-                    grn = 0;
-                    blu = 0;
-                }
-                break;
-
-            case VISUALIZER_PATTERN_STATIC_RAINBOW:
-                if (y > 213)
-                {
-                    red = 255;
-                    grn = 0;
-                    blu = 0;
-                }
-                else if (y > 170)
-                {
-                    red = 255;
-                    grn = 255;
-                    blu = 0;
-                }
-                else if (y > 128)
-                {
-                    red = 0;
-                    grn = 255;
-                    blu = 0;
-                }
-                else if (y > 85)
-                {
-                    red = 0;
-                    grn = 255;
-                    blu = 255;
-                }
-                else if (y > 43)
-                {
-                    red = 0;
-                    grn = 0;
-                    blu = 255;
-                }
-                else
-                {
-                    red = 255;
-                    grn = 0;
-                    blu = 255;
-                }
-                break;
-
-            case VISUALIZER_PATTERN_STATIC_RAINBOW_INVERSE:
-                if (y > 213)
-                {
-                    red = 255;
-                    grn = 0;
-                    blu = 255;
-                }
-                else if (y > 170)
-                {
-                    red = 0;
-                    grn = 0;
-                    blu = 255;
-                }
-                else if (y > 128)
-                {
-                    red = 0;
-                    grn = 255;
-                    blu = 255;
-                }
-                else if (y > 85)
-                {
-                    red = 0;
-                    grn = 255;
-                    blu = 0;
-                }
-                else if (y > 43)
-                {
-                    red = 255;
-                    grn = 255;
-                    blu = 0;
-                }
-                else
-                {
-                    red = 255;
-                    grn = 0;
-                    blu = 0;
-                }
-                break;
-
-            case VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL:
-                red = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1);
-                grn = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1);
-                blu = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) + (6.28f / 3)) + 1);
-                break;
-
-            case VISUALIZER_PATTERN_ANIM_RAINBOW_HSV:
-                {
-                    int hsv_h = ((bkgd_step + (256 - x)) % 360);
-                    hsv_t hsv = { hsv_h, 255, bright };
-                    pixels->pixels[y][x] = hsv2rgb(&hsv);
-                }
-                break;
-
-            case VISUALIZER_PATTERN_ANIM_COLOR_WHEEL:
-                {
-                    float hue = bkgd_step + (int)(180 + atan2(y - 32.1, x - 128.1) * (180.0 / 3.14159)) % 360;
-                    hsv_t hsv2 = { hue, 255, bright };
-                    pixels->pixels[y][x] = hsv2rgb(&hsv2);
-                }
-                break;
             }
-
-            if (pattern < VISUALIZER_PATTERN_ANIM_RAINBOW_HSV)
+            else
             {
-                pixels->pixels[y][x] = RGB(((bright * red)/256), ((bright * grn)/256), ((bright * blu)/256));
+                int idx = num_colors - ((float)y * ((float)num_colors / 63.0f));
+                pixels->pixels[y][x] = RGB(((bright * GetRValue(colors[idx])) / 256), ((bright * GetGValue(colors[idx])) / 256), ((bright * GetBValue(colors[idx])) / 256));
             }
         }
+    }
+}
+
+void DrawRainbowSinusoidal(int bright, int bkgd_step, vis_pixels *pixels)
+{
+    bright = bright * (255.0f / 100.0f);
+    for (int x = 0; x < 256; x++)
+    {
+        for (int y = 0; y < 64; y++)
+        {
+            int red = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1);
+            int grn = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1);
+            int blu = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) + (6.28f / 3)) + 1);
+            pixels->pixels[y][x] = RGB(((bright * red) / 256), ((bright * grn) / 256), ((bright * blu) / 256));
+        }
+    }
+}
+
+void DrawRainbow(int bright, int bkgd_step, vis_pixels *pixels)
+{
+    bright = bright * (255.0f / 100.0f);
+    for (int x = 0; x < 256; x++)
+    {
+        for (int y = 0; y < 64; y++)
+        {
+            int hsv_h = ((bkgd_step + (256 - x)) % 360);
+            hsv_t hsv = { hsv_h, 255, bright };
+            pixels->pixels[y][x] = hsv2rgb(&hsv);
+        }
+    }
+}
+
+void DrawColorWheel(int bright, int bkgd_step, vis_pixels *pixels)
+{
+    bright = bright * (255.0f / 100.0f);
+    for (int x = 0; x < 256; x++)
+    {
+        for (int y = 0; y < 64; y++)
+        {
+            float hue = bkgd_step + (int)(180 + atan2(y - 32.1, x - 128.1) * (180.0 / 3.14159)) % 360;
+            hsv_t hsv2 = { hue, 255, bright };
+            pixels->pixels[y][x] = hsv2rgb(&hsv2);
+        }
+    }
+}
+
+void DrawSpectrumCycle(int bright, int bkgd_step, vis_pixels *pixels)
+{
+    bright = bright * (255.0f / 100.0f);
+    for (int x = 0; x < 256; x++)
+    {
+        for (int y = 0; y < 64; y++)
+        {
+            hsv_t hsv2 = { bkgd_step, 255, bright };
+            pixels->pixels[y][x] = hsv2rgb(&hsv2);
+        }
+    }
+}
+
+void DrawSingleColorBackground(float amplitude, vis_pixels *bg_pixels, vis_pixels *out_pixels)
+{
+    if (amplitude >= 1.0f)
+    {
+        amplitude = 1.0f;
+    }
+    else if (amplitude <= 0.0f)
+    {
+        amplitude = 0.0f;
+    }
+
+    for (int x = 0; x < 256; x++)
+    {
+        int in_color = bg_pixels->pixels[ROW_IDX_SINGLE_COLOR][x];
+        int out_color = RGB(((amplitude * GetRValue(in_color))), ((amplitude * GetGValue(in_color))), ((amplitude * GetBValue(in_color))));
+        out_pixels->pixels[ROW_IDX_SINGLE_COLOR][x] = out_color;
+    }
+}
+
+void DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixels *out_pixels)
+{
+    if (amplitude >= 1.0f)
+    {
+        amplitude = 1.0f;
+    }
+    else if (amplitude <= 0.0f)
+    {
+        amplitude = 0.0f;
+    }
+
+    int idx = 64.0f - (amplitude * 62.0f);
+    int in_color = fg_pixels->pixels[idx][0];
+    int out_color = RGB(((amplitude * GetRValue(in_color))), ((amplitude * GetGValue(in_color))), ((amplitude * GetBValue(in_color))));
+    for (int x = 0; x < 256; x++)
+    {
+        out_pixels->pixels[ROW_IDX_SINGLE_COLOR][x] = out_color;
+    }
+}
+
+void DrawSingleColorStatic(float amplitude, COLORREF in_color, vis_pixels *out_pixels)
+{
+    if (amplitude >= 1.0f)
+    {
+        amplitude = 1.0f;
+    }
+    else if (amplitude <= 0.0f)
+    {
+        amplitude = 0.0f;
+    }
+
+    int out_color = RGB(((amplitude * GetRValue(in_color))), ((amplitude * GetGValue(in_color))), ((amplitude * GetBValue(in_color))));
+    for (int x = 0; x < 256; x++)
+    {
+        out_pixels->pixels[ROW_IDX_SINGLE_COLOR][x] = out_color;
+    }
+}
+
+void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels *pixels)
+{
+    switch (pattern)
+    {
+    case VISUALIZER_PATTERN_SOLID_BLACK:
+        DrawSolidColor(bright, 0x00000000, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_SOLID_WHITE:
+        DrawSolidColor(bright, 0x00FFFFFF, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_SOLID_RED:
+        DrawSolidColor(bright, 0x000000FF, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_SOLID_ORANGE:
+        DrawSolidColor(bright, 0x000080FF, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_SOLID_YELLOW:
+        DrawSolidColor(bright, 0x0000FFFF, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_SOLID_GREEN:
+        DrawSolidColor(bright, 0x0000FF00, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_SOLID_CYAN:
+        DrawSolidColor(bright, 0x00FFFF00, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_SOLID_BLUE:
+        DrawSolidColor(bright, 0x00FF0000, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_SOLID_PURPLE:
+        DrawSolidColor(bright, 0x00FF00FF, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED:
+        {
+        COLORREF colors[] = { 0x0000FF00, 0x0000FFFF, 0x000000FF };
+        DrawHorizontalBars(bright, colors, 3, pixels);
+        }
+        break;
+
+    case VISUALIZER_PATTERN_STATIC_GREEN_WHITE_RED:
+        {
+        COLORREF colors[] = { 0x0000FF00, 0x00FFFFFF, 0x000000FF };
+        DrawHorizontalBars(bright, colors, 3, pixels);
+        }
+        break;
+
+    case VISUALIZER_PATTERN_STATIC_BLUE_CYAN_WHITE:
+        {
+        COLORREF colors[] = { 0x00FF0000, 0x00FFFF00, 0x00FFFFFF };
+        DrawHorizontalBars(bright, colors, 3, pixels);
+        }
+        break;
+
+    case VISUALIZER_PATTERN_STATIC_RED_WHITE_BLUE:
+        {
+        COLORREF colors[] = { 0x000000FF, 0x00FFFFFF, 0x00FF0000 };
+        DrawHorizontalBars(bright, colors, 3, pixels);
+        }
+        break;
+
+    case VISUALIZER_PATTERN_STATIC_RAINBOW:
+        {
+        COLORREF colors[] = { 0x000000FF, 0x0000FFFF, 0x0000FF00, 0x00FFFF00, 0x00FF0000, 0x00FF00FF };
+        DrawHorizontalBars(bright, colors, 6, pixels);
+        }
+        break;
+
+    case VISUALIZER_PATTERN_STATIC_RAINBOW_INVERSE:
+        {
+        COLORREF colors[] = { 0x00FF00FF, 0x00FF0000, 0x00FFFF00, 0x0000FF00, 0x0000FFFF, 0x000000FF };
+        DrawHorizontalBars(bright, colors, 6, pixels);
+        }
+        break;
+
+    case VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL:
+        DrawRainbowSinusoidal(bright, bkgd_step, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_ANIM_RAINBOW_HSV:
+        DrawRainbow(bright, bkgd_step, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_ANIM_COLOR_WHEEL:
+        DrawColorWheel(bright, bkgd_step, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_ANIM_SPECTRUM_CYCLE:
+        DrawSpectrumCycle(bright, bkgd_step, pixels);
+        break;
     }
 }
 
@@ -712,20 +724,17 @@ void Visualizer::VisThread()
                 float brightness = bkgd_bright * (255.0f / 100.0f);
 
                 //Draw Spectrograph Foreground
-                if (y > 3)
+                if (fft[x] >((1 / 64.0f)*(64.0f - y)))
                 {
-                    if (fft[x] >((1 / 64.0f)*(64.0f - y)))
-                    {
-                        pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
-                    }
-                    else
-                    {
-                        pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
-                    }
+                    pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
+                }
+                else
+                {
+                    pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
                 }
 
                 //Draw Bar Graph Foreground
-                if (y < 2)
+                if (y == ROW_IDX_BAR_GRAPH)
                 {
                     if (x < 128)
                     {
@@ -750,70 +759,60 @@ void Visualizer::VisThread()
                         }
                     }
                 }
-
-                //Draw brightness based visualizer for single LED devices
-                if (y == 3)
-                {
-                    float brightness = fft[5] * 255;
-                    switch (single_color_mode)
-                    {
-                    //None
-                    case 0:
-                        pixels_render->pixels[y][x] = RGB(0, 0, 0);
-                        break;
-
-                    //Follow Foreground
-                    case 1:
-                        //pixels_render->pixels[y][x] = GetAmplitudeColor(255 - brightness, 255, brightness);
-                        break;
-
-                    //Follow Background:
-                    case 2:
-                        break;
-
-                    //White
-                    case 3:
-                        pixels_render->pixels[y][x] = RGB(brightness, brightness, brightness);
-                        break;
-
-                    //Red
-                    case 4:
-                        pixels_render->pixels[y][x] = RGB(brightness, 0, 0);
-                        break;
-
-                    //Orange
-                    case 5:
-                        pixels_render->pixels[y][x] = RGB(brightness, brightness / 2, 0);
-                        break;
-
-                    //Yellow
-                    case 6:
-                        pixels_render->pixels[y][x] = RGB(brightness, brightness, 0);
-                        break;
-
-                    //Green
-                    case 7:
-                        pixels_render->pixels[y][x] = RGB(0, brightness, 0);
-                        break;
-
-                    //Cyan
-                    case 8:
-                        pixels_render->pixels[y][x] = RGB(0, brightness, brightness);
-                        break;
-
-                    //Blue
-                    case 9:
-                        pixels_render->pixels[y][x] = RGB(0, 0, brightness);
-                        break;
-
-                    //Purple
-                    case 10:
-                        pixels_render->pixels[y][x] = RGB(brightness, 0, brightness);
-                        break;
-                    }
-                }
 			}
 		}
+
+        //Draw brightness based visualizer for single LED devices
+        switch (single_color_mode)
+        {
+        case VISUALIZER_SINGLE_COLOR_BLACK:
+            DrawSingleColorStatic(fft[5], 0x00000000, pixels_render);
+            break;
+
+        case VISUALIZER_SINGLE_COLOR_WHITE:
+            DrawSingleColorStatic(fft[5], 0x00FFFFFF, pixels_render);
+            break;
+
+        case VISUALIZER_SINGLE_COLOR_RED:
+            DrawSingleColorStatic(fft[5], 0x000000FF, pixels_render);
+            break;
+
+        case VISUALIZER_SINGLE_COLOR_ORANGE:
+            DrawSingleColorStatic(fft[5], 0x000080FF, pixels_render);
+            break;
+
+        case VISUALIZER_SINGLE_COLOR_YELLOW:
+            DrawSingleColorStatic(fft[5], 0x0000FFFF, pixels_render);
+            break;
+
+        case VISUALIZER_SINGLE_COLOR_GREEN:
+            DrawSingleColorStatic(fft[5], 0x0000FF00, pixels_render);
+            break;
+
+        case VISUALIZER_SINGLE_COLOR_CYAN:
+            DrawSingleColorStatic(fft[5], 0x00FFFF00, pixels_render);
+            break;
+
+        case VISUALIZER_SINGLE_COLOR_BLUE:
+            DrawSingleColorStatic(fft[5], 0x00FF0000, pixels_render);
+            break;
+
+        case VISUALIZER_SINGLE_COLOR_PURPLE:
+            DrawSingleColorStatic(fft[5], 0x00FF00FF, pixels_render);
+            break;
+
+        case VISUALIZER_SINGLE_COLOR_BACKGROUND:
+            //Intentionally do nothing, leave the background unmodified
+            break;
+
+        case VISUALIZER_SINGLE_COLOR_FOLLOW_BACKGROUND:
+            DrawSingleColorBackground(fft[5], &pixels_bg, pixels_render);
+            break;
+
+        case VISUALIZER_SINGLE_COLOR_FOLLOW_FOREGROUND:
+            DrawSingleColorForeground(fft[5], &pixels_fg, pixels_render);
+            break;
+        }
 
         //Swap buffers
         if (pixels_render == &pixels_vs1)

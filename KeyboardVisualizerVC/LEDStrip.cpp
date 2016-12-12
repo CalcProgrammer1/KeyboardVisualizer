@@ -1,3 +1,9 @@
+/*---------------------------------------------------------*\
+|  Processing Code for Generic LED Strip Interface          |
+|                                                           |
+|  Adam Honse (calcprogrammer1@gmail.com), 12/11/2016       |
+\*---------------------------------------------------------*/
+
 #include "LEDStrip.h"
 
 #include <fstream>
@@ -118,9 +124,9 @@ void LEDStrip::SetLEDs(COLORREF pixels[64][256])
 
         for (int idx = 0; idx < (num_leds * 3); idx += 3)
         {
-            serial_buf[idx + 1] = GetRValue(pixels[1][(int)(idx * (256.0f / (3.0f * num_leds)))]);
-            serial_buf[idx + 2] = GetGValue(pixels[1][(int)(idx * (256.0f / (3.0f * num_leds)))]);
-            serial_buf[idx + 3] = GetBValue(pixels[1][(int)(idx * (256.0f / (3.0f * num_leds)))]);
+            serial_buf[idx + 1] = GetRValue(pixels[ROW_IDX_BAR_GRAPH][(int)(idx * (256.0f / (3.0f * num_leds)))]);
+            serial_buf[idx + 2] = GetGValue(pixels[ROW_IDX_BAR_GRAPH][(int)(idx * (256.0f / (3.0f * num_leds)))]);
+            serial_buf[idx + 3] = GetBValue(pixels[ROW_IDX_BAR_GRAPH][(int)(idx * (256.0f / (3.0f * num_leds)))]);
         }
 
         unsigned __int16 sum = 0;
@@ -153,9 +159,9 @@ void LEDStrip::SetLEDsXmas(COLORREF pixels[64][256])
 
     for (int idx = 0; idx < 25; idx++)
     {
-        unsigned int xmas_color = ((GetBValue(pixels[0][(int)(idx * 5.12f)])/16)<<8)
-                                | ((GetGValue(pixels[0][(int)(idx * 5.12f)])/16)<<4)
-                                | ((GetRValue(pixels[0][(int)(idx * 5.12f)])/16));
+        unsigned int xmas_color = ((GetBValue(pixels[ROW_IDX_BAR_GRAPH][(int)(idx * 5.12f)])/16)<<8)
+                                | ((GetGValue(pixels[ROW_IDX_BAR_GRAPH][(int)(idx * 5.12f)])/16)<<4)
+                                | ((GetRValue(pixels[ROW_IDX_BAR_GRAPH][(int)(idx * 5.12f)])/16));
 
         xmas_buf[(idx * 5)] = 0x00;
         xmas_buf[(idx * 5) + 1] = idx + 1;

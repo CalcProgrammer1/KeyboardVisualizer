@@ -1,8 +1,17 @@
-#pragma once
+/*---------------------------------------------------------*\
+|  Definitions for Generic LED Strip Interface              |
+|                                                           |
+|  Adam Honse (calcprogrammer1@gmail.com), 12/11/2016       |
+\*---------------------------------------------------------*/
+
+#ifndef LED_STRIP_H
+#define LED_STRIP_H
 
 #include "stdafx.h"
 #include "serial_port.h"
 #include "udp_port.h"
+
+#include "VisualizerDefines.h"
 
 class LEDStrip
 {
@@ -28,3 +37,4 @@ private:
     udp_port *udpport;
 };
 
+#endif

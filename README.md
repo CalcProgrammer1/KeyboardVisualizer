@@ -39,7 +39,7 @@ Keyboard Visualizer allows you to save your custom settings in two different way
     
     Available command line arguments:
         Usage: argument1=value1 argument2=value2 ...
-
+    
         amplitude         - Adjust the amplitude of the visualizer
         bkgd_bright       - Adjust the background brightness
         avg_size          - Number of points to average
@@ -53,54 +53,66 @@ Keyboard Visualizer allows you to save your custom settings in two different way
                           - 2:  Hamming window
                           - 3:  Blackman window
         bkgd_mode         - Background mode, values are:
-                          - 0:  None (black)
-                          - 1:  Original (sinusoidal rainbow effect)
-                          - 2:  Rainbow (HSV rainbow effect)
-                          - 3:  Color Wheel
-                          - 4:  Follow foreground effect
-                          - 5:  White
-                          - 6:  Red
-                          - 7:  Orange
-                          - 8:  Yellow
-                          - 9:  Green
-                          - 10: Cyan
-                          - 11: Blue
-                          - 12: Purple
+                          - 0  Black
+                          - 1  White
+                          - 2  Red
+                          - 3  Orange
+                          - 4  Yellow
+                          - 5  Green
+                          - 6  Cyan
+                          - 7  Blue
+                          - 8  Purple
+                          - 9  Green/Yellow/Red
+                          - 10 Green/White/Red
+                          - 11 Blue/Cyan/White
+                          - 12 Red/White/Blue
+                          - 13 Rainbow Bars
+                          - 14 Rainbow Bars Inverse
+                          - 15 Original
+                          - 16 Rainbow
+                          - 17 Color Wheel
+                          - 18 Spectrum Cycle
         frgd_mode         - Foreground mode, values are:
-                          - 0:  White
-                          - 1:  Red
-                          - 2:  Orange
-                          - 3:  Yellow
-                          - 4:  Green
-                          - 5:  Cyan
-                          - 6:  Blue
-                          - 7:  Purple
-                          - 8:  Green/Yellow/Red
-                          - 9:  Green/White/Red
-                          - 10: White/Cyan/Blue
-                          - 11: Red/White/Blue
-                          - 12: Rainbow
-                          - 13: Rainbow Inverse
+                          - 0  Black
+                          - 1  White
+                          - 2  Red
+                          - 3  Orange
+                          - 4  Yellow
+                          - 5  Green
+                          - 6  Cyan
+                          - 7  Blue
+                          - 8  Purple
+                          - 9  Green/Yellow/Red
+                          - 10 Green/White/Red
+                          - 11 Blue/Cyan/White
+                          - 12 Red/White/Blue
+                          - 13 Rainbow Bars
+                          - 14 Rainbow Bars Inverse
+                          - 15 Original
+                          - 16 Rainbow
+                          - 17 Color Wheel
+                          - 18 Spectrum Cycle
         single_color_mode - Single color mode, values are:
-                          - 0:  None (black)
-                          - 1:  Follow foreground effect
-                          - 2:  Follow background effect
-                          - 3:  White
-                          - 4:  Red
-                          - 5:  Orange
-                          - 6:  Yellow
-                          - 7:  Green
-                          - 8:  Cyan
-                          - 9:  Blue
-                          - 10: Purple
+                          - 0  Black
+                          - 1  White
+                          - 2  Red
+                          - 3  Orange
+                          - 4  Yellow
+                          - 5  Green
+                          - 6  Cyan
+                          - 7  Blue
+                          - 8  Purple
+                          - 9  Background
+                          - 10 Follow Background
+                          - 11 Follow Foreground
         avg_mode          - Visualizer averaging mode
                           - 0:  Binning
                           - 1:  Low-pass filtering
-        ledstrip          - LED config strings:
-                          - Serial: ledstrip=port,baud,num_leds
-                          -         (ex. ledstrip=COM1,115200,30)
-                          - UDP:    ledstrip=client,port,num_leds
-                          -         (ex. ledstrip=192.168.1.5,1234,30)
+        ledstrip          - LED config strings :
+                          - Serial : ledstrip = port, baud, num_leds
+                          - (ex.ledstrip = COM1, 115200, 30)
+                          - UDP : ledstrip = client, port, num_leds
+                          - (ex.ledstrip = 192.168.1.5, 1234, 30)
         xmas              - COM port, ex. xmas=COM2
 
 # Available Visual Effects

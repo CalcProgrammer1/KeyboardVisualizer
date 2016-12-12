@@ -1,5 +1,8 @@
-// KeyboardVisDlg.cpp : implementation file
-//
+/*---------------------------------------------------------*\
+|  Processing Code for Keyboard Visualizer Dialog           |
+|                                                           |
+|  Adam Honse (calcprogrammer1@gmail.com), 12/11/2016       |
+\*---------------------------------------------------------*/
 
 #include "stdafx.h"
 #include "KeyboardVisDlg.h"
@@ -78,61 +81,24 @@ BOOL KeyboardVisDlg::OnInitDialog()
 	windowBox->SetCurSel(vis->window_mode);
 
 	CComboBox* bkgdModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_BKGD_MODE);
-	bkgdModeBox->AddString("Black");
-    bkgdModeBox->AddString("White");
-    bkgdModeBox->AddString("Red");
-    bkgdModeBox->AddString("Orange");
-    bkgdModeBox->AddString("Yellow");
-    bkgdModeBox->AddString("Green");
-    bkgdModeBox->AddString("Cyan");
-    bkgdModeBox->AddString("Blue");
-    bkgdModeBox->AddString("Purple");
-    bkgdModeBox->AddString("Green/Yellow/Red");
-    bkgdModeBox->AddString("Green/White/Red");
-    bkgdModeBox->AddString("Blue/Cyan/White");
-    bkgdModeBox->AddString("Red/White/Blue");
-    bkgdModeBox->AddString("Rainbow");
-    bkgdModeBox->AddString("Rainbow Inverse");
-    bkgdModeBox->AddString("Original");
-	bkgdModeBox->AddString("Rainbow");
-    bkgdModeBox->AddString("Color Wheel");
-    //bkgdModeBox->AddString("Follow Foreground");
-
+    for (int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
+    {
+        bkgdModeBox->AddString(visualizer_pattern_labels[i]);
+    }
 	bkgdModeBox->SetCurSel(vis->bkgd_mode);
 
     CComboBox* frgdModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_FRGD_MODE);
-    frgdModeBox->AddString("Black");
-    frgdModeBox->AddString("White");
-    frgdModeBox->AddString("Red");
-    frgdModeBox->AddString("Orange");
-    frgdModeBox->AddString("Yellow");
-    frgdModeBox->AddString("Green");
-    frgdModeBox->AddString("Cyan");
-    frgdModeBox->AddString("Blue");
-    frgdModeBox->AddString("Purple");
-    frgdModeBox->AddString("Green/Yellow/Red");
-    frgdModeBox->AddString("Green/White/Red");
-    frgdModeBox->AddString("Blue/Cyan/White");
-    frgdModeBox->AddString("Red/White/Blue");
-    frgdModeBox->AddString("Rainbow");
-    frgdModeBox->AddString("Rainbow Inverse");
-    frgdModeBox->AddString("Original");
-    frgdModeBox->AddString("Rainbow");
-    frgdModeBox->AddString("Color Wheel");
+    for (int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
+    {
+        frgdModeBox->AddString(visualizer_pattern_labels[i]);
+    }
     frgdModeBox->SetCurSel(vis->frgd_mode);
 
     CComboBox* snglClrModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_SNGL_CLR_MODE);
-    snglClrModeBox->AddString("None");
-    snglClrModeBox->AddString("Follow Foreground");
-    snglClrModeBox->AddString("Follow Background");
-    snglClrModeBox->AddString("White");
-    snglClrModeBox->AddString("Red");
-    snglClrModeBox->AddString("Orange");
-    snglClrModeBox->AddString("Yellow");
-    snglClrModeBox->AddString("Green");
-    snglClrModeBox->AddString("Cyan");
-    snglClrModeBox->AddString("Blue");
-    snglClrModeBox->AddString("Purple");
+    for (int i = 0; i < VISUALIZER_NUM_SINGLE_COLOR; i++)
+    {
+        snglClrModeBox->AddString(visualizer_single_color_labels[i]);
+    }
     snglClrModeBox->SetCurSel(vis->single_color_mode);
 
     CComboBox* avgModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_AVG_MODE);

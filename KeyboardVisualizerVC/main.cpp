@@ -1,3 +1,9 @@
+/*---------------------------------------------------------*\
+|  Entry Point Code for Keyboard Visualizer Application     |
+|                                                           |
+|  Adam Honse (calcprogrammer1@gmail.com), 12/11/2016       |
+\*---------------------------------------------------------*/
+
 #include "stdafx.h"
 #include "resource.h"
 #include "KeyboardVisDlg.h"
@@ -64,7 +70,7 @@ void parse_argument_string(char * argument, char * value)
 
     if (strcmp(argument, "bkgd_mode") == 0)
     {
-        if ((atoi(value) >= 0) && (atoi(value) <= 17))
+        if ((atoi(value) >= 0) && (atoi(value) <= VISUALIZER_NUM_PATTERNS))
         {
             vis.bkgd_mode = atoi(value);
         }
@@ -72,7 +78,7 @@ void parse_argument_string(char * argument, char * value)
 
     if (strcmp(argument, "frgd_mode") == 0)
     {
-        if ((atoi(value) >= 0) && (atoi(value) <= 17))
+        if ((atoi(value) >= 0) && (atoi(value) <= VISUALIZER_NUM_PATTERNS))
         {
             vis.frgd_mode = atoi(value);
         }
@@ -80,7 +86,7 @@ void parse_argument_string(char * argument, char * value)
 
     if (strcmp(argument, "single_color_mode") == 0)
     {
-        if ((atoi(value) >= 0) && (atoi(value) <= 10))
+        if ((atoi(value) >= 0) && (atoi(value) <= VISUALIZER_NUM_SINGLE_COLOR))
         {
             vis.single_color_mode = atoi(value);
         }
@@ -140,46 +146,41 @@ boolean parse_command_line(char * command_line)
             printf("                      - 2:  Hamming window\r\n");
             printf("                      - 3:  Blackman window\r\n");
             printf("    bkgd_mode         - Background mode, values are:\r\n");
-            printf("                      - 0:  None (black)\r\n");
-            printf("                      - 1:  Original (sinusoidal rainbow effect)\r\n");
-            printf("                      - 2:  Rainbow (HSV rainbow effect)\r\n");
-            printf("                      - 3:  Color Wheel\r\n");
-            printf("                      - 4:  Follow foreground effect\r\n");
-            printf("                      - 5:  White\r\n");
-            printf("                      - 6:  Red\r\n");
-            printf("                      - 7:  Orange\r\n");
-            printf("                      - 8:  Yellow\r\n");
-            printf("                      - 9:  Green\r\n");
-            printf("                      - 10: Cyan\r\n");
-            printf("                      - 11: Blue\r\n");
-            printf("                      - 12: Purple\r\n");
+            for (int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
+            {
+                if (i < 10)
+                {
+                    printf("                      - %d  %s\r\n", i, visualizer_pattern_labels[i]);
+                }
+                else
+                {
+                    printf("                      - %d %s\r\n", i, visualizer_pattern_labels[i]);
+                }
+            }
             printf("    frgd_mode         - Foreground mode, values are:\r\n");
-            printf("                      - 0:  White\r\n");
-            printf("                      - 1:  Red\r\n");
-            printf("                      - 2:  Orange\r\n");
-            printf("                      - 3:  Yellow\r\n");
-            printf("                      - 4:  Green\r\n");
-            printf("                      - 5:  Cyan\r\n");
-            printf("                      - 6:  Blue\r\n");
-            printf("                      - 7:  Purple\r\n");
-            printf("                      - 8:  Green/Yellow/Red\r\n");
-            printf("                      - 9:  Green/White/Red\r\n");
-            printf("                      - 10: White/Cyan/Blue\r\n");
-            printf("                      - 11: Red/White/Blue\r\n");
-            printf("                      - 12: Rainbow\r\n");
-            printf("                      - 13: Rainbow Inverse\r\n");
+            for (int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
+            {
+                if (i < 10)
+                {
+                    printf("                      - %d  %s\r\n", i, visualizer_pattern_labels[i]);
+                }
+                else
+                {
+                    printf("                      - %d %s\r\n", i, visualizer_pattern_labels[i]);
+                }
+            }
             printf("    single_color_mode - Single color mode, values are:\r\n");
-            printf("                      - 0:  None (black)\r\n");
-            printf("                      - 1:  Follow foreground effect\r\n");
-            printf("                      - 2:  Follow background effect\r\n");
-            printf("                      - 3:  White\r\n");
-            printf("                      - 4:  Red\r\n");
-            printf("                      - 5:  Orange\r\n");
-            printf("                      - 6:  Yellow\r\n");
-            printf("                      - 7:  Green\r\n");
-            printf("                      - 8:  Cyan\r\n");
-            printf("                      - 9:  Blue\r\n");
-            printf("                      - 10: Purple\r\n");
+            for (int i = 0; i < VISUALIZER_NUM_SINGLE_COLOR; i++)
+            {
+                if (i < 10)
+                {
+                    printf("                      - %d  %s\r\n", i, visualizer_single_color_labels[i]);
+                }
+                else
+                {
+                    printf("                      - %d %s\r\n", i, visualizer_single_color_labels[i]);
+                }
+            }
             printf("    avg_mode          - Visualizer averaging mode\r\n");
             printf("                      - 0:  Binning\r\n");
             printf("                      - 1:  Low-pass filtering\r\n");
