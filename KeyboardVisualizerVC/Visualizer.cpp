@@ -35,6 +35,8 @@ IAudioClient *pAudioClient;
 IAudioCaptureClient *pAudioCaptureClient;
 WAVEFORMATEX *waveformat;
 
+int single_color_timeout;
+
 //Thread starting static function
 static void thread(void *param)
 {
@@ -139,6 +141,7 @@ void Visualizer::Initialize()
 	ckb.Initialize();
     mkb.Initialize();
 
+    single_color_timeout = 0;
     amplitude   = 100;
     anim_speed  = 100.0f;
     avg_mode    = 0;
@@ -768,43 +771,66 @@ void Visualizer::VisThread()
 			}
 		}
 
+        
+        //If music isn't playing, fade in the single color LEDs after 2 seconds
+        float brightness = fft[5];
+        single_color_timeout++;
+        for (int i = 0; i < 128; i++)
+        {
+            if (fft[2 * i] >= 0.0001f)
+            {
+                single_color_timeout = 0;
+            }
+        }
+        if (single_color_timeout >= 120)
+        {
+            if (single_color_mode == VISUALIZER_SINGLE_COLOR_FOLLOW_BACKGROUND)
+            {
+                brightness = (single_color_timeout - 120) / 240.0f;
+            }
+            else
+            {
+                brightness = (bkgd_bright / 100.0f) * (single_color_timeout - 120) / 240.0f;
+            }
+        }
+
         //Draw brightness based visualizer for single LED devices
         switch (single_color_mode)
         {
         case VISUALIZER_SINGLE_COLOR_BLACK:
-            DrawSingleColorStatic(fft[5], 0x00000000, pixels_render);
+            DrawSingleColorStatic(brightness, 0x00000000, pixels_render);
             break;
 
         case VISUALIZER_SINGLE_COLOR_WHITE:
-            DrawSingleColorStatic(fft[5], 0x00FFFFFF, pixels_render);
+            DrawSingleColorStatic(brightness, 0x00FFFFFF, pixels_render);
             break;
 
         case VISUALIZER_SINGLE_COLOR_RED:
-            DrawSingleColorStatic(fft[5], 0x000000FF, pixels_render);
+            DrawSingleColorStatic(brightness, 0x000000FF, pixels_render);
             break;
 
         case VISUALIZER_SINGLE_COLOR_ORANGE:
-            DrawSingleColorStatic(fft[5], 0x000080FF, pixels_render);
+            DrawSingleColorStatic(brightness, 0x000080FF, pixels_render);
             break;
 
         case VISUALIZER_SINGLE_COLOR_YELLOW:
-            DrawSingleColorStatic(fft[5], 0x0000FFFF, pixels_render);
+            DrawSingleColorStatic(brightness, 0x0000FFFF, pixels_render);
             break;
 
         case VISUALIZER_SINGLE_COLOR_GREEN:
-            DrawSingleColorStatic(fft[5], 0x0000FF00, pixels_render);
+            DrawSingleColorStatic(brightness, 0x0000FF00, pixels_render);
             break;
 
         case VISUALIZER_SINGLE_COLOR_CYAN:
-            DrawSingleColorStatic(fft[5], 0x00FFFF00, pixels_render);
+            DrawSingleColorStatic(brightness, 0x00FFFF00, pixels_render);
             break;
 
         case VISUALIZER_SINGLE_COLOR_BLUE:
-            DrawSingleColorStatic(fft[5], 0x00FF0000, pixels_render);
+            DrawSingleColorStatic(brightness, 0x00FF0000, pixels_render);
             break;
 
         case VISUALIZER_SINGLE_COLOR_PURPLE:
-            DrawSingleColorStatic(fft[5], 0x00FF00FF, pixels_render);
+            DrawSingleColorStatic(brightness, 0x00FF00FF, pixels_render);
             break;
 
         case VISUALIZER_SINGLE_COLOR_BACKGROUND:
@@ -812,11 +838,11 @@ void Visualizer::VisThread()
             break;
 
         case VISUALIZER_SINGLE_COLOR_FOLLOW_BACKGROUND:
-            DrawSingleColorBackground(fft[5], &pixels_bg, pixels_render);
+            DrawSingleColorBackground(brightness, &pixels_bg, pixels_render);
             break;
 
         case VISUALIZER_SINGLE_COLOR_FOLLOW_FOREGROUND:
-            DrawSingleColorForeground(fft[5], &pixels_fg, pixels_render);
+            DrawSingleColorForeground(brightness, &pixels_fg, pixels_render);
             break;
         }
 
