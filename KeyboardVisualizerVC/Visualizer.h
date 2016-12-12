@@ -83,6 +83,7 @@ public:
     vis_pixels *pixels_render;
 
 	//Background Variables
+    float anim_speed;
 	int bkgd_bright;
 	int bkgd_mode;
 
@@ -98,7 +99,7 @@ public:
 
 private:
 	//Background Step
-	int bkgd_step;
+	float bkgd_step;
 
 	//FFT Variables
 	float win_hanning[256];

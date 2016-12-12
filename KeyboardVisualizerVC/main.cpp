@@ -60,6 +60,11 @@ void parse_argument_string(char * argument, char * value)
         vis.nrml_scl = strtod(value, NULL);
     }
 
+    if (strcmp(argument, "anim_speed") == 0)
+    {
+        vis.anim_speed = strtod(value, NULL);
+    }
+
     if (strcmp(argument, "window_mode") == 0)
     {
         if ((atoi(value) >= 0) && (atoi(value) <= 4))
@@ -184,6 +189,7 @@ boolean parse_command_line(char * command_line)
             printf("    avg_mode          - Visualizer averaging mode\r\n");
             printf("                      - 0:  Binning\r\n");
             printf("                      - 1:  Low-pass filtering\r\n");
+            printf("    anim_speed        - Animation Speed (percent)\r\n");
             printf("    ledstrip          - LED config strings :\r\n");
             printf("                      - Serial : ledstrip = port, baud, num_leds\r\n");
             printf("                      - (ex.ledstrip = COM1, 115200, 30)\r\n");

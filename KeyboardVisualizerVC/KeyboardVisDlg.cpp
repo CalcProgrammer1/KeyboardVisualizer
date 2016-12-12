@@ -61,15 +61,18 @@ BOOL KeyboardVisDlg::OnInitDialog()
 
     char nrml_ofst_str[64];
     char nrml_scl_str[64];
+    char anim_speed_str[64];
 
     snprintf(nrml_ofst_str, 64, "%f", vis->nrml_ofst);
     snprintf(nrml_scl_str,  64, "%f", vis->nrml_scl);
+    snprintf(anim_speed_str, 64, "%f", vis->anim_speed);
 
 	SetDlgItemInt(IDC_EDIT_AMPLITUDE, vis->amplitude);
 	SetDlgItemInt(IDC_EDIT_BACKGROUND_BRIGHTNESS, vis->bkgd_bright);
 	SetDlgItemInt(IDC_EDIT_AVERAGE_SIZE, vis->avg_size);
 	SetDlgItemInt(IDC_EDIT_DECAY, vis->decay);
 	SetDlgItemInt(IDC_EDIT_DELAY, vis->delay);
+    SetDlgItemText(IDC_EDIT_ANIM_SPEED, anim_speed_str);
     SetDlgItemText(IDC_EDIT_NRML_OFST, nrml_ofst_str);
     SetDlgItemText(IDC_EDIT_NRML_SCL, nrml_scl_str);
 
@@ -203,6 +206,7 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_EN_CHANGE(IDC_EDIT_NRML_OFST, &KeyboardVisDlg::OnEnChangedEditNrmlOfst)
     ON_EN_CHANGE(IDC_EDIT_NRML_SCL, &KeyboardVisDlg::OnEnChangedEditNrmlScl)
     ON_BN_CLICKED(IDC_BUTTON_SAVE, &KeyboardVisDlg::OnClickedSave)
+    ON_EN_CHANGE(IDC_EDIT_ANIM_SPEED, &KeyboardVisDlg::OnEnChangeEditAnimSpeed)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
@@ -283,4 +287,11 @@ void KeyboardVisDlg::OnEnChangedEditNrmlScl()
 void KeyboardVisDlg::OnClickedSave()
 {
     vis->SaveSettings();
+}
+
+void KeyboardVisDlg::OnEnChangeEditAnimSpeed()
+{
+    char val[64];
+    GetDlgItemText(IDC_EDIT_ANIM_SPEED, (LPTSTR)&val, 64);
+    vis->anim_speed = strtod(val, NULL);
 }

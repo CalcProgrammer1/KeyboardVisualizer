@@ -139,7 +139,8 @@ void Visualizer::Initialize()
 	ckb.Initialize();
     mkb.Initialize();
 
-	amplitude   = 100;
+    amplitude   = 100;
+    anim_speed  = 100.0f;
     avg_mode    = 0;
     avg_size    = 8;
 	bkgd_step   = 0;
@@ -224,6 +225,10 @@ void Visualizer::SaveSettings()
 
     //Save Averaging Mode
     snprintf(out_str, 1024, "avg_mode=%d\r\n", avg_mode);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Animation Speed
+    snprintf(out_str, 1024, "anim_speed=%f\r\n", anim_speed);
     outfile.write(out_str, strlen(out_str));
 
     //Save LED Strip Configurations
@@ -708,7 +713,8 @@ void Visualizer::VisThread()
 		Update();
 
 		//Overflow background step
-		if (bkgd_step >= 360) bkgd_step = 0;
+		if (bkgd_step >= 360.0f) bkgd_step = 0.0f;
+        if (bkgd_step < 0.0f) bkgd_step = 360.0f;
 
         //Draw active background
         DrawPattern(bkgd_mode, bkgd_bright, &pixels_bg);
@@ -827,7 +833,7 @@ void Visualizer::VisThread()
         }
 
 		//Increment background step
-		bkgd_step++;
+		bkgd_step = bkgd_step += (anim_speed / 100.0f);
 
         //Wait 15ms (~60fps)
         Sleep(15);

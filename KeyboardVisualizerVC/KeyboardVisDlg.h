@@ -54,6 +54,7 @@ public:
     afx_msg void OnEnChangedEditNrmlOfst();
     afx_msg void OnEnChangedEditNrmlScl();
     afx_msg void OnClickedSave();
+    afx_msg void OnEnChangeEditAnimSpeed();
 };
 
 #endif
