@@ -157,12 +157,17 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         Keyboards
         - K70 RGB (spectrograph)
         - Likely other CUE SDK supported keyboards (spectrograph), untested
-        
+
+    * SteelSeries
+
+        Keyboards
+        - Apex M800 (spectrograph)
+
     * MSI SteelSeries
         
         Keyboards
         - MSI 3-zone laptop keyboards (MSI GS63VR, etc) (bar)
-        
+
     * WS28XX Pixel LED Strips
     
         - Arduino (Serial/USB-Serial) or ESP8266 (UDP over WiFi) may be used for controller
