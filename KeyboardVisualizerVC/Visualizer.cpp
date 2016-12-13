@@ -7,6 +7,7 @@
 #include "Visualizer.h"
 #include "RazerChroma.h"
 #include "CorsairCUE.h"
+#include "SteelSeriesGameSense.h"
 #include "MSIKeyboard.h"
 #include "LEDStrip.h"
 
@@ -23,6 +24,7 @@
 
 RazerChroma rkb;
 CorsairCUE ckb;
+SteelSeriesGameSense skb;
 MSIKeyboard mkb;
 std::vector<LEDStrip *> str;
 std::vector<LEDStrip *> xmas;
@@ -48,6 +50,12 @@ static void rkbthread(void *param)
 {
 	Visualizer* vis = static_cast<Visualizer*>(param);
 	vis->RazerChromaUpdateThread();
+}
+
+static void skbthread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->SteelSeriesKeyboardUpdateThread();
 }
 
 static void ckbthread(void *param)
@@ -139,6 +147,7 @@ void Visualizer::Initialize()
     
     rkb.Initialize();
 	ckb.Initialize();
+    skb.Initialize();
     mkb.Initialize();
 
     single_color_timeout = 0;
@@ -438,6 +447,7 @@ void Visualizer::StartThread()
 	_beginthread(thread, 0, this);
 	_beginthread(rkbthread, 0, this);
     _beginthread(ckbthread, 0, this);
+    _beginthread(skbthread, 0, this);
     _beginthread(mkbthread, 0, this);
     _beginthread(lsthread, 0, this);
 }
@@ -877,6 +887,14 @@ void Visualizer::RazerChromaUpdateThread()
 void Visualizer::CorsairKeyboardUpdateThread()
 {
     while (ckb.SetLEDs(pixels_out->pixels))
+    {
+        Sleep(delay);
+    }
+}
+
+void Visualizer::SteelSeriesKeyboardUpdateThread()
+{
+    while (skb.SetLEDs(pixels_out->pixels))
     {
         Sleep(delay);
     }
