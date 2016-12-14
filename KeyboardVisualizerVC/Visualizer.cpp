@@ -499,6 +499,10 @@ void DrawHorizontalBars(int bright, COLORREF * colors, int num_colors, vis_pixel
                 if (x < 128)
                 {
                     int idx = num_colors - ((float)x * ((float)num_colors / 128.0f));
+                    if (idx >= num_colors)
+                    {
+                        idx = num_colors - 1;
+                    }
                     pixels->pixels[y][x] = RGB(((bright * GetRValue(colors[idx])) / 256), ((bright * GetGValue(colors[idx])) / 256), ((bright * GetBValue(colors[idx])) / 256));
                 }
                 else
