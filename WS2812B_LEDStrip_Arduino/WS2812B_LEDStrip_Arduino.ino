@@ -68,7 +68,7 @@ void loop()
       }
       head++;
     }
-  }
+  
     if( serial_buffer[start] == 0xAA )
     {
       unsigned short sum = 0;
@@ -107,4 +107,5 @@ void loop()
         interrupts();
       }
     }
+  }
 }
