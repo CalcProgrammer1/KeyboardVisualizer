@@ -1,10 +1,14 @@
-#include "CmKeyboard.h"
-#include  <iostream>
-
 //==================================================================================================
 // 2016/7/23 Sen Zhao pz140202@gmail.com 
 // Powered by Cooler Master SDK v160630
 //==================================================================================================
+
+#include "CmKeyboard.h"
+
+#define COOLER_MASTER_ENABLED
+
+#ifdef COOLER_MASTER_ENABLED
+#include  <iostream>
 
 static COLOR_MATRIX cm;
 bool INITED = false; 
@@ -24,7 +28,7 @@ static float LED_TABLE[6][22] = {
 /* 4 */ {0.875, -1,		2.25,	3.25,	4.25,	5.25,	6.25,	7.25,	8.25,	9.25,	10.25,	11.25,	-1,		-1,		13.125,	-1,		16.25,	-1,		18.5,	19.5,	20.5,	21.5},
 /* 5 */ {0.125,	1.375,	2.625,	-1,		-1,		-1,		6.375,	-1,		-1,		-1,		10.125,	11.375,	12.625, -1,		13.875,	15.25,	16.25,	17.25,	19.5,	-1,		20.5,	-1}
 };
-
+#endif
 
 CmKeyboard::CmKeyboard()
 {
@@ -32,11 +36,14 @@ CmKeyboard::CmKeyboard()
 
 CmKeyboard::~CmKeyboard()
 {
+#ifdef COOLER_MASTER_ENABLED
 	EnableLedControl(false);
+#endif
 }
 
-int CmKeyboard::Initialize()
+void CmKeyboard::Initialize()
 {
+#ifdef COOLER_MASTER_ENABLED
 	//device selection
 	SetControlDevice(DEV_MKeys_S);
 	isplug = IsDevicePlug();
@@ -73,11 +80,12 @@ int CmKeyboard::Initialize()
 		RefreshLed(true);
 		INITED = true;
 	}
-	return isplug;
+#endif
 }
 
 bool CmKeyboard::SetLEDs(COLORREF pixels[64][256])
 {
+#ifdef COOLER_MASTER_ENABLED
 	if (INITED == true)
     {
 		for (int i = 0; i < 6; i++)
@@ -100,4 +108,7 @@ bool CmKeyboard::SetLEDs(COLORREF pixels[64][256])
 	}
 
 	return INITED;
+#else
+    return FALSE;
+#endif
 }

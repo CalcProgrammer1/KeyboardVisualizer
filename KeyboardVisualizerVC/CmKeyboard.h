@@ -1,4 +1,11 @@
-#pragma once
+//==================================================================================================
+// 2016/7/23 Sen Zhao pz140202@gmail.com 
+// Powered by Cooler Master SDK v160630
+//==================================================================================================
+
+#ifndef CM_KEYBOARD_H
+#define CM_KEYBOARD_H
+
 #include "SDKDLL.h"
 
 //==================================================================================================
@@ -14,7 +21,9 @@ public:
 	CmKeyboard();
 	~CmKeyboard();
 
-	int Initialize();
+	void Initialize();
 	bool SetLEDs(COLORREF pixels[64][256]);
 
 };
+
+#endif
