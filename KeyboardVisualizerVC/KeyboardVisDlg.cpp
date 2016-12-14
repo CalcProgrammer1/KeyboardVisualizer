@@ -230,6 +230,14 @@ void KeyboardVisDlg::OnCbnSelchangeComboWindow()
 void KeyboardVisDlg::OnEnChangeEditAverageSize()
 {
 	vis->avg_size = (int)GetDlgItemInt(IDC_EDIT_AVERAGE_SIZE, 0, 0);
+    if (vis->avg_size < 1)
+    {
+        vis->avg_size = 1;
+    }
+    else if (vis->avg_size > 128)
+    {
+        vis->avg_size = 128;
+    }
 }
 
 

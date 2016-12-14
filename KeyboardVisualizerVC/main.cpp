@@ -38,6 +38,14 @@ void parse_argument_string(char * argument, char * value)
     if (strcmp(argument, "avg_size") == 0)
     {
         vis.avg_size = atoi(value);
+        if (vis.avg_size < 1)
+        {
+            vis.avg_size = 1;
+        }
+        else if (vis.avg_size > 128)
+        {
+            vis.avg_size = 128;
+        }
     }
 
     if (strcmp(argument, "decay") == 0)
