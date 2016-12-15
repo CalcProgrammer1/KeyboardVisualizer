@@ -28,6 +28,7 @@ public:
     bool SetLEDs(COLORREF pixels[64][256]);
 
 private:
+    void ResetLighting();
     void SetMode(unsigned char mode);
 
     HANDLE Dev;

@@ -44,21 +44,16 @@ SteelSeriesGameSense::SteelSeriesGameSense()
 
 SteelSeriesGameSense::~SteelSeriesGameSense()
 {
-    unsigned char buf[33];
-    memset(buf, 0, sizeof(buf));
-    buf[0] = 0x00;
-    buf[1] = 0x0d;
-    buf[2] = 0x00;
-    buf[3] = 0x00;
-
-    HidD_SetOutputReport(Dev, buf, sizeof(buf));
+    ResetLighting();
 }
 
 void SteelSeriesGameSense::Initialize()
 {
     Dev = GetDeviceHandle(0x1038, 0x1600, 0x0000);
-    
+
     SetMode(0x02);
+
+    ResetLighting();
 }
 
 void SteelSeriesGameSense::SetKeyboardLayout(SS_KEYBOARD_LAYOUT layout)
@@ -145,5 +140,20 @@ void SteelSeriesGameSense::SetMode(unsigned char mode)
             HidD_SetFeature(Dev, FeatureReportBuf, sizeof(FeatureReportBuf));
             Sleep(10);
         }
+    }
+}
+
+void SteelSeriesGameSense::ResetLighting()
+{
+    if (Dev != INVALID_HANDLE_VALUE)
+    {
+        unsigned char buf[33];
+        memset(buf, 0, sizeof(buf));
+        buf[0] = 0x00;
+        buf[1] = 0x0d;
+        buf[2] = 0x00;
+        buf[3] = 0x00;
+
+        HidD_SetOutputReport(Dev, buf, sizeof(buf));
     }
 }
