@@ -66,7 +66,7 @@ bool SteelSeriesGameSense::SetLEDs(COLORREF pixels[64][256])
     FeatureReportBuf[4] = 0x00;
 
     int i = 5;
-    int yStep = 64 / ROWS;
+    int yStep = 62 / ROWS;
     int xStep = 256 / COLS;
 
     for (int y = 0; y < ROWS; ++y)
@@ -76,7 +76,7 @@ bool SteelSeriesGameSense::SetLEDs(COLORREF pixels[64][256])
             unsigned char key = KeyMap[y][x];
             if (key != 0xff)
             {
-                COLORREF color = pixels[y * yStep][x * xStep];
+                COLORREF color = pixels[(y * yStep) + 2][x * xStep];
                 FeatureReportBuf[i++] = key;
                 FeatureReportBuf[i++] = GetRValue(color);
                 FeatureReportBuf[i++] = GetGValue(color);
