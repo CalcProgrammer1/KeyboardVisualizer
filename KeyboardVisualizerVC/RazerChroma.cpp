@@ -60,11 +60,11 @@ void SetupKeyboardGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_l
 {
     for (int x = 0; x < x_count; x++)
     {
-        x_idx_list[x] = x * (256 / x_count);
+        x_idx_list[x] = x * (SPECTROGRAPH_COLS / x_count);
     }
     for (int y = 0; y < y_count; y++)
     {
-        y_idx_list[y] = y * (64 / y_count) + (0.5f * (64 / y_count));
+        y_idx_list[y] = ROW_IDX_SPECTROGRAPH_TOP + (y * (SPECTROGRAPH_ROWS / y_count)) + (0.5f * (SPECTROGRAPH_ROWS / y_count));
     }
 }
 

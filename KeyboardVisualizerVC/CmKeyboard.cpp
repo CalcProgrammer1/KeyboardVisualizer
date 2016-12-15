@@ -4,6 +4,7 @@
 //==================================================================================================
 
 #include "CmKeyboard.h"
+#include "VisualizerDefines.h"
 
 #define COOLER_MASTER_ENABLED
 
@@ -16,7 +17,7 @@ int device = -1;	// device type : 0- Masterkeys Pro L ; 1- Masterkeys Pro S
 bool isplug;	
 
 int dev_column; 
-int row = (int)(64 / 7);
+int y_idx_list[6];
 int col;
 
 static float LED_TABLE[6][22] = {
@@ -61,16 +62,21 @@ void CmKeyboard::Initialize()
 		}
 	}
 
+    for (int y = 0; y < 6; y++)
+    {
+        y_idx_list[y] = ROW_IDX_SPECTROGRAPH_TOP + (y * (SPECTROGRAPH_ROWS / 6)) + (0.5f * (SPECTROGRAPH_ROWS / 6));
+    }
+
 	// count "col" by device type
 	if (device == 0)
     {
 		dev_column = 22;
-		col = (int)(256 / 22);
+		col = (int)(SPECTROGRAPH_COLS / 22);
 	}
 	else if (device == 1)
     {
 		dev_column = 18;
-		col = (int)(256 / 18);
+		col = (int)(SPECTROGRAPH_COLS / 18);
 	}
 
 	// finish init
@@ -94,9 +100,9 @@ bool CmKeyboard::SetLEDs(COLORREF pixels[64][256])
             {
 				if (LED_TABLE[i][j] >= 0)
                 {
-					cm.KeyColor[i][j].r = GetRValue(pixels[row * i + row][(int)(col * LED_TABLE[i][j]) + col]);
-					cm.KeyColor[i][j].g = GetGValue(pixels[row * i + row][(int)(col * LED_TABLE[i][j]) + col]);
-					cm.KeyColor[i][j].b = GetBValue(pixels[row * i + row][(int)(col * LED_TABLE[i][j]) + col]);
+					cm.KeyColor[i][j].r = GetRValue(pixels[y_idx_list[i]][(int)(col * LED_TABLE[i][j]) + col]);
+					cm.KeyColor[i][j].g = GetGValue(pixels[y_idx_list[i]][(int)(col * LED_TABLE[i][j]) + col]);
+					cm.KeyColor[i][j].b = GetBValue(pixels[y_idx_list[i]][(int)(col * LED_TABLE[i][j]) + col]);
 				}
 				
 			}

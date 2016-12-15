@@ -111,6 +111,8 @@ private:
 
 	//Audio Sample Buffer
 	unsigned char buffer[256];
+
+    void DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixels *out_pixels);
 };
 
 #endif

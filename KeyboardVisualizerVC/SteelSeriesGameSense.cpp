@@ -5,6 +5,7 @@
 \*---------------------------------------------------------*/
 
 #include "SteelSeriesGameSense.h"
+#include "VisualizerDefines.h"
 
 #pragma comment(lib, "hid.lib")
 
@@ -19,6 +20,9 @@ namespace
 
 const int ROWS = 6;
 const int COLS = 23;
+
+int y_idx_list[ROWS];
+int x_idx_list[COLS];
 
 const unsigned char KeyMap[ROWS][COLS] = {
     0xe8, 0x29, 0xff, 0x3a, 0x3b, 0x3c, 0x3d, 0xff, 0x3e, 0x3f, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0xff, 0x00, 0xff, 0xff,
@@ -52,7 +56,16 @@ SteelSeriesGameSense::~SteelSeriesGameSense()
 void SteelSeriesGameSense::Initialize()
 {
     Dev = GetDeviceHandle(0x1038, 0x1600, 0x0000);
-    
+
+    for (int y = 0; y < ROWS; y++)
+    {
+        y_idx_list[y] = ROW_IDX_SPECTROGRAPH_TOP + (y * (SPECTROGRAPH_ROWS / ROWS)) + (0.5f * (SPECTROGRAPH_ROWS / ROWS));
+    }
+    for (int x = 0; x < COLS; x++)
+    {
+        x_idx_list[x] = x * (SPECTROGRAPH_COLS / COLS);
+    }
+
     SetMode(0x02);
 }
 
@@ -66,17 +79,15 @@ bool SteelSeriesGameSense::SetLEDs(COLORREF pixels[64][256])
     FeatureReportBuf[4] = 0x00;
 
     int i = 5;
-    int yStep = 64 / ROWS;
-    int xStep = 256 / COLS;
 
-    for (int y = 0; y < ROWS; ++y)
+    for (int y = 0; y < ROWS; y++)
     {
-        for (int x = 0; x < COLS; ++x)
+        for (int x = 0; x < COLS; x++)
         {
             unsigned char key = KeyMap[y][x];
             if (key != 0xff)
             {
-                COLORREF color = pixels[y * yStep][x * xStep];
+                COLORREF color = pixels[y_idx_list[y]][x_idx_list[x]];
                 FeatureReportBuf[i++] = key;
                 FeatureReportBuf[i++] = GetRValue(color);
                 FeatureReportBuf[i++] = GetGValue(color);

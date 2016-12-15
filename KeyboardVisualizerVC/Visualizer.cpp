@@ -595,7 +595,7 @@ void DrawSingleColorBackground(float amplitude, vis_pixels *bg_pixels, vis_pixel
     }
 }
 
-void DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixels *out_pixels)
+void Visualizer::DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixels *out_pixels)
 {
     if (amplitude >= 1.0f)
     {
@@ -611,6 +611,12 @@ void DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixel
     int out_color = RGB(((amplitude * GetRValue(in_color))), ((amplitude * GetGValue(in_color))), ((amplitude * GetBValue(in_color))));
     for (int x = 0; x < 256; x++)
     {
+        if (frgd_mode >= VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL)
+        {
+            in_color = fg_pixels->pixels[ROW_IDX_SINGLE_COLOR][x];
+            out_color = RGB(((amplitude * GetRValue(in_color))), ((amplitude * GetGValue(in_color))), ((amplitude * GetBValue(in_color))));
+        }
+
         out_pixels->pixels[ROW_IDX_SINGLE_COLOR][x] = out_color;
     }
 }
@@ -810,6 +816,10 @@ void Visualizer::VisThread()
         }
         if (single_color_timeout >= 120)
         {
+            if (single_color_timeout >= 360.0f)
+            {
+                single_color_timeout = 360.0f;
+            }
             if (single_color_mode == VISUALIZER_SINGLE_COLOR_FOLLOW_BACKGROUND)
             {
                 brightness = (single_color_timeout - 120) / 240.0f;
