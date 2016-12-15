@@ -158,6 +158,12 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         - K70 RGB (spectrograph)
         - Likely other CUE SDK supported keyboards (spectrograph), untested
 
+    * Cooler Master RGB
+
+    	Keyboards
+    	- Masterkeys Pro L
+    	- Masterkeys Pro S
+
     * SteelSeries
 
         Keyboards

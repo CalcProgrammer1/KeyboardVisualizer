@@ -9,8 +9,6 @@
 
 #include <Windows.h>
 
-#include <vector>
-
 enum SS_KEYBOARD_LAYOUT
 {
     SS_APEX_M800_LAYOUT_US,
@@ -33,7 +31,6 @@ private:
 
     HANDLE Dev;
     unsigned char FeatureReportBuf[515];
-    const std::vector<std::vector<unsigned char>> *KeyMap;
 };
 
 #endif

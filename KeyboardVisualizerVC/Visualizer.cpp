@@ -7,6 +7,7 @@
 #include "Visualizer.h"
 #include "RazerChroma.h"
 #include "CorsairCUE.h"
+#include "CmKeyboard.h"
 #include "SteelSeriesGameSense.h"
 #include "MSIKeyboard.h"
 #include "LEDStrip.h"
@@ -24,6 +25,7 @@
 
 RazerChroma rkb;
 CorsairCUE ckb;
+CmKeyboard cmkb;
 SteelSeriesGameSense skb;
 MSIKeyboard mkb;
 std::vector<LEDStrip *> str;
@@ -62,6 +64,12 @@ static void ckbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->CorsairKeyboardUpdateThread();
+}
+
+static void cmkbthread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->CmKeyboardUpdateThread();
 }
 
 static void mkbthread(void *param)
@@ -147,6 +155,7 @@ void Visualizer::Initialize()
     
     rkb.Initialize();
 	ckb.Initialize();
+    cmkb.Initialize();
     skb.Initialize();
     mkb.Initialize();
 
@@ -447,6 +456,7 @@ void Visualizer::StartThread()
 	_beginthread(thread, 0, this);
 	_beginthread(rkbthread, 0, this);
     _beginthread(ckbthread, 0, this);
+    _beginthread(cmkbthread, 0, this);
     _beginthread(skbthread, 0, this);
     _beginthread(mkbthread, 0, this);
     _beginthread(lsthread, 0, this);
@@ -489,6 +499,10 @@ void DrawHorizontalBars(int bright, COLORREF * colors, int num_colors, vis_pixel
                 if (x < 128)
                 {
                     int idx = num_colors - ((float)x * ((float)num_colors / 128.0f));
+                    if (idx >= num_colors)
+                    {
+                        idx = num_colors - 1;
+                    }
                     pixels->pixels[y][x] = RGB(((bright * GetRValue(colors[idx])) / 256), ((bright * GetGValue(colors[idx])) / 256), ((bright * GetBValue(colors[idx])) / 256));
                 }
                 else
@@ -581,7 +595,7 @@ void DrawSingleColorBackground(float amplitude, vis_pixels *bg_pixels, vis_pixel
     }
 }
 
-void DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixels *out_pixels)
+void Visualizer::DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixels *out_pixels)
 {
     if (amplitude >= 1.0f)
     {
@@ -597,6 +611,12 @@ void DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixel
     int out_color = RGB(((amplitude * GetRValue(in_color))), ((amplitude * GetGValue(in_color))), ((amplitude * GetBValue(in_color))));
     for (int x = 0; x < 256; x++)
     {
+        if (frgd_mode >= VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL)
+        {
+            in_color = fg_pixels->pixels[ROW_IDX_SINGLE_COLOR][x];
+            out_color = RGB(((amplitude * GetRValue(in_color))), ((amplitude * GetGValue(in_color))), ((amplitude * GetBValue(in_color))));
+        }
+
         out_pixels->pixels[ROW_IDX_SINGLE_COLOR][x] = out_color;
     }
 }
@@ -721,6 +741,8 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
 
 void Visualizer::VisThread()
 {
+	float red, grn, blu;
+
 	while (1)
 	{
 		Update();
@@ -794,6 +816,10 @@ void Visualizer::VisThread()
         }
         if (single_color_timeout >= 120)
         {
+            if (single_color_timeout >= 360.0f)
+            {
+                single_color_timeout = 360.0f;
+            }
             if (single_color_mode == VISUALIZER_SINGLE_COLOR_FOLLOW_BACKGROUND)
             {
                 brightness = (single_color_timeout - 120) / 240.0f;
@@ -890,6 +916,14 @@ void Visualizer::CorsairKeyboardUpdateThread()
     {
         Sleep(delay);
     }
+}
+
+void Visualizer::CmKeyboardUpdateThread()
+{
+	while (cmkb.SetLEDs(pixels_out->pixels))
+	{
+		Sleep(delay);
+	}
 }
 
 void Visualizer::SteelSeriesKeyboardUpdateThread()

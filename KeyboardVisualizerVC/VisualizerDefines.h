@@ -8,8 +8,12 @@
 #define VISUALIZER_DEFINES_H
 
 //Special purpose row indices
-#define ROW_IDX_BAR_GRAPH       0
-#define ROW_IDX_SINGLE_COLOR    1
+#define ROW_IDX_BAR_GRAPH           0
+#define ROW_IDX_SINGLE_COLOR        1
+#define ROW_IDX_SPECTROGRAPH_TOP    2
+
+#define SPECTROGRAPH_COLS           (255)
+#define SPECTROGRAPH_ROWS           (64 - ROW_IDX_SPECTROGRAPH_TOP)
 
 typedef unsigned int VISUALIZER_PATTERN;
 enum
