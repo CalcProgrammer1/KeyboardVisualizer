@@ -206,6 +206,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
     CreateEffect = (CREATEEFFECT)GetProcAddress(hModule, "CreateEffect");
     CreateKeyboardEffect = (CREATEKEYBOARDEFFECT)GetProcAddress(hModule, "CreateKeyboardEffect");
     CreateMouseEffect = (CREATEMOUSEEFFECT)GetProcAddress(hModule, "CreateMouseEffect");
+    CreateMousepadEffect = (CREATEMOUSEPADEFFECT)GetProcAddress(hModule, "CreateMousepadEffect");
     CreateHeadsetEffect = (CREATEHEADSETEFFECT)GetProcAddress(hModule, "CreateHeadsetEffect");
 
     if (CreateEffect == NULL || pixels == NULL)
@@ -262,7 +263,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             FireflyEffect.Color[x] = pixels[ROW_IDX_BAR_GRAPH][FireflyIndex[x]];
         }
 
-        CreateEffect(ChromaSDK::FIREFLY_CHROMA, ChromaSDK::CHROMA_CUSTOM, &FireflyEffect, NULL);
+        CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_CUSTOM, &FireflyEffect, NULL);
 
         //Razer Core
         ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE CoreEffect = {};
