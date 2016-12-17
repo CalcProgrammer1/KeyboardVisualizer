@@ -212,18 +212,21 @@ END_MESSAGE_MAP()
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
 {
 	vis->amplitude = GetDlgItemInt(IDC_EDIT_AMPLITUDE, 0, 0);
+    vis->OnSettingsChanged();
 }
 
 
 void KeyboardVisDlg::OnEnChangeEditBackgroundBrightness()
 {
 	vis->bkgd_bright = (int)(GetDlgItemInt(IDC_EDIT_BACKGROUND_BRIGHTNESS, 0, 0));
+    vis->OnSettingsChanged();
 }
 
 
 void KeyboardVisDlg::OnCbnSelchangeComboWindow()
 {
 	vis->window_mode = ((CComboBox*)GetDlgItem(IDC_COMBO_WINDOW))->GetCurSel();
+    vis->OnSettingsChanged();
 }
 
 
@@ -238,42 +241,49 @@ void KeyboardVisDlg::OnEnChangeEditAverageSize()
     {
         vis->avg_size = 128;
     }
+    vis->OnSettingsChanged();
 }
 
 
 void KeyboardVisDlg::OnCbnSelchangeComboBkgdMode()
 {
 	vis->bkgd_mode = ((CComboBox*)GetDlgItem(IDC_COMBO_BKGD_MODE))->GetCurSel();
+    vis->OnSettingsChanged();
 }
 
 
 void KeyboardVisDlg::OnEnChangeEditDecay()
 {
 	vis->decay = (int)GetDlgItemInt(IDC_EDIT_DECAY, 0, 0);
+    vis->OnSettingsChanged();
 }
 
 
 void KeyboardVisDlg::OnEnChangeEditDelay()
 {
 	vis->delay = (int)GetDlgItemInt(IDC_EDIT_DELAY, 0, 0);
+    vis->OnSettingsChanged();
 }
 
 
 void KeyboardVisDlg::OnCbnSelchangeComboFrgdMode()
 {
     vis->frgd_mode = ((CComboBox*)GetDlgItem(IDC_COMBO_FRGD_MODE))->GetCurSel();
+    vis->OnSettingsChanged();
 }
 
 
 void KeyboardVisDlg::OnCbnSelchangeComboAvgMode()
 {
     vis->avg_mode = ((CComboBox*)GetDlgItem(IDC_COMBO_AVG_MODE))->GetCurSel();
+    vis->OnSettingsChanged();
 }
 
 
 void KeyboardVisDlg::OnCbnSelchangeComboSnglClrMode()
 {
     vis->single_color_mode = ((CComboBox*)GetDlgItem(IDC_COMBO_SNGL_CLR_MODE))->GetCurSel();
+    vis->OnSettingsChanged();
 }
 
 void KeyboardVisDlg::OnEnChangedEditNrmlOfst()
@@ -282,6 +292,7 @@ void KeyboardVisDlg::OnEnChangedEditNrmlOfst()
     GetDlgItemText(IDC_EDIT_NRML_OFST, (LPTSTR)&val, 64);
     vis->nrml_ofst = strtod(val, NULL);
     vis->SetNormalization(vis->nrml_ofst, vis->nrml_scl);
+    vis->OnSettingsChanged();
 }
 
 void KeyboardVisDlg::OnEnChangedEditNrmlScl()
@@ -290,6 +301,7 @@ void KeyboardVisDlg::OnEnChangedEditNrmlScl()
     GetDlgItemText(IDC_EDIT_NRML_SCL, (LPTSTR)&val, 64);
     vis->nrml_scl = strtod(val, NULL);
     vis->SetNormalization(vis->nrml_ofst, vis->nrml_scl);
+    vis->OnSettingsChanged();
 }
 
 void KeyboardVisDlg::OnClickedSave()
@@ -302,4 +314,5 @@ void KeyboardVisDlg::OnEnChangeEditAnimSpeed()
     char val[64];
     GetDlgItemText(IDC_EDIT_ANIM_SPEED, (LPTSTR)&val, 64);
     vis->anim_speed = strtod(val, NULL);
+    vis->OnSettingsChanged();
 }

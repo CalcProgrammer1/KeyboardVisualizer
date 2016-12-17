@@ -184,7 +184,7 @@
     <ClCompile Include="RazerChroma.cpp" />
     <ClCompile Include="serial_port.cpp" />
     <ClCompile Include="SteelSeriesGameSense.cpp" />
-    <ClCompile Include="udp_port.cpp" />
+    <ClCompile Include="net_port.cpp" />
     <ClCompile Include="Visualizer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -201,7 +201,7 @@
     <ClInclude Include="serial_port.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SteelSeriesGameSense.h" />
-    <ClInclude Include="udp_port.h" />
+    <ClInclude Include="net_port.h" />
     <ClInclude Include="Visualizer.h" />
     <ClInclude Include="VisualizerDefines.h" />
   </ItemGroup>

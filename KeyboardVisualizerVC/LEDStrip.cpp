@@ -98,7 +98,7 @@ void LEDStrip::InitializeUDP(char * clientname, char * port)
     strcpy(client_name, clientname);
     strcpy(port_name, port);
 
-    udpport = new udp_port(client_name, port_name);
+    udpport = new net_port(client_name, port_name);
     serialport = NULL;
 }
 

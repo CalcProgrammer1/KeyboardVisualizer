@@ -122,6 +122,16 @@ void parse_argument_string(char * argument, char * value)
     {
         vis.AddLEDStripXmas(value);
     }
+
+    if (strcmp(argument, "server") == 0)
+    {
+        vis.InitServer(value);
+    }
+
+    if (strcmp(argument, "client") == 0)
+    {
+        vis.InitClient(value);
+    }
 }
 
 boolean parse_command_line(char * command_line)

@@ -11,11 +11,38 @@
 #include <math.h>
 #include "chuck_fft.h"
 #include "hsv.h"
+#include "net_port.h"
 
 #include <string>
 #include <vector>
 
 #include "VisualizerDefines.h"
+
+typedef struct
+{
+    int amplitude;
+    int avg_mode;
+    int avg_size;
+    int window_mode;
+    int decay;
+    int delay;
+    float anim_speed;
+    int bkgd_bright;
+    int bkgd_mode;
+    int single_color_mode;
+    float nrml_ofst;
+    float nrml_scl;
+    int frgd_mode;
+    float bkgd_step;
+} settings_pkt_type;
+
+typedef int net_mode;
+enum
+{
+    NET_MODE_DISABLED,
+    NET_MODE_CLIENT,
+    NET_MODE_SERVER
+};
 
 class Visualizer
 {
@@ -31,6 +58,10 @@ public:
 	//Visualizer Thread
 	void VisThread();
 
+    //Network Threads
+    void NetConnectThread();
+    void NetUpdateThread();
+
 	//Keyboard Update Thread
 	void RazerChromaUpdateThread();
     void CorsairKeyboardUpdateThread();
@@ -38,6 +69,15 @@ public:
     void SteelSeriesKeyboardUpdateThread();
     void MSIKeyboardUpdateThread();
     void LEDStripUpdateThread();
+
+    //Called when settings changed
+    void OnSettingsChanged();
+
+    //Initialize Server
+    void InitServer(char * serverstring);
+
+    //Initialize CLient
+    void InitClient(char * clientstring);
 
 	//Update function
 	void Update();
@@ -102,6 +142,12 @@ public:
 private:
 	//Background Step
 	float bkgd_step;
+
+    //Network Port Pointer
+    net_port * port;
+
+    //Network Mode
+    net_mode netmode;
 
 	//FFT Variables
 	float win_hanning[256];

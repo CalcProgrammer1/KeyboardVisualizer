@@ -40,12 +40,24 @@ IAudioCaptureClient *pAudioCaptureClient;
 WAVEFORMATEX *waveformat;
 
 int single_color_timeout;
+float fft_nrml[256];
 
 //Thread starting static function
 static void thread(void *param)
 {
 	Visualizer* vis = static_cast<Visualizer*>(param);
 	vis->VisThread();
+}
+
+static void netconthread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->NetConnectThread();
+}
+static void netupdthread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->NetUpdateThread();
 }
 
 static void rkbthread(void *param)
@@ -137,8 +149,6 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
     xmas.push_back(newstr);
 }
 
-float fft_nrml[256];
-
 void Visualizer::Initialize()
 {
     CoInitializeEx(NULL, COINIT_MULTITHREADED);
@@ -158,6 +168,8 @@ void Visualizer::Initialize()
     cmkb.Initialize();
     skb.Initialize();
     mkb.Initialize();
+
+    netmode     = NET_MODE_DISABLED;
 
     single_color_timeout = 0;
     amplitude   = 100;
@@ -184,6 +196,30 @@ void Visualizer::Initialize()
     pixels_out = &pixels_vs2;
 
     SetNormalization(nrml_ofst, nrml_scl);
+}
+
+void Visualizer::InitClient(char * clientstring)
+{
+    if (netmode == NET_MODE_DISABLED)
+    {
+        LPSTR client_name;
+        LPSTR port_name;
+        client_name = strtok_s(clientstring, ",", &port_name);
+
+        netmode = NET_MODE_CLIENT;
+        port = new net_port();
+        port->tcp_client(client_name, port_name);
+    }
+}
+
+void Visualizer::InitServer(char * serverstring)
+{
+    if (netmode == NET_MODE_DISABLED)
+    {
+        netmode = NET_MODE_SERVER;
+        port = new net_port();
+        port->tcp_server(serverstring);
+    }
 }
 
 void Visualizer::SaveSettings()
@@ -278,6 +314,30 @@ void Visualizer::SetNormalization(float offset, float scale)
     {
         fft[i] = 0.0f;
         fft_nrml[i] = offset + (scale * (i / 256.0f));
+    }
+}
+
+void Visualizer::OnSettingsChanged()
+{
+    if (netmode == NET_MODE_SERVER)
+    {
+        settings_pkt_type settings;
+        settings.amplitude = amplitude;
+        settings.avg_mode = avg_mode;
+        settings.avg_size = avg_size;
+        settings.window_mode = window_mode;
+        settings.decay = decay;
+        settings.delay = delay;
+        settings.anim_speed = anim_speed;
+        settings.bkgd_bright = bkgd_bright;
+        settings.bkgd_mode = bkgd_mode;
+        settings.single_color_mode = single_color_mode;
+        settings.nrml_ofst = nrml_ofst;
+        settings.nrml_scl = nrml_scl;
+        settings.frgd_mode = frgd_mode;
+        settings.bkgd_step = bkgd_step;
+
+        port->tcp_write((char *)&settings, sizeof(settings));
     }
 }
 
@@ -454,6 +514,8 @@ void Visualizer::Update()
 void Visualizer::StartThread()
 {
 	_beginthread(thread, 0, this);
+    _beginthread(netconthread, 0, this);
+    _beginthread(netupdthread, 0, this);
 	_beginthread(rkbthread, 0, this);
     _beginthread(ckbthread, 0, this);
     _beginthread(cmkbthread, 0, this);
@@ -739,13 +801,102 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
     }
 }
 
+void Visualizer::NetConnectThread()
+{
+    while (1)
+    {
+        switch (netmode)
+        {
+        case NET_MODE_DISABLED:
+            return;
+            break;
+
+        case NET_MODE_SERVER:
+            //Listen for new clients
+            port->tcp_server_listen();
+
+            //When a new client connects, send settings
+            OnSettingsChanged();
+            break;
+
+        case NET_MODE_CLIENT:
+            //Try to connect to server
+            port->tcp_client_connect();
+
+            //Wait 1 second between tries;
+            Sleep(1000);
+            break;
+        }
+    }
+}
+
+void Visualizer::NetUpdateThread()
+{
+    int counter = 0;
+    char buf[sizeof(fft)];
+
+    while (1)
+    {
+        switch (netmode)
+        {
+        case NET_MODE_DISABLED:
+            return;
+            break;
+
+        case NET_MODE_SERVER:
+            port->tcp_write((char *)fft, sizeof(fft));
+            if (counter++ > 60)
+            {
+                OnSettingsChanged();
+            }
+            Sleep(30);
+            break;
+
+        case NET_MODE_CLIENT:
+            if (port->connected)
+            {
+                if (port->tcp_listen((char *)buf, sizeof(buf)) == sizeof(settings_pkt_type))
+                {
+                    amplitude = ((settings_pkt_type *)buf)->amplitude;
+                    avg_mode = ((settings_pkt_type *)buf)->avg_mode;
+                    avg_size = ((settings_pkt_type *)buf)->avg_size;
+                    window_mode = ((settings_pkt_type *)buf)->window_mode;
+                    decay = ((settings_pkt_type *)buf)->decay;
+                    delay = ((settings_pkt_type *)buf)->delay;
+                    anim_speed = ((settings_pkt_type *)buf)->anim_speed;
+                    bkgd_bright = ((settings_pkt_type *)buf)->bkgd_bright;
+                    bkgd_mode = ((settings_pkt_type *)buf)->bkgd_mode;
+                    single_color_mode = ((settings_pkt_type *)buf)->single_color_mode;
+                    nrml_ofst = ((settings_pkt_type *)buf)->nrml_ofst;
+                    nrml_scl = ((settings_pkt_type *)buf)->nrml_scl;
+                    frgd_mode = ((settings_pkt_type *)buf)->frgd_mode;
+                    bkgd_step = ((settings_pkt_type *)buf)->bkgd_step;
+                }
+                else
+                {
+                    memcpy(&fft, buf, sizeof(fft));
+                }
+            }
+            else
+            {
+                Sleep(10);
+            }
+            break;
+        }
+    }
+}
+
 void Visualizer::VisThread()
 {
-	float red, grn, blu;
+    float red, grn, blu;
 
-	while (1)
-	{
-		Update();
+    while (1)
+    {
+        if (!(netmode == NET_MODE_CLIENT && port->connected))
+        {
+            Update();
+        }
+        
 
 		//Overflow background step
 		if (bkgd_step >= 360.0f) bkgd_step = 0.0f;
