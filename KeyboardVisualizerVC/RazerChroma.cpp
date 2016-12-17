@@ -273,6 +273,9 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             CoreEffect.Color[x+3] = pixels[ROW_IDX_BAR_GRAPH][CoreXIndex[x]];
         }
 
+        //Razer Core internal LEDs are a single color zone
+        CoreEffect.Color[2] = pixels[ROW_IDX_SINGLE_COLOR][0];
+
         CreateEffect(ChromaSDK::CORE_CHROMA, ChromaSDK::CHROMA_CUSTOM, &CoreEffect, NULL);
 
         //Mamba Chroma Tournament Edition
