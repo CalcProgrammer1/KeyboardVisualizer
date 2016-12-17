@@ -208,6 +208,11 @@ boolean parse_command_line(char * command_line)
             printf("                      - 0:  Binning\r\n");
             printf("                      - 1:  Low-pass filtering\r\n");
             printf("    anim_speed        - Animation Speed (percent)\r\n");
+            printf("    server            - Configure this instance as a server for synchronization\r\n");
+            printf("                      -  Takes what port to serve on as argument, i.e. server=1234\r\n");
+            printf("    client            - Configure this instance as a client for synchronization\r\n");
+            printf("                      -  Takes the IP/hostname of the server and port as arguments,\r\n");
+            printf("                      -  i.e. client=192.168.1.100,1234\r\n");
             printf("    ledstrip          - LED config strings :\r\n");
             printf("                      - Serial : ledstrip = port, baud, num_leds\r\n");
             printf("                      - (ex.ledstrip = COM1, 115200, 30)\r\n");

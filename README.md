@@ -39,7 +39,7 @@ Keyboard Visualizer allows you to save your custom settings in two different way
     
     Available command line arguments:
         Usage: argument1=value1 argument2=value2 ...
-    
+
         amplitude         - Adjust the amplitude of the visualizer
         bkgd_bright       - Adjust the background brightness
         avg_size          - Number of points to average
@@ -108,6 +108,12 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         avg_mode          - Visualizer averaging mode
                           - 0:  Binning
                           - 1:  Low-pass filtering
+        anim_speed        - Animation Speed (percent)
+        server            - Configure this instance as a server for synchronization
+                          -  Takes what port to serve on as argument, i.e. server=1234
+        client            - Configure this instance as a client for synchronization
+                          -  Takes the IP/hostname of the server and port as arguments,
+                          -  i.e. client=192.168.1.100,1234
         ledstrip          - LED config strings :
                           - Serial : ledstrip = port, baud, num_leds
                           - (ex.ledstrip = COM1, 115200, 30)
