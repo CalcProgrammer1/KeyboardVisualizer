@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>KeyboardVisualizerDlg</class>
+ <widget class="QMainWindow" name="KeyboardVisualizerDlg">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>350</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Keyboard Visualizer (linux-devel)</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QLabel" name="label_Amplitude">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Amplitude (%)</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_Amplitude">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>5</y>
+      <width>130</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Background_Brightness">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Background Brightness</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_Background_Brightness">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>35</y>
+      <width>130</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Average_Size">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>70</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Average Size</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_Average_Size">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>65</y>
+      <width>130</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Decay">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Decay (% per step)</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_Decay">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>95</y>
+      <width>130</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Delay">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>130</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Delay (ms)</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_Delay">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>125</y>
+      <width>130</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Normalization_Offset">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>160</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Normalization Offset</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_Normalization_Offset">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>155</y>
+      <width>130</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Normalization_Scale">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>190</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Normalization Scale</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_Normalization_Scale">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>185</y>
+      <width>130</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_FFT_Window_Mode">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>10</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>FFT Window Mode</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_FFT_Window_Mode">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>5</y>
+      <width>150</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Background_Mode">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>40</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Background Mode</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_Background_Mode">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>35</y>
+      <width>150</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Foreground_Mode">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>70</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Foreground Mode</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_Foreground_Mode">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>65</y>
+      <width>150</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Single_Color_Mode">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>100</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Single Color Mode</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_Single_Color_Mode">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>95</y>
+      <width>150</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Average_Mode">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>130</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Average Mode</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_Average_Mode">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>125</y>
+      <width>150</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Animation_Speed">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>160</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Animation Speed</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_Animation_Speed">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>155</y>
+      <width>150</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="graphicsView_Visualization_Preview">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>215</y>
+      <width>256</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>256</width>
+      <height>64</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>256</width>
+      <height>64</height>
+     </size>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="interactive">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Visualization_Preview">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>220</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Visualization Preview</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_Save_Settings">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>215</y>
+      <width>150</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save Settings</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
