@@ -19,9 +19,7 @@ SOURCES += main.cpp \
     Visualizer.cpp \
     LEDStrip.cpp \
     serial_port.cpp \
-    RazerChromaLinux.cpp \
-    net_port.cpp \
-    CorsairCKBLinux.cpp
+    net_port.cpp
 
 HEADERS  += \
     KeyboardVisDlg.h \

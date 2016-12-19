@@ -140,11 +140,13 @@ void Ui::KeyboardVisDlg::on_lineEdit_Delay_textChanged(const QString &arg1)
 void Ui::KeyboardVisDlg::on_lineEdit_Normalization_Offset_textChanged(const QString &arg1)
 {
     vis_ptr->nrml_ofst = arg1.toFloat();
+    vis_ptr->SetNormalization(vis_ptr->nrml_ofst, vis_ptr->nrml_scl);
 }
 
 void Ui::KeyboardVisDlg::on_lineEdit_Normalization_Scale_textChanged(const QString &arg1)
 {
     vis_ptr->nrml_scl = arg1.toFloat();
+    vis_ptr->SetNormalization(vis_ptr->nrml_ofst, vis_ptr->nrml_scl);
 }
 
 void Ui::KeyboardVisDlg::on_lineEdit_Animation_Speed_textChanged(const QString &arg1)
