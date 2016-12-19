@@ -18,7 +18,10 @@ SOURCES += main.cpp \
     hsv.cpp \
     Visualizer.cpp \
     LEDStrip.cpp \
-    serial_port.cpp
+    serial_port.cpp \
+    RazerChromaLinux.cpp \
+    net_port.cpp \
+    CorsairCKBLinux.cpp
 
 HEADERS  += \
     KeyboardVisDlg.h \
@@ -27,8 +30,17 @@ HEADERS  += \
     hsv.h \
     chuck_fft.h \
     LEDStrip.h \
-    serial_port.h
+    serial_port.h \
+    RazerChromaLinux.h \
+    net_port.h \
+    CorsairCKBLinux.h
 
 FORMS    += keyboardvisualizer.ui
 
-LIBS     += -lopenal
+#LIBS     += -lopenal -lrazer_chroma
+LIBS      += -lopenal
+
+DISTFILES +=
+
+RESOURCES += \
+    resources.qrc

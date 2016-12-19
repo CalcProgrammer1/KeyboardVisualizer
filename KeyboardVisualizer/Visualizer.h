@@ -11,7 +11,7 @@
 #include <math.h>
 #include "chuck_fft.h"
 #include "hsv.h"
-//#include "net_port.h"
+#include "net_port.h"
 
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -150,7 +150,7 @@ private:
     float bkgd_step;
 
     //Network Port Pointer
-    //net_port * port;
+    net_port * port;
 
     //Network Mode
     net_mode netmode;

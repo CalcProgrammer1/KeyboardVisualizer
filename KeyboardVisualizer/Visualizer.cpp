@@ -9,8 +9,9 @@
 #include "pthread.h"
 #include "unistd.h"
 
-//#include "RazerChroma.h"
+//#include "RazerChromaLinux.h"
 //#include "CorsairCUE.h"
+//#include "CorsairCKBLinux.h"
 //#include "CmKeyboard.h"
 //#include "SteelSeriesGameSense.h"
 //#include "MSIKeyboard.h"
@@ -28,6 +29,7 @@
 #include <fstream>
 
 //RazerChroma rkb;
+//CorsairCKB ckb;
 //CorsairCUE ckb;
 //CmKeyboard cmkb;
 //SteelSeriesGameSense skb;
@@ -63,23 +65,24 @@ static void* netupdthread(void *param)
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->NetUpdateThread();
 }
-/*
-static void rkbthread(void *param)
+
+static void* rkbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->RazerChromaUpdateThread();
 }
 
+static void* ckbthread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->CorsairKeyboardUpdateThread();
+}
+
+/*
 static void skbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->SteelSeriesKeyboardUpdateThread();
-}
-
-static void ckbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->CorsairKeyboardUpdateThread();
 }
 
 static void cmkbthread(void *param)
@@ -209,18 +212,16 @@ void Visualizer::Initialize()
 
 void Visualizer::InitClient(char * clientstring)
 {
-    /*
     if (netmode == NET_MODE_DISABLED)
     {
-        LPSTR client_name;
-        LPSTR port_name;
-        client_name = strtok_s(clientstring, ",", &port_name);
+        char * client_name;
+        char * port_name;
+        client_name = strtok_r(clientstring, ",", &port_name);
 
         netmode = NET_MODE_CLIENT;
         port = new net_port();
         port->tcp_client(client_name, port_name);
     }
-    */
 }
 
 void Visualizer::InitServer(char * serverstring)
@@ -228,8 +229,8 @@ void Visualizer::InitServer(char * serverstring)
     if (netmode == NET_MODE_DISABLED)
     {
         netmode = NET_MODE_SERVER;
-        //port = new net_port();
-        //port->tcp_server(serverstring);
+        port = new net_port();
+        port->tcp_server(serverstring);
     }
 }
 
@@ -352,7 +353,7 @@ void Visualizer::OnSettingsChanged()
         settings.frgd_mode = frgd_mode;
         settings.bkgd_step = bkgd_step;
 
-        //port->tcp_write((char *)&settings, sizeof(settings));
+        port->tcp_write((char *)&settings, sizeof(settings));
     }
 }
 
@@ -560,7 +561,9 @@ void Visualizer::StartThread()
     pthread_create(&threads[0], NULL, &thread, this);
     pthread_create(&threads[1], NULL, &netconthread, this);
     pthread_create(&threads[2], NULL, &netupdthread, this);
-    pthread_create(&threads[3], NULL, &lsthread, this);
+    pthread_create(&threads[3], NULL, &rkbthread, this);
+    pthread_create(&threads[4], NULL, &ckbthread, this);
+    pthread_create(&threads[5], NULL, &lsthread, this);
 }
 
 void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)
@@ -852,7 +855,7 @@ void Visualizer::NetConnectThread()
 
         case NET_MODE_SERVER:
             //Listen for new clients
-            //port->tcp_server_listen();
+            port->tcp_server_listen();
 
             //When a new client connects, send settings
             OnSettingsChanged();
@@ -860,7 +863,7 @@ void Visualizer::NetConnectThread()
 
         case NET_MODE_CLIENT:
             //Try to connect to server
-            //port->tcp_client_connect();
+            port->tcp_client_connect();
 
             //Wait 1 second between tries;
             Sleep(1000);
@@ -871,7 +874,6 @@ void Visualizer::NetConnectThread()
 
 void Visualizer::NetUpdateThread()
 {
-    /*
     int counter = 0;
     char buf[sizeof(fft)];
 
@@ -889,7 +891,7 @@ void Visualizer::NetUpdateThread()
             {
                 OnSettingsChanged();
             }
-            Sleep(30);
+            Sleep(20);
             break;
 
         case NET_MODE_CLIENT:
@@ -924,7 +926,6 @@ void Visualizer::NetUpdateThread()
             break;
         }
     }
-    */
 }
 
 void Visualizer::VisThread()
@@ -933,7 +934,7 @@ void Visualizer::VisThread()
 
     while (1)
     {
-        //if (!(netmode == NET_MODE_CLIENT && port->connected))
+        if (!(netmode == NET_MODE_CLIENT && port->connected))
         {
             Update();
         }
@@ -1093,10 +1094,9 @@ void Visualizer::VisThread()
     }
 }
 
-/*
 void Visualizer::RazerChromaUpdateThread()
 {
-    while (rkb.SetLEDs(pixels_out->pixels))
+    //while (rkb.SetLEDs(pixels_out->pixels))
     {
         Sleep(delay);
     }
@@ -1104,12 +1104,13 @@ void Visualizer::RazerChromaUpdateThread()
 
 void Visualizer::CorsairKeyboardUpdateThread()
 {
-    while (ckb.SetLEDs(pixels_out->pixels))
+    //while (ckb.SetLEDs(pixels_out->pixels))
     {
         Sleep(delay);
     }
 }
 
+/*
 void Visualizer::CmKeyboardUpdateThread()
 {
     while (cmkb.SetLEDs(pixels_out->pixels))

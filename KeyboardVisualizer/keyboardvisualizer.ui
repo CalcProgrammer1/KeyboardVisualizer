@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>350</height>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -374,6 +374,19 @@
     </property>
     <property name="text">
      <string>Save Settings</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_GitHub_URL">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>280</y>
+      <width>581</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>https://github.com/CalcProgrammer1/KeyboardVisualizerVCUI</string>
     </property>
    </widget>
   </widget>

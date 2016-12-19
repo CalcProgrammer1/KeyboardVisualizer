@@ -16,6 +16,9 @@ KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new Ke
 
 void KeyboardVisDlg::show()
 {
+    QIcon icon(":Icon.png");
+    setWindowIcon(icon);
+
     ui->lineEdit_Normalization_Offset->setText(QString::number(vis_ptr->nrml_ofst));
     ui->lineEdit_Normalization_Scale->setText(QString::number(vis_ptr->nrml_scl));
     ui->lineEdit_Animation_Speed->setText(QString::number(vis_ptr->anim_speed));
@@ -68,6 +71,10 @@ void KeyboardVisDlg::show()
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(15);
 
+    image = new QImage(256, 64, QImage::Format_RGB32);
+    scene = new QGraphicsScene(this);
+    ui->graphicsView_Visualization_Preview->setScene(scene);
+
     QMainWindow::show();
 }
 
@@ -78,22 +85,20 @@ KeyboardVisDlg::~KeyboardVisDlg()
 
 void KeyboardVisDlg::update()
 {
-    QImage image(256, 64, QImage::Format_RGB32);
-
     for(int x = 0; x < 256; x++)
     {
         for(int y = 0; y < 64; y++)
         {
             COLORREF input = vis_ptr->pixels_out->pixels[y][x];
             COLORREF bgr = RGB(GetBValue(input), GetGValue(input), GetRValue(input));
-            image.setPixel(x, y, bgr);
+            image->setPixel(x, y, bgr);
         }
     }
 
-    QGraphicsScene *scene = new QGraphicsScene(this);
-    QPixmap pixmap = QPixmap::fromImage(image);
+    pixmap.convertFromImage(*image);
+    scene->clear();
     scene->addPixmap(pixmap);
-    ui->graphicsView_Visualization_Preview->setScene(scene);
+
     ui->graphicsView_Visualization_Preview->show();
 }
 

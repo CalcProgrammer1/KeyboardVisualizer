@@ -58,5 +58,8 @@ private slots:
 private:
     Ui::KeyboardVisualizerDlg *ui;
     QTimer* timer;
+    QGraphicsScene* scene;
+    QImage* image;
+    QPixmap pixmap;
 };
 #endif // KEYBOARDVISDLG_H
