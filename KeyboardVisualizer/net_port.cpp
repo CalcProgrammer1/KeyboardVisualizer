@@ -248,7 +248,7 @@ int net_port::tcp_listen(char * recv_data, int length)
         {
             if (select(sock, NULL, NULL, 0, &waitd))
             {
-                ret = recv(sock, &len, sizeof(len), 0);
+                ret = recv(sock, (char *)&len, sizeof(len), 0);
             }
             if (ret == -1)
             {
@@ -294,7 +294,7 @@ int net_port::tcp_write(char * buffer, int length)
     for (unsigned int i = 0; i < clients.size(); i++)
     {
         int val = length;
-        val = send(*(clients[i]), &length, sizeof(length), 0);
+        val = send(*(clients[i]), (const char *)&length, sizeof(length), 0);
         val = send(*(clients[i]), buffer, length, 0);
 
         if (val == -1)
