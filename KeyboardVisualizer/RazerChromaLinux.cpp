@@ -11,6 +11,7 @@ enum
 {
     RAZER_NO_DEVICE,
     RAZER_BLACKWIDOW_CHROMA,
+    RAZER_ORNATA_CHROMA,
     RAZER_TARTARUS_CHROMA,
     RAZER_DEATHADDER_CHROMA,
     RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA,
@@ -126,6 +127,13 @@ void RazerChroma::Initialize()
 
                             device_type = RAZER_BLACKWIDOW_CHROMA;
                         }
+                        else if(!strncmp(device_string, "Razer Ornata Chroma", strlen("Razer Ornata Chroma")))
+                        {
+                            //Device is Razer Ornata Chroma
+                            printf("Ornata Chroma Detected\r\n");
+
+                            device_type = RAZER_ORNATA_CHROMA;
+                        }
                         else if(!strncmp(device_string, "Razer Tartarus Chroma", strlen("Razer Tartarus Chroma")))
                         {
                             //Device is Razer Tartarus Chroma
@@ -198,6 +206,7 @@ void RazerChroma::Initialize()
                                     {
                                     //Devices with custom effect type and matrix
                                     case RAZER_BLACKWIDOW_CHROMA:
+                                    case RAZER_ORNATA_CHROMA:
                                     case RAZER_FIREFLY_CHROMA:
                                     case RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA:
                                         {
@@ -214,9 +223,7 @@ void RazerChroma::Initialize()
 
                                             if(custom_fd && update_fd)
                                             {
-
-                                                //Build index list for BlackWidow
-                                    SetupKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex); razer_device_serial.push_back(serial);
+                                                razer_device_serial.push_back(serial);
                                                 razer_device_type.push_back(device_type);
                                                 razer_custom_fd.push_back(custom_fd);
                                                 razer_update_fd.push_back(update_fd);
@@ -291,6 +298,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         {
             switch(razer_device_type[i])
             {
+            case RAZER_ORNATA_CHROMA:
             case RAZER_BLACKWIDOW_CHROMA:
                 {
                     char BlackWidowEffect[((3 * 22)) + 3];
