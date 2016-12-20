@@ -9,7 +9,7 @@
 #include "pthread.h"
 #include "unistd.h"
 
-//#include "RazerChromaLinux.h"
+#include "RazerChromaLinux.h"
 //#include "CorsairCUE.h"
 //#include "CorsairCKBLinux.h"
 //#include "CmKeyboard.h"
@@ -28,7 +28,7 @@
 //File includes
 #include <fstream>
 
-//RazerChroma rkb;
+RazerChroma rkb;
 //CorsairCKB ckb;
 //CorsairCUE ckb;
 //CmKeyboard cmkb;
@@ -175,7 +175,7 @@ void Visualizer::Initialize()
     device = alcCaptureOpenDevice(devices, 10000, AL_FORMAT_MONO8, 2048);
     alcCaptureStart(device);
 
-    //rkb.Initialize();
+    rkb.Initialize();
     //ckb.Initialize();
     //cmkb.Initialize();
     //skb.Initialize();
@@ -1096,7 +1096,7 @@ void Visualizer::VisThread()
 
 void Visualizer::RazerChromaUpdateThread()
 {
-    //while (rkb.SetLEDs(pixels_out->pixels))
+    while (rkb.SetLEDs(pixels_out->pixels))
     {
         Sleep(delay);
     }
