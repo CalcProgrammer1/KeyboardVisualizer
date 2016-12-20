@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     Visualizer.cpp \
     LEDStrip.cpp \
     serial_port.cpp \
-    net_port.cpp
+    net_port.cpp \
+    RazerChromaLinux.cpp
 
 HEADERS  += \
     KeyboardVisDlg.h \
@@ -35,7 +36,6 @@ HEADERS  += \
 
 FORMS    += keyboardvisualizer.ui
 
-#LIBS     += -lopenal -lrazer_chroma
 LIBS      += -lopenal
 
 DISTFILES +=
