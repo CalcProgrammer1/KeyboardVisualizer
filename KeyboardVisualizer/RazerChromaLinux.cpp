@@ -12,10 +12,15 @@ enum
     RAZER_NO_DEVICE,
     RAZER_BLACKWIDOW_CHROMA,
     RAZER_TARTARUS_CHROMA,
+    RAZER_DEATHADDER_CHROMA,
     RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA,
     RAZER_FIREFLY_CHROMA,
     RAZER_NUM_DEVICES
 };
+
+//Index lists for BlackWidow
+int BlackWidowXIndex[22];
+int BlackWidowYIndex[6];
 
 //Index list for Firefly
 int FireflyIndex[15];
@@ -28,6 +33,18 @@ RazerChroma::RazerChroma()
 RazerChroma::~RazerChroma()
 {
 
+}
+
+void SetupKeyboardGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list)
+{
+    for (int x = 0; x < x_count; x++)
+    {
+        x_idx_list[x] = x * (SPECTROGRAPH_COLS / x_count);
+    }
+    for (int y = 0; y < y_count; y++)
+    {
+        y_idx_list[y] = ROW_IDX_SPECTROGRAPH_TOP + (y * (SPECTROGRAPH_ROWS / y_count)) + (0.5f * (SPECTROGRAPH_ROWS / y_count));
+    }
 }
 
 void RazerChroma::Initialize()
@@ -116,6 +133,13 @@ void RazerChroma::Initialize()
 
                             device_type = RAZER_TARTARUS_CHROMA;
                         }
+                        else if(!strncmp(device_string, "Razer DeathAdder Chroma", strlen("Razer DeathAdder Chroma")))
+                        {
+                            //Device is Razer DeathAdder Chroma
+                            printf("DeathAdder Chroma Detected\r\n");
+
+                            device_type = RAZER_DEATHADDER_CHROMA;
+                        }
                         else if(!strncmp(device_string, "Razer Mamba Tournament Edition", strlen("Razer Mamba Tournament Edition")))
                         {
                             //Device is Razer Mamba Tournament Edition
@@ -190,7 +214,9 @@ void RazerChroma::Initialize()
 
                                             if(custom_fd && update_fd)
                                             {
-                                                razer_device_serial.push_back(serial);
+
+                                                //Build index list for BlackWidow
+                                    SetupKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex); razer_device_serial.push_back(serial);
                                                 razer_device_type.push_back(device_type);
                                                 razer_custom_fd.push_back(custom_fd);
                                                 razer_update_fd.push_back(update_fd);
@@ -231,6 +257,10 @@ void RazerChroma::Initialize()
         driver_to_read++;
     }
 
+
+    //Build index list for BlackWidow
+    SetupKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex);
+
     //Build index list for Firefly
     for (int x = 0; x < 15; x++)
     {
@@ -261,6 +291,37 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         {
             switch(razer_device_type[i])
             {
+            case RAZER_BLACKWIDOW_CHROMA:
+                {
+                    char BlackWidowEffect[((3 * 22)) + 3];
+
+                    BlackWidowEffect[1] = 0;
+                    BlackWidowEffect[2] = 21;
+
+                    for(int y = 0; y < 6; y++)
+                    {
+                        BlackWidowEffect[0] = y;
+
+                        for(int x = 0; x < 22; x++)
+                        {
+                            BlackWidowEffect[3 + (x * 3)] = GetRValue(pixels[BlackWidowYIndex[y]][BlackWidowXIndex[x]]);
+                            BlackWidowEffect[4 + (x * 3)] = GetGValue(pixels[BlackWidowYIndex[y]][BlackWidowXIndex[x]]);
+                            BlackWidowEffect[5 + (x * 3)] = GetBValue(pixels[BlackWidowYIndex[y]][BlackWidowXIndex[x]]);
+
+                            if(y == 0 && x == 20)
+                            {
+                                BlackWidowEffect[3 + (x * 3)] = GetRValue(pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)]);
+                                BlackWidowEffect[4 + (x * 3)] = GetGValue(pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)]);
+                                BlackWidowEffect[5 + (x * 3)] = GetBValue(pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)]);
+                            }
+                        }
+
+                        write(razer_custom_fd[i], &BlackWidowEffect, sizeof(BlackWidowEffect));
+                    }
+                    write(razer_update_fd[i], &BlackWidowEffect, 1);
+                }
+                break;
+
             case RAZER_FIREFLY_CHROMA:
                 {
                     char FireflyEffect[(3 * 15) + 3];
