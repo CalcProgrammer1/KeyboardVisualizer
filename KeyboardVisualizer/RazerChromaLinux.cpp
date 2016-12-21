@@ -11,9 +11,11 @@ enum
 {
     RAZER_NO_DEVICE,
     RAZER_BLACKWIDOW_CHROMA,
+    RAZER_DEATHSTALKER_CHROMA,
     RAZER_ORNATA_CHROMA,
     RAZER_TARTARUS_CHROMA,
     RAZER_DEATHADDER_CHROMA,
+    RAZER_DIAMONDBACK_CHROMA,
     RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA,
     RAZER_FIREFLY_CHROMA,
     RAZER_NUM_DEVICES
@@ -127,6 +129,13 @@ void RazerChroma::Initialize()
 
                             device_type = RAZER_BLACKWIDOW_CHROMA;
                         }
+                        if(!strncmp(device_string, "Razer DeathStalker Chroma", strlen("Razer DeathStalker Chroma")))
+                        {
+                            //Device is Razer DeathStalker Chroma
+                            printf("DeathStalker Chroma Detected\r\n");
+
+                            device_type = RAZER_DEATHSTALKER_CHROMA;
+                        }
                         else if(!strncmp(device_string, "Razer Ornata Chroma", strlen("Razer Ornata Chroma")))
                         {
                             //Device is Razer Ornata Chroma
@@ -147,6 +156,13 @@ void RazerChroma::Initialize()
                             printf("DeathAdder Chroma Detected\r\n");
 
                             device_type = RAZER_DEATHADDER_CHROMA;
+                        }
+                        else if(!strncmp(device_string, "Razer Diamondback Chroma", strlen("Razer Diamondback Chroma")))
+                        {
+                            //Device is Razer Diamondback Chroma
+                            printf("Diamondback Chroma Detected\r\n");
+
+                            device_type = RAZER_DIAMONDBACK_CHROMA;
                         }
                         else if(!strncmp(device_string, "Razer Mamba Tournament Edition", strlen("Razer Mamba Tournament Edition")))
                         {
@@ -206,27 +222,35 @@ void RazerChroma::Initialize()
                                     {
                                     //Devices with custom effect type and matrix
                                     case RAZER_BLACKWIDOW_CHROMA:
+                                    case RAZER_DEATHSTALKER_CHROMA:
                                     case RAZER_ORNATA_CHROMA:
                                     case RAZER_FIREFLY_CHROMA:
                                     case RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA:
+                                    case RAZER_DIAMONDBACK_CHROMA:
                                         {
                                             //Device is unique, go ahead and register it
                                             strcpy(device_string, driver_path);
                                             strcat(device_string, ent->d_name);
                                             strcat(device_string, "/matrix_custom_frame");
-                                            int custom_fd = open(device_string, O_WRONLY);
+                                            int fd_1 = open(device_string, O_WRONLY);
 
                                             strcpy(device_string, driver_path);
                                             strcat(device_string, ent->d_name);
                                             strcat(device_string, "/matrix_effect_custom");
-                                            int update_fd = open(device_string, O_WRONLY);
+                                            int fd_2 = open(device_string, O_WRONLY);
 
-                                            if(custom_fd && update_fd)
+                                            //We need placeholders for the unused update fds to keep the vectors the same length
+                                            int fd_3 = 0;
+                                            int fd_4 = 0;
+
+                                            if(fd_1 && fd_2)
                                             {
                                                 razer_device_serial.push_back(serial);
                                                 razer_device_type.push_back(device_type);
-                                                razer_custom_fd.push_back(custom_fd);
-                                                razer_update_fd.push_back(update_fd);
+                                                razer_fd_1.push_back(fd_1);
+                                                razer_fd_2.push_back(fd_2);
+                                                razer_fd_3.push_back(fd_3);
+                                                razer_fd_4.push_back(fd_4);
                                             }
                                         }
                                         break;
@@ -238,17 +262,57 @@ void RazerChroma::Initialize()
                                             strcpy(device_string, driver_path);
                                             strcat(device_string, ent->d_name);
                                             strcat(device_string, "/matrix_effect_static");
-                                            int custom_fd = open(device_string, O_WRONLY);
+                                            int fd_1 = open(device_string, O_WRONLY);
 
-                                            //We need a placeholder for the unused update fd to keep the vectors the same length
-                                            int update_fd = 0;
+                                            //We need placeholders for the unused update fds to keep the vectors the same length
+                                            int fd_2 = 0;
+                                            int fd_3 = 0;
+                                            int fd_4 = 0;
 
-                                            if(custom_fd)
+                                            if(fd_1)
                                             {
                                                 razer_device_serial.push_back(serial);
                                                 razer_device_type.push_back(device_type);
-                                                razer_custom_fd.push_back(custom_fd);
-                                                razer_update_fd.push_back(update_fd);
+                                                razer_fd_1.push_back(fd_1);
+                                                razer_fd_2.push_back(fd_2);
+                                                razer_fd_3.push_back(fd_3);
+                                                razer_fd_4.push_back(fd_4);
+                                            }
+                                        }
+                                        break;
+
+                                    //Devices with logo LED rgb and effect parameters
+                                    case RAZER_DEATHADDER_CHROMA:
+                                        {
+                                            //Device is unique, go ahead and register it
+                                            strcpy(device_string, driver_path);
+                                            strcat(device_string, ent->d_name);
+                                            strcat(device_string, "/logo_led_rgb");
+                                            int fd_1 = open(device_string, O_WRONLY);
+
+                                            strcpy(device_string, driver_path);
+                                            strcat(device_string, ent->d_name);
+                                            strcat(device_string, "/logo_led_effect");
+                                            int fd_2 = open(device_string, O_WRONLY);
+
+                                            strcpy(device_string, driver_path);
+                                            strcat(device_string, ent->d_name);
+                                            strcat(device_string, "/scroll_led_rgb");
+                                            int fd_3 = open(device_string, O_WRONLY);
+
+                                            strcpy(device_string, driver_path);
+                                            strcat(device_string, ent->d_name);
+                                            strcat(device_string, "/scroll_led_effect");
+                                            int fd_4 = open(device_string, O_WRONLY);
+
+                                            if(fd_1 && fd_2 && fd_3 && fd_4)
+                                            {
+                                                razer_device_serial.push_back(serial);
+                                                razer_device_type.push_back(device_type);
+                                                razer_fd_1.push_back(fd_1);
+                                                razer_fd_2.push_back(fd_2);
+                                                razer_fd_3.push_back(fd_3);
+                                                razer_fd_4.push_back(fd_4);
                                             }
                                         }
                                         break;
@@ -288,13 +352,13 @@ void RazerChroma::Initialize()
 
 bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 {
-//    if(!razer_custom_fd || !razer_update_fd)
+//    if(!razer_fd_1 || !razer_fd_2)
 //    {
 //        return false;
 //    }
 //    else
     {
-        for(int i = 0; i < razer_custom_fd.size(); i++)
+        for(int i = 0; i < razer_fd_1.size(); i++)
         {
             switch(razer_device_type[i])
             {
@@ -324,9 +388,9 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
                             }
                         }
 
-                        write(razer_custom_fd[i], &BlackWidowEffect, sizeof(BlackWidowEffect));
+                        write(razer_fd_1[i], &BlackWidowEffect, sizeof(BlackWidowEffect));
                     }
-                    write(razer_update_fd[i], &BlackWidowEffect, 1);
+                    write(razer_fd_2[i], &BlackWidowEffect, 1);
                 }
                 break;
 
@@ -347,8 +411,8 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
                     FireflyEffect[sizeof(FireflyEffect)-1] = '\n';
 
-                    write(razer_custom_fd[i], &FireflyEffect, sizeof(FireflyEffect));
-                    write(razer_update_fd[i], &FireflyEffect, 1);
+                    write(razer_fd_1[i], &FireflyEffect, sizeof(FireflyEffect));
+                    write(razer_fd_2[i], &FireflyEffect, 1);
                 }
                 break;
 
@@ -388,8 +452,55 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
                         }
                     }
 
-                    write(razer_custom_fd[i], &MambaTEEffect, sizeof(MambaTEEffect));
-                    write(razer_update_fd[i], &MambaTEEffect, 1);
+                    write(razer_fd_1[i], &MambaTEEffect, sizeof(MambaTEEffect));
+                    write(razer_fd_2[i], &MambaTEEffect, 1);
+                }
+                break;
+
+            case RAZER_DIAMONDBACK_CHROMA:
+                {
+                    char DiamondbackEffect[(3 * 21) + 3];
+
+                    DiamondbackEffect[0] = 0;
+                    DiamondbackEffect[1] = 0;
+                    DiamondbackEffect[2] = 20;
+
+                    for(int x = 0; x < 21; x++)
+                    {
+                        if(x < 9)
+                        {
+                            DiamondbackEffect[3 + (x * 3)] = GetRValue(pixels[ROW_IDX_BAR_GRAPH][(x * (128 / 9)) + (128/18)]);
+                            DiamondbackEffect[4 + (x * 3)] = GetGValue(pixels[ROW_IDX_BAR_GRAPH][(x * (128 / 9)) + (128/18)]);
+                            DiamondbackEffect[5 + (x * 3)] = GetBValue(pixels[ROW_IDX_BAR_GRAPH][(x * (128 / 9)) + (128/18)]);
+                        }
+                        else if(x == 9)
+                        {
+                            DiamondbackEffect[3 + (x * 3)] = GetRValue(pixels[ROW_IDX_BAR_GRAPH][128]);
+                            DiamondbackEffect[4 + (x * 3)] = GetGValue(pixels[ROW_IDX_BAR_GRAPH][128]);
+                            DiamondbackEffect[5 + (x * 3)] = GetBValue(pixels[ROW_IDX_BAR_GRAPH][128]);
+                        }
+                        else if(x < 19)
+                        {
+                            DiamondbackEffect[3 + (x * 3)] = GetRValue(pixels[ROW_IDX_BAR_GRAPH][((18 - x) * (128 / 9)) + (128/18)]);
+                            DiamondbackEffect[4 + (x * 3)] = GetGValue(pixels[ROW_IDX_BAR_GRAPH][((18 - x) * (128 / 9)) + (128/18)]);
+                            DiamondbackEffect[5 + (x * 3)] = GetBValue(pixels[ROW_IDX_BAR_GRAPH][((18 - x) * (128 / 9)) + (128/18)]);
+                        }
+                        else if(x == 19)
+                        {
+                            DiamondbackEffect[3 + (x * 3)] = GetRValue(pixels[ROW_IDX_SINGLE_COLOR][14 * 5]);
+                            DiamondbackEffect[4 + (x * 3)] = GetGValue(pixels[ROW_IDX_SINGLE_COLOR][14 * 5]);
+                            DiamondbackEffect[5 + (x * 3)] = GetBValue(pixels[ROW_IDX_SINGLE_COLOR][14 * 5]);
+                        }
+                        else if(x == 20)
+                        {
+                            DiamondbackEffect[3 + (x * 3)] = GetRValue(pixels[ROW_IDX_SINGLE_COLOR][0]);
+                            DiamondbackEffect[4 + (x * 3)] = GetGValue(pixels[ROW_IDX_SINGLE_COLOR][0]);
+                            DiamondbackEffect[5 + (x * 3)] = GetBValue(pixels[ROW_IDX_SINGLE_COLOR][0]);
+                        }
+                    }
+
+                    write(razer_fd_1[i], &DiamondbackEffect, sizeof(DiamondbackEffect));
+                    write(razer_fd_2[i], &DiamondbackEffect, 1);
                 }
                 break;
 
@@ -401,7 +512,28 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
                     TartarusEffect[1] = GetGValue(pixels[ROW_IDX_SINGLE_COLOR][0]);
                     TartarusEffect[2] = GetBValue(pixels[ROW_IDX_SINGLE_COLOR][0]);
 
-                    write(razer_custom_fd[i], &TartarusEffect, sizeof(TartarusEffect));
+                    write(razer_fd_1[i], &TartarusEffect, sizeof(TartarusEffect));
+                }
+                break;
+
+            case RAZER_DEATHADDER_CHROMA:
+                {
+                    char DeathAdderEffect[3];
+
+                    DeathAdderEffect[0] = 3;
+                    write(razer_fd_2[i], &DeathAdderEffect, 1);
+                    write(razer_fd_4[i], &DeathAdderEffect, 1);
+
+                    DeathAdderEffect[0] = GetRValue(pixels[ROW_IDX_SINGLE_COLOR][0]);
+                    DeathAdderEffect[1] = GetGValue(pixels[ROW_IDX_SINGLE_COLOR][0]);
+                    DeathAdderEffect[2] = GetBValue(pixels[ROW_IDX_SINGLE_COLOR][0]);
+
+                    write(razer_fd_1[i], &DeathAdderEffect, sizeof(DeathAdderEffect));
+                    write(razer_fd_3[i], &DeathAdderEffect, sizeof(DeathAdderEffect));
+
+                    DeathAdderEffect[0] = 0;
+                    write(razer_fd_2[i], &DeathAdderEffect, 1);
+                    write(razer_fd_4[i], &DeathAdderEffect, 1);
                 }
                 break;
             }
