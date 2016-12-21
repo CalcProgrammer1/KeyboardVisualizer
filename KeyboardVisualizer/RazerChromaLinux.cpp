@@ -394,6 +394,26 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
                 }
                 break;
 
+            case RAZER_DEATHSTALKER_CHROMA:
+                {
+                    char DeathStalkerEffect[(3 * 12) + 3];
+
+                    DeathStalkerEffect[0] = 0;
+                    DeathStalkerEffect[1] = 0;
+                    DeathStalkerEffect[2] = 11;
+
+                    for(int x = 0; x < 12; x++)
+                    {
+                        DeathStalkerEffect[3 + (x * 3)] = GetRValue(pixels[ROW_IDX_BAR_GRAPH][(11 - x) * (128 / 12)]);
+                        DeathStalkerEffect[4 + (x * 3)] = GetGValue(pixels[ROW_IDX_BAR_GRAPH][(11 - x) * (128 / 12)]);
+                        DeathStalkerEffect[5 + (x * 3)] = GetBValue(pixels[ROW_IDX_BAR_GRAPH][(11 - x) * (128 / 12)]);
+                    }
+
+                    write(razer_fd_1[i], &DeathStalkerEffect, sizeof(DeathStalkerEffect));
+                    write(razer_fd_2[i], &DeathStalkerEffect, 1);
+                }
+                break;
+
             case RAZER_FIREFLY_CHROMA:
                 {
                     char FireflyEffect[(3 * 15) + 3];
@@ -408,8 +428,6 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
                         FireflyEffect[4 + (x * 3)] = GetGValue(pixels[ROW_IDX_BAR_GRAPH][FireflyIndex[x]]);
                         FireflyEffect[5 + (x * 3)] = GetBValue(pixels[ROW_IDX_BAR_GRAPH][FireflyIndex[x]]);
                     }
-
-                    FireflyEffect[sizeof(FireflyEffect)-1] = '\n';
 
                     write(razer_fd_1[i], &FireflyEffect, sizeof(FireflyEffect));
                     write(razer_fd_2[i], &FireflyEffect, 1);
