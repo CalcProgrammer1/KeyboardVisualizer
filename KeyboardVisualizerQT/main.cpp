@@ -1,7 +1,7 @@
 #include "KeyboardVisDlg.h"
 #include <QApplication>
-#include "Visualizer.h"
-#include "VisualizerDefines.h"
+#include "KeyboardVisualizerCommon/Visualizer.h"
+#include "KeyboardVisualizerCommon/VisualizerDefines.h"
 
 #include <unistd.h>
 #include <fstream>

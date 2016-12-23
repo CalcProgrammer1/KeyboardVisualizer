@@ -15,6 +15,7 @@ enum
     RAZER_ORNATA_CHROMA,
     RAZER_TARTARUS_CHROMA,
     RAZER_DEATHADDER_CHROMA,
+    RAZER_NAGA_CHROMA,
     RAZER_DIAMONDBACK_CHROMA,
     RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA,
     RAZER_FIREFLY_CHROMA,
@@ -157,6 +158,13 @@ void RazerChroma::Initialize()
 
                             device_type = RAZER_DEATHADDER_CHROMA;
                         }
+                        else if(!strncmp(device_string, "Razer Naga Chroma", strlen("Razer Naga Chroma")))
+                        {
+                            //Device is Razer Naga Chroma
+                            printf("Naga Chroma Detected\r\n");
+
+                            device_type = RAZER_NAGA_CHROMA;
+                        }
                         else if(!strncmp(device_string, "Razer Diamondback Chroma", strlen("Razer Diamondback Chroma")))
                         {
                             //Device is Razer Diamondback Chroma
@@ -283,6 +291,7 @@ void RazerChroma::Initialize()
 
                                     //Devices with logo LED rgb and effect parameters
                                     case RAZER_DEATHADDER_CHROMA:
+                                    case RAZER_NAGA_CHROMA:
                                         {
                                             //Device is unique, go ahead and register it
                                             strcpy(device_string, driver_path);
@@ -535,6 +544,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
                 break;
 
             case RAZER_DEATHADDER_CHROMA:
+            case RAZER_NAGA_CHROMA:
                 {
                     char DeathAdderEffect[3];
 

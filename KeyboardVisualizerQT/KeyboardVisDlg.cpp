@@ -1,6 +1,6 @@
 #include "KeyboardVisDlg.h"
-#include "Visualizer.h"
-#include "VisualizerDefines.h"
+#include "KeyboardVisualizerCommon/Visualizer.h"
+#include "KeyboardVisualizerCommon/VisualizerDefines.h"
 #include "ui_keyboardvisualizer.h"
 
 Visualizer* vis_ptr;

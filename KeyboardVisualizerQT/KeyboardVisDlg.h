@@ -1,7 +1,7 @@
 #ifndef KEYBOARDVISDLG_H
 #define KEYBOARDVISDLG_H
 
-#include "Visualizer.h"
+#include "KeyboardVisualizerCommon/Visualizer.h"
 #include "ui_keyboardvisualizer.h"
 #include <QMainWindow>
 #include <QTimer>
