@@ -8,7 +8,7 @@
 #define KEYBOARD_VIS_DLG_H
 
 #include "stdafx.h"
-#include "Visualizer.h"
+#include "..\KeyboardVisualizerCommon\Visualizer.h"
 // KeyboardVisDlg dialog
 
 class KeyboardVisDlg : public CDialogEx

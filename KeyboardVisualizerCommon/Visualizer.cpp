@@ -6,8 +6,19 @@
 
 #include "Visualizer.h"
 #include "string.h"
+
+//Thread functions have different types in Windows and Linux
+#ifdef WIN32
+#define THREAD static void
+#else
+#define THREAD static void*
+#endif
+
+//Include pthread and Unix standard libraries if not building for Windows
+#ifndef WIN32
 #include "pthread.h"
 #include "unistd.h"
+#endif
 
 #include "RazerChromaLinux.h"
 //#include "CorsairCUE.h"
@@ -16,14 +27,6 @@
 //#include "SteelSeriesGameSense.h"
 //#include "MSIKeyboard.h"
 #include "LEDStrip.h"
-
-//WASAPI includes
-//#include <mmsystem.h>
-//#include <mmdeviceapi.h>
-//#include <audioclient.h>
-//#include <initguid.h>
-//#include <mmdeviceapi.h>
-//#include <functiondiscoverykeys_devpkey.h>
 
 //File includes
 #include <fstream>
@@ -37,67 +40,69 @@ RazerChroma rkb;
 std::vector<LEDStrip *> str;
 std::vector<LEDStrip *> xmas;
 
-//WASAPI objects
-//IMMDeviceEnumerator *pMMDeviceEnumerator;
-//IMMDevice *pMMDevice;
-//IMMDeviceCollection *pMMDeviceCollection;
-//IAudioClient *pAudioClient;
-//IAudioCaptureClient *pAudioCaptureClient;
-//WAVEFORMATEX *waveformat;
+//WASAPI objects if building for Windows
+#ifdef WIN32
+IMMDeviceEnumerator *pMMDeviceEnumerator;
+IMMDevice *pMMDevice;
+IMMDeviceCollection *pMMDeviceCollection;
+IAudioClient *pAudioClient;
+IAudioCaptureClient *pAudioCaptureClient;
+WAVEFORMATEX *waveformat;
+#endif
 
 int single_color_timeout;
 float fft_nrml[256];
 
 //Thread starting static function
-static void* thread(void *param)
+THREAD thread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->VisThread();
 }
 
-static void* netconthread(void *param)
+THREAD netconthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->NetConnectThread();
 }
-static void* netupdthread(void *param)
+THREAD netupdthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->NetUpdateThread();
 }
 
-static void* rkbthread(void *param)
+THREAD rkbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->RazerChromaUpdateThread();
 }
 
-static void* ckbthread(void *param)
+THREAD ckbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->CorsairKeyboardUpdateThread();
 }
 
 /*
-static void skbthread(void *param)
+THREAD skbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->SteelSeriesKeyboardUpdateThread();
 }
 
-static void cmkbthread(void *param)
+THREAD cmkbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->CmKeyboardUpdateThread();
 }
 
-static void mkbthread(void *param)
+THREAD mkbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->MSIKeyboardUpdateThread();
 }
 */
-static void* lsthread(void *param)
+THREAD lsthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->LEDStripUpdateThread();
@@ -158,22 +163,27 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
 
 void Visualizer::Initialize()
 {
-    //CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    //CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&pMMDeviceEnumerator);
-    //pMMDeviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pMMDevice);
-    //pMMDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, NULL, (void**)&pAudioClient);
+#ifdef WIN32
+    //If using WASAPI, start WASAPI loopback capture device
+    CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&pMMDeviceEnumerator);
+    pMMDeviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pMMDevice);
+    pMMDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, NULL, (void**)&pAudioClient);
 
-    //pAudioClient->GetMixFormat(&waveformat);
+    pAudioClient->GetMixFormat(&waveformat);
 
-    //pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_LOOPBACK, 0, 0, waveformat, 0);
-    //pAudioClient->GetService(__uuidof(IAudioCaptureClient), (void**)&pAudioCaptureClient);
+    pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_LOOPBACK, 0, 0, waveformat, 0);
+    pAudioClient->GetService(__uuidof(IAudioCaptureClient), (void**)&pAudioCaptureClient);
 
-    //pAudioClient->Start();
+    pAudioClient->Start();
 
+#else
+    //If using OpenAL, start OpenAL capture on default capture device
     ALCchar* devices;
     devices = (ALCchar *) alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
     device = alcCaptureOpenDevice(devices, 10000, AL_FORMAT_MONO8, 2048);
     alcCaptureStart(device);
+#endif
 
     rkb.Initialize();
     //ckb.Initialize();
@@ -214,9 +224,9 @@ void Visualizer::InitClient(char * clientstring)
 {
     if (netmode == NET_MODE_DISABLED)
     {
-        char * client_name;
-        char * port_name;
-        client_name = strtok_r(clientstring, ",", &port_name);
+        LPSTR client_name;
+        LPSTR port_name;
+        client_name = strtok_s(clientstring, ",", &port_name);
 
         netmode = NET_MODE_CLIENT;
         port = new net_port();
@@ -241,13 +251,17 @@ void Visualizer::SaveSettings()
     char out_str[1024];
 
     //Get file path in executable directory
-    //GetModuleFileName(NULL, filename, 2048);
+#ifdef WIN32
+    GetModuleFileName(NULL, filename, 2048);
+    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
+    strcat(filename, "\\settings.txt");
+#else
     char arg1[64];
     snprintf(arg1, 64, "/proc/%d/exe", getpid());
     readlink(arg1, filename, 1024);
     strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
-    //strcat(filename, "\\settings.txt");
     strcat(filename, "/settings.txt");
+#endif
 
     //Open settings file
     outfile.open(filename);
@@ -373,6 +387,33 @@ void Visualizer::Update()
         fft[i] = fft[i] * (((float)decay) / 100.0f);
     }
 
+#ifdef WIN32
+    unsigned int nextPacketSize = 1;
+    unsigned int flags;
+
+    while(nextPacketSize > 0 )
+    {
+        float *buf;
+        pAudioCaptureClient->GetBuffer((BYTE**)&buf, &nextPacketSize, (DWORD *)&flags, NULL, NULL);
+
+        for (int i = 0; i < nextPacketSize; i+=4)
+        {
+            for (int j = 0; j < 255; j++)
+            {
+                input_wave[2 * j] = input_wave[2 * (j + 1)];
+                input_wave[(2 * j) + 1] = input_wave[2 * j];
+            }
+            input_wave[510] = buf[i] * 2.0f * amplitude;
+            input_wave[511] = input_wave[510];
+        }
+
+        buffer_pos += nextPacketSize/4;
+        pAudioCaptureClient->ReleaseBuffer(nextPacketSize);
+    }
+
+    memcpy(fft_tmp, input_wave, sizeof(input_wave));
+
+#else
     //Only update FFT if there are at least 256 samples in the sample buffer
     int samples;
 
@@ -390,31 +431,7 @@ void Visualizer::Update()
     {
         fft_tmp[i] = (buffer[i / 2] - 128.0f) * (amplitude / 128.0f);
     }
-
-    //unsigned int nextPacketSize = 1;
-    //unsigned int flags;
-
-    //while(nextPacketSize > 0 )
-    //{
-    //    float *buf;
-    //    //pAudioCaptureClient->GetBuffer((BYTE**)&buf, &nextPacketSize, (DWORD *)&flags, NULL, NULL);
-
-    //    for (int i = 0; i < nextPacketSize; i+=4)
-    //    {
-    //        for (int j = 0; j < 255; j++)
-    //        {
-    //            input_wave[2 * j] = input_wave[2 * (j + 1)];
-    //            input_wave[(2 * j) + 1] = input_wave[2 * j];
-    //        }
-    //        input_wave[510] = buf[i] * 2.0f * amplitude;
-    //        input_wave[511] = input_wave[510];
-    //    }
-
-    //    buffer_pos += nextPacketSize/4;
-    //    //pAudioCaptureClient->ReleaseBuffer(nextPacketSize);
-    //}
-
-    //memcpy(fft_tmp, input_wave, sizeof(input_wave));
+#endif
 
     //Apply selected window
     switch (window_mode)
@@ -547,23 +564,27 @@ void Visualizer::Update()
 
 void Visualizer::StartThread()
 {
-    pthread_t threads[10];
-    //_beginthread(thread, 0, this);
-    //_beginthread(netconthread, 0, this);
-    //_beginthread(netupdthread, 0, this);
-    //_beginthread(rkbthread, 0, this);
-    //_beginthread(ckbthread, 0, this);
+#ifdef WIN32
+    _beginthread(thread, 0, this);
+    _beginthread(netconthread, 0, this);
+    _beginthread(netupdthread, 0, this);
+    _beginthread(rkbthread, 0, this);
+    _beginthread(ckbthread, 0, this);
     //_beginthread(cmkbthread, 0, this);
     //_beginthread(skbthread, 0, this);
     //_beginthread(mkbthread, 0, this);
-    //_beginthread(lsthread, 0, this);
+    _beginthread(lsthread, 0, this);
 
+#else
+    pthread_t threads[10];
+    
     pthread_create(&threads[0], NULL, &thread, this);
     pthread_create(&threads[1], NULL, &netconthread, this);
     pthread_create(&threads[2], NULL, &netupdthread, this);
     pthread_create(&threads[3], NULL, &rkbthread, this);
     pthread_create(&threads[4], NULL, &ckbthread, this);
     pthread_create(&threads[5], NULL, &lsthread, this);
+#endif
 }
 
 void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)

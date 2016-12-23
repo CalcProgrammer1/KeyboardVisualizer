@@ -7,14 +7,25 @@
 #ifndef VISUALIZER_H
 #define VISUALIZER_H
 
-//#include "stdafx.h"
 #include <math.h>
 #include "chuck_fft.h"
 #include "hsv.h"
 #include "net_port.h"
 
+//If building on Windows, use WASAPI
+#ifdef WIN32
+#include <mmsystem.h>
+#include <mmdeviceapi.h>
+#include <audioclient.h>
+#include <initguid.h>
+#include <mmdeviceapi.h>
+#include <functiondiscoverykeys_devpkey.h>
+
+//If not building on Windows, use OpenAL
+#else
 #include <AL/al.h>
 #include <AL/alc.h>
+#endif
 
 #include <string>
 #include <vector>
@@ -143,8 +154,10 @@ public:
     int frgd_mode;
 
 private:
+#ifndef WIN32
     //Audio Device Pointer
     ALCdevice *device;
+#endif
 
     //Background Step
     float bkgd_step;

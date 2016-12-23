@@ -7,6 +7,11 @@
 #ifndef VISUALIZER_DEFINES_H
 #define VISUALIZER_DEFINES_H
 
+#ifdef WIN32
+#ifndef _WINDOWS_
+#include "..\KeyboardVisualizerVC\stdafx.h"
+#endif
+#else
 //Define Windows types for non-Windows Builds
 typedef unsigned int    COLORREF;
 typedef unsigned char   BYTE;
@@ -16,6 +21,9 @@ typedef bool            boolean;
 #define GetGValue(rgb)  ((unsigned char) ((rgb) >> 8))
 #define GetBValue(rgb)  ((unsigned char) ((rgb) >> 16))
 #define Sleep(ms)       (usleep(ms * 1000))
+#define LPSTR           char *
+#define strtok_s        strtok_r
+#endif
 
 //Special purpose row indices
 #define ROW_IDX_BAR_GRAPH           0

@@ -7,7 +7,7 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "KeyboardVisDlg.h"
-#include "Visualizer.h"
+#include "..\KeyboardVisualizerCommon\Visualizer.h"
 
 #include <fstream>
 #include <iostream>

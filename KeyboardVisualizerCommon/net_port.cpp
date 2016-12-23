@@ -9,9 +9,11 @@
 
 #include "net_port.h"
 
+#ifndef WIN32
 #include <sys/ioctl.h>
 #include <netinet/tcp.h>
 #include <sys/types.h>
+#endif
 #include <memory.h>
 #include <errno.h>
 #include <stdlib.h>

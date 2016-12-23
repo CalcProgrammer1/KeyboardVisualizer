@@ -25,12 +25,12 @@ void LEDStrip::Initialize(char* ledstring)
     strcpy(led_string, ledstring);
 
     bool    serial      = TRUE;
-    char *  numleds     = NULL;
-    char *  source      = NULL;
-    char *  udpport_baud= NULL;
-    char *  next        = NULL;
+    LPSTR   numleds     = NULL;
+    LPSTR   source      = NULL;
+    LPSTR   udpport_baud= NULL;
+    LPSTR   next        = NULL;
 
-    source = strtok_r(ledstring, ",", &next);
+    source = strtok_s(ledstring, ",", &next);
 
     //Check if we are setting up a UDP or Serial interface
     //UDP is denoted by udp:
@@ -43,13 +43,13 @@ void LEDStrip::Initialize(char* ledstring)
     //Check for either the UDP port or the serial baud rate
     if (strlen(next))
     {
-        udpport_baud = strtok_r(next, ",", &next);
+        udpport_baud = strtok_s(next, ",", &next);
     }
 
     //Check for the number of LEDs
     if (strlen(next))
     {
-        numleds = strtok_r(next, ",", &next);
+        numleds = strtok_s(next, ",", &next);
     }
 
     if (serial)
