@@ -84,30 +84,38 @@ bool serial_port::serial_open()
         return false;
     }
 
-    serial_struct ss;
-    int closestSpeed;
-    ioctl(file_descriptor, TIOCGSERIAL, &ss);
-    ss.flags = (ss.flags & ~ASYNC_SPD_MASK) | ASYNC_SPD_CUST | ASYNCB_LOW_LATENCY;
-    ss.custom_divisor = (ss.baud_base + (baud_rate / 2)) / baud_rate;
-    if(ss.custom_divisor == 0)
-    {
-        closestSpeed = baud_rate;
-    }
-    else
-    {
-        closestSpeed = ss.baud_base / ss.custom_divisor;
-    }
+    struct termios2 options;
+    ioctl(file_descriptor, TCGETS2, &options);
+    options.c_cflag &= ~CBAUD;
+    options.c_cflag |= BOTHER;
+    options.c_ispeed = baud_rate;
+    options.c_ospeed = baud_rate;
+    ioctl(file_descriptor, TCSETS2, &options);
 
-    if((float)closestSpeed < ((float)baud_rate * (98.0f/100.0f)) || (float)closestSpeed > ((float)baud_rate * (102.0f/100.0f)))
-    {
+    //serial_struct ss;
+    //int closestSpeed;
+    //ioctl(file_descriptor, TIOCGSERIAL, &ss);
+    //ss.flags = (ss.flags & ~ASYNC_SPD_MASK) | ASYNC_SPD_CUST | ASYNCB_LOW_LATENCY;
+    //ss.custom_divisor = (ss.baud_base + (baud_rate / 2)) / baud_rate;
+    //if(ss.custom_divisor == 0)
+    //{
+    //    closestSpeed = baud_rate;
+    //}
+    //else
+    //{
+    //    closestSpeed = ss.baud_base / ss.custom_divisor;
+    //}
+
+    //if((float)closestSpeed < ((float)baud_rate * (98.0f/100.0f)) || (float)closestSpeed > ((float)baud_rate * (102.0f/100.0f)))
+    //{
 //      printf("SerialPort: Cannot set %s to %d.  Closest possible speed is %d.\n", port_name, baud_rate, closestSpeed);
-    }
-    else
-    {
+    //}
+    //else
+    //{
 //      printf("SerialPort: %s speed set to %d.\n", port_name, baud_rate);
-    }
+    //}
 
-    fcntl(file_descriptor, F_SETFL, 0);
+    //fcntl(file_descriptor, F_SETFL, 0);
     #endif
 
 //  printf("SerialPort: Serial port %s opened successfully.\n", port_name);
@@ -194,7 +202,7 @@ void serial_port::serial_flush_rx()
 
     #else
 
-     tcflush(file_descriptor, TCIFLUSH);
+    tcflush(file_descriptor, TCIFLUSH);
     #endif
 }
 
