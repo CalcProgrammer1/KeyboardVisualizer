@@ -218,8 +218,7 @@ void Visualizer::Initialize()
 
     //Initialize devices supported by both Windows and Linux
     rkb.Initialize();
-    ckb.Initialize();
-    cmkb.Initialize();
+    //ckb.Initialize();
     skb.Initialize();
     mkb.Initialize();
 
@@ -609,7 +608,7 @@ void Visualizer::StartThread()
 
 #else
     pthread_t threads[10];
-    
+
     pthread_create(&threads[0], NULL, &thread, this);
     pthread_create(&threads[1], NULL, &netconthread, this);
     pthread_create(&threads[2], NULL, &netupdthread, this);
@@ -1175,7 +1174,7 @@ void Visualizer::RazerChromaUpdateThread()
 
 void Visualizer::CorsairKeyboardUpdateThread()
 {
-    while (ckb.SetLEDs(pixels_out->pixels))
+//    while (ckb.SetLEDs(pixels_out->pixels))
     {
         Sleep(delay);
     }

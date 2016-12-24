@@ -7,7 +7,10 @@
 #ifndef STEELSERIESGAMESENSE_H
 #define STEELSERIESGAMESENSE_H
 
-#include <Windows.h>
+#include <stdio.h>
+#include <cstdlib>
+#include <string.h>
+#include "VisualizerDefines.h"
 
 enum SS_KEYBOARD_LAYOUT
 {
@@ -29,7 +32,6 @@ private:
     void ResetLighting();
     void SetMode(unsigned char mode);
 
-    HANDLE Dev;
     unsigned char FeatureReportBuf[515];
 };
 

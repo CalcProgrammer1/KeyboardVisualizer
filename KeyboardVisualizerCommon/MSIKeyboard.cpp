@@ -9,7 +9,7 @@
 #include "UsbDevice.h"
 
 static UsbDevice usb;
-static bool init_ok = TRUE;
+static bool init_ok = true;
 
 MSIKeyboard::MSIKeyboard()
 {
@@ -21,26 +21,16 @@ MSIKeyboard::~MSIKeyboard()
 }
 
 
-void MSIKeyboard::send_usb_msg(char * data_pkt)
-{
-    char usb_pkt[8];
-    for (int i = 1; i < 9; i++)
-    {
-        usb_pkt[i] = data_pkt[i - 1];
-    }
-    HidD_SetFeature(dev, data_pkt, 8);
-}
-
 void MSIKeyboard::Initialize()
 {
     //Look for MSI SteelSeries Keyboard
     if (usb.OpenDevice(0x1770, 0xFF00, 0))
     {
-        init_ok == TRUE;
+        init_ok == true;
     }
     else
     {
-        init_ok = FALSE;
+        init_ok = false;
     }
 }
 

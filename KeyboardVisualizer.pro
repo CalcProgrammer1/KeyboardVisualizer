@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = KeyboardVisualizer
 TEMPLATE = app
 
-LIBS      += -lopenal
+LIBS      += -lopenal -lusb
 
 DISTFILES +=
 
@@ -26,6 +26,9 @@ HEADERS += \
     KeyboardVisualizerCommon/CorsairCKBLinux.h \
     KeyboardVisualizerCommon/RazerChromaLinux.h \
     KeyboardVisualizerQT/KeyboardVisDlg.h \
+    KeyboardVisualizerCommon/UsbDevice.h \
+    KeyboardVisualizerCommon/MSIKeyboard.h \
+    KeyboardVisualizerCommon/SteelSeriesGameSense.h
 
 SOURCES += \
     KeyboardVisualizerCommon/hsv.cpp \
@@ -38,6 +41,9 @@ SOURCES += \
     KeyboardVisualizerCommon/RazerChromaLinux.cpp \
     KeyboardVisualizerQT/KeyboardVisDlg.cpp \
     KeyboardVisualizerQT/main.cpp \
+    KeyboardVisualizerCommon/UsbDevice.cpp \
+    KeyboardVisualizerCommon/MSIKeyboard.cpp \
+    KeyboardVisualizerCommon/SteelSeriesGameSense.cpp
 
 RESOURCES += \
     KeyboardVisualizerQT/resources.qrc

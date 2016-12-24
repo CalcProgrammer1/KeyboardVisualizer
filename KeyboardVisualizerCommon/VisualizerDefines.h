@@ -12,6 +12,9 @@
 #include "..\KeyboardVisualizerVC\stdafx.h"
 #endif
 #else
+//Includes for non-Windows builds
+#include <unistd.h>
+
 //Define Windows types for non-Windows Builds
 typedef unsigned int    COLORREF;
 typedef unsigned char   BYTE;

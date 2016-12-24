@@ -16,6 +16,8 @@ namespace
 const int ROWS = 6;
 const int COLS = 23;
 
+bool init_ok = false;
+
 int y_idx_list[ROWS];
 int x_idx_list[COLS];
 
@@ -42,8 +44,6 @@ const unsigned char(*KeyMap)[ROWS][COLS];
 }
 
 SteelSeriesGameSense::SteelSeriesGameSense()
-:Dev(INVALID_HANDLE_VALUE)
-,FeatureReportBuf()
 {
     KeyMap = &APEX_M800_KEYMAP_US;
 }
@@ -55,7 +55,7 @@ SteelSeriesGameSense::~SteelSeriesGameSense()
 
 void SteelSeriesGameSense::Initialize()
 {
-    usb.OpenDevice(0x1038, 0x1600, 0x0000);
+    init_ok = usb.OpenDevice(0x1038, 0x1600, 0x0000);
 
     for (int y = 0; y < ROWS; y++)
     {
@@ -118,7 +118,7 @@ bool SteelSeriesGameSense::SetLEDs(COLORREF pixels[64][256])
 
 void SteelSeriesGameSense::SetMode(unsigned char mode)
 {
-    if (Dev != INVALID_HANDLE_VALUE)
+    if (init_ok)
     {
         memset(FeatureReportBuf, 0, sizeof(FeatureReportBuf));
         FeatureReportBuf[0] = 0x00;
@@ -154,7 +154,7 @@ void SteelSeriesGameSense::SetMode(unsigned char mode)
 
 void SteelSeriesGameSense::ResetLighting()
 {
-    if (Dev != INVALID_HANDLE_VALUE)
+    if (init_ok)
     {
         unsigned char buf[33];
         memset(buf, 0, sizeof(buf));
@@ -162,7 +162,7 @@ void SteelSeriesGameSense::ResetLighting()
         buf[1] = 0x0d;
         buf[2] = 0x00;
         buf[3] = 0x00;
-        
+
         //HidD_SetOutputReport(Dev, buf, sizeof(buf));
     }
 }
