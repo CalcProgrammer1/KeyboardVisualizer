@@ -7,7 +7,7 @@
 #ifndef RAZER_CHROMA_H
 #define RAZER_CHROMA_H
 
-#include "stdafx.h"
+#include "..\KeyboardVisualizerVC\stdafx.h"
 
 #include "RzChromaSDKDefines.h"
 #include "RzChromaSDKTypes.h"

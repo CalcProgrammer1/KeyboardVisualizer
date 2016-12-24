@@ -175,7 +175,6 @@
     <ClCompile Include="..\KeyboardVisualizerCommon\chuck_fft.c" />
     <ClCompile Include="..\KeyboardVisualizerCommon\CmKeyboard.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\CorsairCUE.cpp" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\HidUtil.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\hsv.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\LEDStrip.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\MSIKeyboard.cpp" />
@@ -183,6 +182,7 @@
     <ClCompile Include="..\KeyboardVisualizerCommon\RazerChroma.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\serial_port.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\SteelSeriesGameSense.cpp" />
+    <ClCompile Include="..\KeyboardVisualizerCommon\UsbDevice.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\Visualizer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="KeyboardVisDlg.cpp" />
@@ -191,7 +191,6 @@
     <ClInclude Include="..\KeyboardVisualizerCommon\chuck_fft.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\CmKeyboard.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\CorsairCUE.h" />
-    <ClInclude Include="..\KeyboardVisualizerCommon\HidUtil.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\hsv.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\LEDStrip.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\MSIKeyboard.h" />
@@ -199,6 +198,7 @@
     <ClInclude Include="..\KeyboardVisualizerCommon\RazerChroma.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\serial_port.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\SteelSeriesGameSense.h" />
+    <ClInclude Include="..\KeyboardVisualizerCommon\UsbDevice.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\Visualizer.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\VisualizerDefines.h" />
     <ClInclude Include="KeyboardVisDlg.h" />

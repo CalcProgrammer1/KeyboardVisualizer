@@ -5,7 +5,6 @@
 \*---------------------------------------------------------*/
 
 #include "Visualizer.h"
-#include "string.h"
 
 //Thread functions have different types in Windows and Linux
 #ifdef WIN32
@@ -20,23 +19,37 @@
 #include "unistd.h"
 #endif
 
+//Includes for devices supported only under Windows
+#ifdef WIN32
+#include "RazerChroma.h"
+#include "CorsairCUE.h"
+#include "CmKeyboard.h"
+
+//Includes for devices supported only under Linux
+#else
 #include "RazerChromaLinux.h"
-//#include "CorsairCUE.h"
 //#include "CorsairCKBLinux.h"
-//#include "CmKeyboard.h"
-//#include "SteelSeriesGameSense.h"
-//#include "MSIKeyboard.h"
+#endif
+
+//Includes for devices supported on both Windows and Linux
+#include "SteelSeriesGameSense.h"
+#include "MSIKeyboard.h"
 #include "LEDStrip.h"
 
-//File includes
-#include <fstream>
+//Devices supported only under Windows
+#ifdef WIN32
+CorsairCUE              ckb;
+CmKeyboard              cmkb;
 
-RazerChroma rkb;
-//CorsairCKB ckb;
-//CorsairCUE ckb;
-//CmKeyboard cmkb;
-//SteelSeriesGameSense skb;
-//MSIKeyboard mkb;
+//Devices supported only under Linux
+#else
+//CorsairCKB              ckb;
+#endif
+
+//Devices supported on both Windows and Linux
+RazerChroma             rkb;
+SteelSeriesGameSense    skb;
+MSIKeyboard             mkb;
 std::vector<LEDStrip *> str;
 std::vector<LEDStrip *> xmas;
 
@@ -53,7 +66,7 @@ WAVEFORMATEX *waveformat;
 int single_color_timeout;
 float fft_nrml[256];
 
-//Thread starting static function
+//Threads for Visualizer.cpp
 THREAD thread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
@@ -71,6 +84,20 @@ THREAD netupdthread(void *param)
     vis->NetUpdateThread();
 }
 
+//Threads for devices supported only under Windows
+#ifdef WIN32
+THREAD cmkbthread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->CmKeyboardUpdateThread();
+}
+
+//Threads for devices supported only under Linux
+#else
+
+#endif
+
+//Threads for devices supported on both Windows and Linux
 THREAD rkbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
@@ -83,17 +110,10 @@ THREAD ckbthread(void *param)
     vis->CorsairKeyboardUpdateThread();
 }
 
-/*
 THREAD skbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->SteelSeriesKeyboardUpdateThread();
-}
-
-THREAD cmkbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->CmKeyboardUpdateThread();
 }
 
 THREAD mkbthread(void *param)
@@ -101,12 +121,14 @@ THREAD mkbthread(void *param)
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->MSIKeyboardUpdateThread();
 }
-*/
+
 THREAD lsthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->LEDStripUpdateThread();
 }
+
+//Visualizer class functions start here
 
 Visualizer::Visualizer()
 {
@@ -185,11 +207,21 @@ void Visualizer::Initialize()
     alcCaptureStart(device);
 #endif
 
+    //Initialize devices supported only under Windows
+#ifdef WIN32
+    cmkb.Initialize();
+
+    //Initialize devices supported only under Linux
+#else
+
+#endif
+
+    //Initialize devices supported by both Windows and Linux
     rkb.Initialize();
-    //ckb.Initialize();
-    //cmkb.Initialize();
-    //skb.Initialize();
-    //mkb.Initialize();
+    ckb.Initialize();
+    cmkb.Initialize();
+    skb.Initialize();
+    mkb.Initialize();
 
     netmode              = NET_MODE_DISABLED;
     single_color_timeout = 0;
@@ -570,9 +602,9 @@ void Visualizer::StartThread()
     _beginthread(netupdthread, 0, this);
     _beginthread(rkbthread, 0, this);
     _beginthread(ckbthread, 0, this);
-    //_beginthread(cmkbthread, 0, this);
-    //_beginthread(skbthread, 0, this);
-    //_beginthread(mkbthread, 0, this);
+    _beginthread(cmkbthread, 0, this);
+    _beginthread(skbthread, 0, this);
+    _beginthread(mkbthread, 0, this);
     _beginthread(lsthread, 0, this);
 
 #else
@@ -583,7 +615,9 @@ void Visualizer::StartThread()
     pthread_create(&threads[2], NULL, &netupdthread, this);
     pthread_create(&threads[3], NULL, &rkbthread, this);
     pthread_create(&threads[4], NULL, &ckbthread, this);
-    pthread_create(&threads[5], NULL, &lsthread, this);
+    pthread_create(&threads[5], NULL, &skbthread, this);
+    pthread_create(&threads[6], NULL, &mkbthread, this);
+    pthread_create(&threads[7], NULL, &lsthread, this);
 #endif
 }
 
@@ -1115,6 +1149,22 @@ void Visualizer::VisThread()
     }
 }
 
+//Thread update functions for devices supported only under Windows
+#ifdef WIN32
+void Visualizer::CmKeyboardUpdateThread()
+{
+    while (cmkb.SetLEDs(pixels_out->pixels))
+    {
+        Sleep(delay);
+    }
+}
+
+//Thread update functions for devices supported only under Linux
+#else
+
+#endif
+
+//Thread update functions for devices supported on both Windows and Linux
 void Visualizer::RazerChromaUpdateThread()
 {
     while (rkb.SetLEDs(pixels_out->pixels))
@@ -1125,20 +1175,12 @@ void Visualizer::RazerChromaUpdateThread()
 
 void Visualizer::CorsairKeyboardUpdateThread()
 {
-    //while (ckb.SetLEDs(pixels_out->pixels))
+    while (ckb.SetLEDs(pixels_out->pixels))
     {
         Sleep(delay);
     }
 }
 
-/*
-void Visualizer::CmKeyboardUpdateThread()
-{
-    while (cmkb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
 
 void Visualizer::SteelSeriesKeyboardUpdateThread()
 {
@@ -1155,7 +1197,7 @@ void Visualizer::MSIKeyboardUpdateThread()
         Sleep(delay);
     }
 }
-*/
+
 void Visualizer::LEDStripUpdateThread()
 {
     if (str.size() > 0 || xmas.size() > 0)

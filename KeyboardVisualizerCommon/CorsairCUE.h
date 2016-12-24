@@ -7,7 +7,7 @@
 #ifndef CORSAIR_CUE_H
 #define CORSAIR_CUE_H
 
-#include "stdafx.h"
+#include "..\KeyboardVisualizerVC\stdafx.h"
 
 #include "CUESDK.h"
 

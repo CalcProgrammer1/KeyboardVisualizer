@@ -7,17 +7,12 @@
 #include "SteelSeriesGameSense.h"
 #include "VisualizerDefines.h"
 
-#pragma comment(lib, "hid.lib")
+#include "UsbDevice.h"
 
-extern "C" {
-#include <hidsdi.h>
-}
-
-#include "HidUtil.h"
+UsbDevice usb;
 
 namespace
 {
-
 const int ROWS = 6;
 const int COLS = 23;
 
@@ -60,7 +55,7 @@ SteelSeriesGameSense::~SteelSeriesGameSense()
 
 void SteelSeriesGameSense::Initialize()
 {
-    Dev = GetDeviceHandle(0x1038, 0x1600, 0x0000);
+    usb.OpenDevice(0x1038, 0x1600, 0x0000);
 
     for (int y = 0; y < ROWS; y++)
     {
@@ -118,7 +113,7 @@ bool SteelSeriesGameSense::SetLEDs(COLORREF pixels[64][256])
         }
     }
 
-    return (HidD_SetFeature(Dev, FeatureReportBuf, sizeof(FeatureReportBuf))) ? true : false;
+    return (usb.SendToDevice(FeatureReportBuf, sizeof(FeatureReportBuf))) ? true : false;
 }
 
 void SteelSeriesGameSense::SetMode(unsigned char mode)
@@ -151,7 +146,7 @@ void SteelSeriesGameSense::SetMode(unsigned char mode)
 
             FeatureReportBuf[3] = i / stride;
 
-            HidD_SetFeature(Dev, FeatureReportBuf, sizeof(FeatureReportBuf));
+            usb.SendToDevice(FeatureReportBuf, sizeof(FeatureReportBuf));
             Sleep(10);
         }
     }
@@ -168,6 +163,6 @@ void SteelSeriesGameSense::ResetLighting()
         buf[2] = 0x00;
         buf[3] = 0x00;
         
-        HidD_SetOutputReport(Dev, buf, sizeof(buf));
+        //HidD_SetOutputReport(Dev, buf, sizeof(buf));
     }
 }

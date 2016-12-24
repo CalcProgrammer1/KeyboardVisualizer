@@ -1,16 +1,11 @@
-#include "HidUtil.h"
+#include "UsbDevice.h"
 
-#include <cfgmgr32.h>
-#include <setupapi.h>
-
-#include <sstream>
-#include <string>
-
+//Helper functions for native Windows USB
+//These functions courtesy of http://www.reddit.com/user/chrisgzy
+#if defined(WIN32) && !defined(LIBUSB)
+#pragma comment(lib, "hid.lib")
 #pragma comment(lib, "setupapi.lib")
 
-//==================================================================================================
-// Code by http://www.reddit.com/user/chrisgzy
-//==================================================================================================
 bool IsMatchingDevice(wchar_t *pDeviceID, unsigned int uiVID, unsigned int uiPID, unsigned int uiMI)
 {
     unsigned int uiLocalVID = 0, uiLocalPID = 0, uiLocalMI = 0;
@@ -45,9 +40,6 @@ bool IsMatchingDevice(wchar_t *pDeviceID, unsigned int uiVID, unsigned int uiPID
     return true;
 }
 
-//==================================================================================================
-// Code by http://www.reddit.com/user/chrisgzy
-//==================================================================================================
 HANDLE GetDeviceHandle(unsigned int uiVID, unsigned int uiPID, unsigned int uiMI)
 {
     const GUID GUID_DEVINTERFACE_HID = { 0x4D1E55B2L, 0xF16F, 0x11CF, 0x88, 0xCB, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30 };
@@ -101,4 +93,84 @@ HANDLE GetDeviceHandle(unsigned int uiVID, unsigned int uiPID, unsigned int uiMI
     SetupDiDestroyDeviceInfoList(hDevInfo);
 
     return hReturn;
+}
+#elif defined(LIBUSB)
+static struct usb_device *find_device(uint16_t vendor, uint16_t product)
+{
+    struct usb_bus *bus;
+    struct usb_device *dev;
+    struct usb_bus *busses;
+
+    usb_init();
+    usb_find_busses();
+    usb_find_devices();
+
+    busses = usb_get_busses();
+
+    for (bus = busses; bus; bus = bus->next)
+    {
+        for (dev = bus->devices; dev; dev = dev->next)
+        {
+            if ((dev->descriptor.idVendor == vendor) && (dev->descriptor.idProduct == product))
+            {
+                return dev;
+            }
+        }
+    }
+
+    return NULL;
+}
+#endif
+
+UsbDevice::UsbDevice()
+{
+
+}
+
+bool UsbDevice::OpenDevice(unsigned short vendor, unsigned short product, unsigned int MI)
+{
+#ifdef LIBUSB
+    device = find_device(vendor, product);
+
+    if (device == NULL)
+    {
+        return FALSE;
+    }
+
+    handle = usb_open(device);
+
+    if (handle == NULL)
+    {
+        return FALSE;
+    }
+
+#ifndef WIN32
+    status = usb_claim_interface(handle, MI);
+    status = usb_detach_kernel_driver_np(handle, MI);
+
+    if (status != 0)
+    {
+        return FALSE;
+    }
+#endif //WIN32
+
+    return TRUE;
+#elif defined(WIN32)
+    handle = GetDeviceHandle(vendor, product, MI);
+
+    if (handle == NULL)
+    {
+        return FALSE;
+    }
+#endif
+}
+
+bool UsbDevice::SendToDevice(unsigned char* data, unsigned int length)
+{
+#ifdef LIBUSB
+    usb_control_msg(handle, 0x21, 0x09 0x0300, 0x03, data, length, 1000);
+    return TRUE;
+#elif defined(WIN32)
+    return(HidD_SetFeature(handle, data, length));
+#endif
 }

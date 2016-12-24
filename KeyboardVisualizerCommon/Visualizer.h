@@ -8,6 +8,12 @@
 #define VISUALIZER_H
 
 #include <math.h>
+#include <fstream>
+#include <string>
+#include <vector>
+
+//Project includes
+#include "VisualizerDefines.h"
 #include "chuck_fft.h"
 #include "hsv.h"
 #include "net_port.h"
@@ -26,11 +32,6 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #endif
-
-#include <string>
-#include <vector>
-
-#include "VisualizerDefines.h"
 
 typedef struct
 {
@@ -76,10 +77,15 @@ public:
     void NetConnectThread();
     void NetUpdateThread();
 
-    //Keyboard Update Thread
+#ifdef WIN32
+    //Update threads for devices supported only under Windows
+    void CmKeyboardUpdateThread();
+#else
+
+#endif
+    //Update threads for devices supported on both Windows and Linux
     void RazerChromaUpdateThread();
     void CorsairKeyboardUpdateThread();
-    void CmKeyboardUpdateThread();
     void SteelSeriesKeyboardUpdateThread();
     void MSIKeyboardUpdateThread();
     void LEDStripUpdateThread();

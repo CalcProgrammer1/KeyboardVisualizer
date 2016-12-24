@@ -26,7 +26,7 @@ public:
     MSIKeyboard();
     ~MSIKeyboard();
 
-    int Initialize();
+    void Initialize();
     bool SetLEDs(COLORREF pixels[64][256]);
 
 private:
