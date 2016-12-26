@@ -1,9 +1,11 @@
-# KeyboardVisualizerVCUI
-Razer Chroma and Corsair RGB Keyboard Spectrograph Visualizer for Windows with Visual C++ UI
+# Keyboard Visualizer
+Razer Chroma and Corsair RGB Keyboard Spectrograph Visualizer for Windows and Linux
 
-Binary builds can be downloaded from the Release submodule
+Binary Windows builds can be downloaded from the Release submodule
 
-You must have the Microsoft Visual C++ 2015 32-bit redistributable package installed to run this program.
+You must have the Microsoft Visual C++ 2015 32-bit redistributable package installed to run this program (Windows).
+
+To build this project in Linux, install QT Creator and libopenal-dev, libhidapi-dev and open/build the .pro file.
 
 # Settings
 
@@ -127,7 +129,7 @@ Keyboard Visualizer allows you to save your custom settings in two different way
     * Bar - Shows a single bar representing bass frequencies
     * Single Color - Brightness and color represent strength of bass frequencies
 
-# Supported Devices
+# Supported Devices (Windows)
     
     * Razer Chroma SDK
     
@@ -193,3 +195,35 @@ Keyboard Visualizer allows you to save your custom settings in two different way
 
         - For up to 200 LEDs on Arduino using 1000000 baud rate, see my pixel_controller repository
         - This requires AVR Studio 4 + WinAVR to build, but is more efficient by skipping Arduino IDE
+
+# Supported Devices (Linux)
+
+    * Razer Drivers (https://github.com/terrycain/razer-drivers)
+
+        Keyboards
+        - BlackWidow Chroma (spectrograph)
+        - BlackWidow Chroma Tournament Edition (spectrograph)
+        - DeathStalker Chroma (horizontal bar)
+        - Razer Ornata Chroma (spectrograph)
+        
+        Mice
+        - Diamondback Chroma (bar and single color)
+        - Mamba Tournament Edition (bar and single color)
+        - DeathAdder Chroma (single color)
+        
+        Mouse Mats
+        - Firefly (bar)
+
+    * SteelSeries
+
+        Keyboards
+        - Apex M800 (spectrograph)
+
+    * MSI SteelSeries
+        
+        Keyboards
+        - MSI 3-zone laptop keyboards (MSI GS63VR, etc) (bar)
+
+    * WS28XX Pixel LED Strips
+    
+        - See the information under the Windows supported devices list.
