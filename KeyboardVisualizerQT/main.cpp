@@ -15,7 +15,7 @@ void parse_argument_string(char * argument, char * value)
 {
     if (strcmp(argument, "startminimized") == 0)
     {
-        startminimized = TRUE;
+        startminimized = true;
     }
 
     if (strcmp(argument, "amplitude") == 0)

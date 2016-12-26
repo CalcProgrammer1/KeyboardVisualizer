@@ -1,8 +1,11 @@
 #ifndef USB_DEVICE_H
 #define USB_DEVICE_H
 
-#ifdef LIBUSB
-#include <usb.h>
+#define HIDAPI
+
+#include <cstdio>
+#ifdef HIDAPI
+#include <hidapi/hidapi.h>
 #elif defined(WIN32)
 #include <sstream>
 #include <wchar.h>
@@ -26,11 +29,10 @@ public:
     bool SendToDevice(unsigned char* data, unsigned int length);
 
 private:
-#ifdef LIBUSB
-    struct usb_device*        device
-    struct usb_device_handle* handle;
+#ifdef HIDAPI
+    hid_device*        device;
 #elif defined(WIN32)
-    HANDLE                    handle;
+    HANDLE             handle;
 #endif
     
 };

@@ -2,7 +2,7 @@
 
 //Helper functions for native Windows USB
 //These functions courtesy of http://www.reddit.com/user/chrisgzy
-#if defined(WIN32) && !defined(LIBUSB)
+#if defined(WIN32) && !defined(HIDAPI)
 #pragma comment(lib, "hid.lib")
 #pragma comment(lib, "setupapi.lib")
 
@@ -94,32 +94,6 @@ HANDLE GetDeviceHandle(unsigned int uiVID, unsigned int uiPID, unsigned int uiMI
 
     return hReturn;
 }
-#elif defined(LIBUSB)
-static struct usb_device *find_device(uint16_t vendor, uint16_t product)
-{
-    struct usb_bus *bus;
-    struct usb_device *dev;
-    struct usb_bus *busses;
-
-    usb_init();
-    usb_find_busses();
-    usb_find_devices();
-
-    busses = usb_get_busses();
-
-    for (bus = busses; bus; bus = bus->next)
-    {
-        for (dev = bus->devices; dev; dev = dev->next)
-        {
-            if ((dev->descriptor.idVendor == vendor) && (dev->descriptor.idProduct == product))
-            {
-                return dev;
-            }
-        }
-    }
-
-    return NULL;
-}
 #endif
 
 UsbDevice::UsbDevice()
@@ -129,47 +103,30 @@ UsbDevice::UsbDevice()
 
 bool UsbDevice::OpenDevice(unsigned short vendor, unsigned short product, unsigned int MI)
 {
-#ifdef LIBUSB
-    device = find_device(vendor, product);
+#ifdef HIDAPI
+    device = hid_open(vendor, product, 0);
 
     if (device == NULL)
     {
-        return FALSE;
+        return false;
     }
 
-    handle = usb_open(device);
-
-    if (handle == NULL)
-    {
-        return FALSE;
-    }
-
-#ifndef WIN32
-    status = usb_claim_interface(handle, MI);
-    status = usb_detach_kernel_driver_np(handle, MI);
-
-    if (status != 0)
-    {
-        return FALSE;
-    }
-#endif //WIN32
-
-    return TRUE;
+    return true;
 #elif defined(WIN32)
     handle = GetDeviceHandle(vendor, product, MI);
 
     if (handle == NULL)
     {
-        return FALSE;
+        return false;
     }
 #endif
 }
 
 bool UsbDevice::SendToDevice(unsigned char* data, unsigned int length)
 {
-#ifdef LIBUSB
-    usb_control_msg(handle, 0x21, 0x09 0x0300, 0x03, data, length, 1000);
-    return TRUE;
+#ifdef HIDAPI
+    hid_send_feature_report(device, data, length);
+    return true;
 #elif defined(WIN32)
     return(HidD_SetFeature(handle, data, length));
 #endif

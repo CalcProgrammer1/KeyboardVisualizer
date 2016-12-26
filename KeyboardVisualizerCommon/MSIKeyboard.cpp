@@ -39,6 +39,11 @@ bool MSIKeyboard::SetLEDs(COLORREF pixels[64][256])
     //Shout out to bparker06 for reverse engineering the MSI keyboard USB protocol!
     // https://github.com/bparker06/msi-keyboard/blob/master/keyboard.cpp for original implementation
 
+    if(!init_ok)
+    {
+        return false;
+    }
+
     unsigned char buf[8] = { 0 };
 
     buf[0] = 1;

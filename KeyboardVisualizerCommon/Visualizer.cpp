@@ -28,7 +28,7 @@
 //Includes for devices supported only under Linux
 #else
 #include "RazerChromaLinux.h"
-//#include "CorsairCKBLinux.h"
+#include "CorsairCKBLinux.h"
 #endif
 
 //Includes for devices supported on both Windows and Linux
@@ -43,7 +43,7 @@ CmKeyboard              cmkb;
 
 //Devices supported only under Linux
 #else
-//CorsairCKB              ckb;
+CorsairCKB              ckb;
 #endif
 
 //Devices supported on both Windows and Linux
@@ -218,7 +218,7 @@ void Visualizer::Initialize()
 
     //Initialize devices supported by both Windows and Linux
     rkb.Initialize();
-    //ckb.Initialize();
+    ckb.Initialize();
     skb.Initialize();
     mkb.Initialize();
 

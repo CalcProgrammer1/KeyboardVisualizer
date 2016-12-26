@@ -11,7 +11,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = KeyboardVisualizer
 TEMPLATE = app
 
-LIBS      += -lopenal -lusb
+LIBS      += -lopenal
+
+packagesExist(hidapi-libusb) {
+  unix:LIBS += -lhidapi-libusb
+} else {
+  packagesExist(hidapi) {
+    unix:LIBS += -lhidapi
+  } else {
+    unix:LIBS += -lhidapi-libusb
+  }
+}
 
 DISTFILES +=
 

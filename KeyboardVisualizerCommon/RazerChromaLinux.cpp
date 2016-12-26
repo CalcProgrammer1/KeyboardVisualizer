@@ -84,6 +84,7 @@ void RazerChroma::Initialize()
 
         if(dir == NULL)
         {
+            driver_to_read++;
             continue;
         }
 

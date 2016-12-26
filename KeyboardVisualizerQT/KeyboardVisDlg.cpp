@@ -29,43 +29,43 @@ void KeyboardVisDlg::show()
     ui->lineEdit_Decay->setText(QString::number(vis_ptr->decay));
     ui->lineEdit_Delay->setText(QString::number(vis_ptr->delay));
 
-    ui->comboBox_FFT_Window_Mode->blockSignals(TRUE);
+    ui->comboBox_FFT_Window_Mode->blockSignals(true);
     ui->comboBox_FFT_Window_Mode->addItem("None");
     ui->comboBox_FFT_Window_Mode->addItem("Hanning");
     ui->comboBox_FFT_Window_Mode->addItem("Hamming");
     ui->comboBox_FFT_Window_Mode->addItem("Blackman");
     ui->comboBox_FFT_Window_Mode->setCurrentIndex(vis_ptr->window_mode);
-    ui->comboBox_FFT_Window_Mode->blockSignals(FALSE);
+    ui->comboBox_FFT_Window_Mode->blockSignals(false);
 
-    ui->comboBox_Background_Mode->blockSignals(TRUE);
+    ui->comboBox_Background_Mode->blockSignals(true);
     for(int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
     {
         ui->comboBox_Background_Mode->addItem(visualizer_pattern_labels[i]);
     }
     ui->comboBox_Background_Mode->setCurrentIndex(vis_ptr->bkgd_mode);
-    ui->comboBox_Background_Mode->blockSignals(FALSE);
+    ui->comboBox_Background_Mode->blockSignals(false);
 
-    ui->comboBox_Foreground_Mode->blockSignals(TRUE);
+    ui->comboBox_Foreground_Mode->blockSignals(true);
     for(int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
     {
         ui->comboBox_Foreground_Mode->addItem(visualizer_pattern_labels[i]);
     }
     ui->comboBox_Foreground_Mode->setCurrentIndex(vis_ptr->frgd_mode);
-    ui->comboBox_Foreground_Mode->blockSignals(FALSE);
+    ui->comboBox_Foreground_Mode->blockSignals(false);
 
-    ui->comboBox_Single_Color_Mode->blockSignals(TRUE);
+    ui->comboBox_Single_Color_Mode->blockSignals(true);
     for(int i = 0; i < VISUALIZER_NUM_SINGLE_COLOR; i++)
     {
         ui->comboBox_Single_Color_Mode->addItem(visualizer_single_color_labels[i]);
     }
     ui->comboBox_Single_Color_Mode->setCurrentIndex(vis_ptr->single_color_mode);
-    ui->comboBox_Single_Color_Mode->blockSignals(FALSE);
+    ui->comboBox_Single_Color_Mode->blockSignals(false);
 
-    ui->comboBox_Average_Mode->blockSignals(TRUE);
+    ui->comboBox_Average_Mode->blockSignals(true);
     ui->comboBox_Average_Mode->addItem("Binning");
     ui->comboBox_Average_Mode->addItem("Low Pass");
     ui->comboBox_Average_Mode->setCurrentIndex(vis_ptr->avg_mode);
-    ui->comboBox_Average_Mode->blockSignals(FALSE);
+    ui->comboBox_Average_Mode->blockSignals(false);
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
