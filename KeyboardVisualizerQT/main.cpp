@@ -127,6 +127,97 @@ void parse_argument_string(char * argument, char * value)
     }
 }
 
+bool parse_command_line(int argc, char *argv[])
+{
+    for(int i = 1; i < argc; i++)
+    {
+        char* argument;
+        char* value;
+
+        argument = strtok_r(argv[i], "=", &value);
+
+        if (strcmp(argument, "help") == 0)
+        {
+            printf("\r\n");
+            printf("Available command line commands:\r\n");
+            printf("    help              - Display this message and quit\r\n");
+            //printf("    nogui             - Run visualizer with no GUI\r\n");
+            printf("    startminimized    - Start in system tray\r\n");
+            printf("\r\n");
+            printf("Available command line arguments:\r\n");
+            printf("    Usage: argument1=value1 argument2=value2 ...\r\n");
+            printf("\r\n");
+            printf("    amplitude         - Adjust the amplitude of the visualizer\r\n");
+            printf("    bkgd_bright       - Adjust the background brightness\r\n");
+            printf("    avg_size          - Number of points to average\r\n");
+            printf("    decay             - Percentage of value to decay every step\r\n");
+            printf("    delay             - Milliseconds between each device update\r\n");
+            printf("    nrml_ofst         - Normalization offset, floating point value\r\n");
+            printf("    nrml_scl          - Normalization scale, floating point value\r\n");
+            printf("    window_mode       - FFT windowing mode selector, values are:\r\n");
+            printf("                      - 0:  No windowing\r\n");
+            printf("                      - 1:  Hanning window\r\n");
+            printf("                      - 2:  Hamming window\r\n");
+            printf("                      - 3:  Blackman window\r\n");
+            printf("    bkgd_mode         - Background mode, values are:\r\n");
+            for (int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
+            {
+                if (i < 10)
+                {
+                    printf("                      - %d  %s\r\n", i, visualizer_pattern_labels[i]);
+                }
+                else
+                {
+                    printf("                      - %d %s\r\n", i, visualizer_pattern_labels[i]);
+                }
+            }
+            printf("    frgd_mode         - Foreground mode, values are:\r\n");
+            for (int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
+            {
+                if (i < 10)
+                {
+                    printf("                      - %d  %s\r\n", i, visualizer_pattern_labels[i]);
+                }
+                else
+                {
+                    printf("                      - %d %s\r\n", i, visualizer_pattern_labels[i]);
+                }
+            }
+            printf("    single_color_mode - Single color mode, values are:\r\n");
+            for (int i = 0; i < VISUALIZER_NUM_SINGLE_COLOR; i++)
+            {
+                if (i < 10)
+                {
+                    printf("                      - %d  %s\r\n", i, visualizer_single_color_labels[i]);
+                }
+                else
+                {
+                    printf("                      - %d %s\r\n", i, visualizer_single_color_labels[i]);
+                }
+            }
+            printf("    avg_mode          - Visualizer averaging mode\r\n");
+            printf("                      - 0:  Binning\r\n");
+            printf("                      - 1:  Low-pass filtering\r\n");
+            printf("    anim_speed        - Animation Speed (percent)\r\n");
+            printf("    server            - Configure this instance as a server for synchronization\r\n");
+            printf("                      -  Takes what port to serve on as argument, i.e. server=1234\r\n");
+            printf("    client            - Configure this instance as a client for synchronization\r\n");
+            printf("                      -  Takes the IP/hostname of the server and port as arguments,\r\n");
+            printf("                      -  i.e. client=192.168.1.100,1234\r\n");
+            printf("    ledstrip          - LED config strings :\r\n");
+            printf("                      - Serial : ledstrip = port, baud, num_leds\r\n");
+            printf("                      - (ex.ledstrip = COM1, 115200, 30)\r\n");
+            printf("                      - UDP : ledstrip = client, port, num_leds\r\n");
+            printf("                      - (ex.ledstrip = 192.168.1.5, 1234, 30)\r\n");
+            printf("    xmas              - COM port, ex. xmas=COM2\r\n");
+            return false;
+        }
+
+        parse_argument_string(argument, value);
+    }
+    return true;
+}
+
 void parse_settings_file(char * filename)
 {
     std::ifstream infile;
@@ -178,10 +269,10 @@ int main(int argc, char *argv[])
     parse_settings_file(filename);
 
     //Parse Command Line
-    //if (!parse_command_line(lpCmdLine))
-    //{
-    //    return 0;
-    //}
+    if (!parse_command_line(argc, argv))
+    {
+        return 0;
+    }
 
     //Start Visualizer Threads
     vis.StartThread();

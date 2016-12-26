@@ -88,6 +88,11 @@ void SteelSeriesGameSense::SetKeyboardLayout(SS_KEYBOARD_LAYOUT layout)
 
 bool SteelSeriesGameSense::SetLEDs(COLORREF pixels[64][256])
 {
+    if(!init_ok)
+    {
+        return false;
+    }
+
     memset(FeatureReportBuf, 0, sizeof(FeatureReportBuf));
     FeatureReportBuf[0] = 0x00;
     FeatureReportBuf[1] = 0x0c;
