@@ -27,6 +27,15 @@
 #include <net/if.h>
 #endif
 
+#ifndef WIN32
+#define SOCKET int
+#define ioctlsocket ioctl
+#define closesocket close
+#define WSACleanup()
+#define INVALID_SOCKET -1
+#define SOCKET_ERROR -1
+#endif
+
 //Network Port Class
 //The reason for this class is that network ports are treated differently
 //on Windows and Linux.  By creating a class, those differences can be
@@ -61,12 +70,9 @@ public:
 private:
 #ifdef WIN32
     WSADATA     wsa;
+#endif
     SOCKET sock;
     std::vector<SOCKET *> clients;
-#else
-    int sock;
-    std::vector<int *> clients;
-#endif
 
     sockaddr addrDest;
     addrinfo*   result_list;

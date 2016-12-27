@@ -21,14 +21,6 @@
 
 const char yes = 1;
 
-#ifndef WIN32
-#define WSACleanup()
-#define INVALID_SOCKET -1
-#define SOCKET_ERROR -1
-#define FALSE 0
-#define TRUE 1
-#endif
-
 net_port::net_port()
 {
 
@@ -55,7 +47,7 @@ bool net_port::udp_client(const char * client_name, const char * port)
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != NO_ERROR)
     {
         WSACleanup();
-        return(FALSE);
+        return(false);
     }
 #endif
 
@@ -63,7 +55,7 @@ bool net_port::udp_client(const char * client_name, const char * port)
     if (sock == INVALID_SOCKET)
     {
         WSACleanup();
-        return(FALSE);
+        return(false);
     }
 
     myAddress.sin_family = AF_INET;
@@ -73,7 +65,7 @@ bool net_port::udp_client(const char * client_name, const char * port)
     if (bind(sock, (sockaddr*)&myAddress, sizeof(myAddress)) == SOCKET_ERROR)
     {
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
     result_list = NULL;
@@ -84,12 +76,12 @@ bool net_port::udp_client(const char * client_name, const char * port)
     {
         memcpy(&addrDest, result_list->ai_addr, result_list->ai_addrlen);
         freeaddrinfo(result_list);
-        return(TRUE);
+        return(true);
     }
     else
     {
         WSACleanup();
-        return(FALSE);
+        return(false);
     }
 }
 
@@ -97,14 +89,14 @@ bool net_port::tcp_client(const char * client_name, const char * port)
 {
     addrinfo    hints = {};
 
-    connected = FALSE;
+    connected = false;
     result_list = NULL;
 
 #ifdef WIN32
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != NO_ERROR)
     {
         WSACleanup();
-        return(FALSE);
+        return(false);
     }
 #endif
 
@@ -112,7 +104,13 @@ bool net_port::tcp_client(const char * client_name, const char * port)
     hints.ai_socktype = SOCK_STREAM;
     getaddrinfo(client_name, port, &hints, &result_list);
 
-    return(TRUE);
+    if(result_list == NULL)
+    {
+        WSACleanup();
+        return(false);
+    }
+
+    return(true);
 }
 
 bool net_port::tcp_client_connect()
@@ -123,17 +121,14 @@ bool net_port::tcp_client_connect()
         if (sock == INVALID_SOCKET)
         {
             WSACleanup();
-            return(FALSE);
+            return(false);
         }
 
         u_long arg = 1;
         fd_set fdset;
         timeval tv;
-#ifdef WIN32
+
         ioctlsocket(sock, FIONBIO, &arg);
-#else
-        ioctl(sock, FIONBIO, &arg);
-#endif
 
         connect(sock, result_list->ai_addr, result_list->ai_addrlen);
 
@@ -152,35 +147,23 @@ bool net_port::tcp_client_connect()
 
             if (so_error == 0)
             {
+                connected = true;
                 arg = 0;
-#ifdef WIN32
                 ioctlsocket(sock, FIONBIO, &arg);
-#else
-                ioctl(sock, FIONBIO, &arg);
-#endif
-                connected = TRUE;
             }
             else
             {
-                connected = FALSE;
-#ifdef WIN32
+                connected = false;
                 closesocket(sock);
-#else
-                close(sock);
-#endif
             }
         }
         else
         {
-            connected = FALSE;
-#ifdef WIN32
+            connected = false;
             closesocket(sock);
-#else
-            close(sock);
-#endif
         }
     }
-    return(TRUE);
+    return(true);
 }
 
 bool net_port::tcp_server(const char * port)
@@ -191,7 +174,7 @@ bool net_port::tcp_server(const char * port)
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != NO_ERROR)
     {
         WSACleanup();
-        return FALSE;
+        return false;
     }
 #endif
 
@@ -199,7 +182,7 @@ bool net_port::tcp_server(const char * port)
     if (sock == INVALID_SOCKET)
     {
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
     myAddress.sin_family = AF_INET;
@@ -209,21 +192,17 @@ bool net_port::tcp_server(const char * port)
     if (bind(sock, (sockaddr*)&myAddress, sizeof(myAddress)) == SOCKET_ERROR)
     {
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
     setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes));
 
-    return(TRUE);
+    return(true);
 }
 
 void net_port::tcp_server_listen()
 {
-#ifdef WIN32
     SOCKET * client = new SOCKET();
-#else
-    int * client = new int();
-#endif
     listen(sock, 10);
     *client = accept(sock, NULL, NULL);
     setsockopt(*client, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes));
@@ -254,15 +233,14 @@ int net_port::tcp_listen(char * recv_data, int length)
             }
             if (ret == -1)
             {
-                connected = FALSE;
-#ifdef WIN32
+                connected = false;
+
                 closesocket(sock);
-#else
-                close(sock);
-#endif
+
                 return(0);
             }
         }
+
         ret = 0;
         while(ret != len)
         {
@@ -272,12 +250,10 @@ int net_port::tcp_listen(char * recv_data, int length)
             }
             if (ret == -1)
             {
-                connected = FALSE;
-#ifdef WIN32
+                connected = false;
+
                 closesocket(sock);
-#else
-                close(sock);
-#endif
+
                 return(0);
             }
         }
