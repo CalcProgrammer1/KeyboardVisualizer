@@ -225,10 +225,12 @@ int net_port::tcp_listen(char * recv_data, int length)
 {
     int ret = 0;
     int len = 0;
+    int tot = 0;
     timeval waitd;
 
     fd_set readfd;
 
+    FD_ZERO(&readfd);
     FD_SET(sock, &readfd);
 
     if (connected)
@@ -251,14 +253,15 @@ int net_port::tcp_listen(char * recv_data, int length)
         }
 
         ret = 0;
-        while(ret != len)
+        while(tot != len)
         {
             waitd.tv_sec = 1;
             waitd.tv_usec = 0;
 
             if (select(sock + 1, &readfd, NULL, NULL, &waitd))
             {
-                ret = recv(sock, recv_data + ret, len, 0);
+                ret = recv(sock, recv_data + ret, len - ret, 0);
+                tot += ret;
             }
             if (ret == -1)
             {
