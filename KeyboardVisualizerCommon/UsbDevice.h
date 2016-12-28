@@ -1,7 +1,9 @@
 #ifndef USB_DEVICE_H
 #define USB_DEVICE_H
 
+#ifndef WIN32
 #define HIDAPI
+#endif
 
 #include <cstdio>
 #ifdef HIDAPI
