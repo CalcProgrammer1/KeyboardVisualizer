@@ -13,6 +13,7 @@ enum
     RAZER_BLACKWIDOW_CHROMA,
     RAZER_DEATHSTALKER_CHROMA,
     RAZER_ORNATA_CHROMA,
+    RAZER_BLADE_STEALTH,
     RAZER_TARTARUS_CHROMA,
     RAZER_DEATHADDER_CHROMA,
     RAZER_NAGA_CHROMA,
@@ -25,6 +26,10 @@ enum
 //Index lists for BlackWidow
 int BlackWidowXIndex[22];
 int BlackWidowYIndex[6];
+
+//Index lists for Blade
+int BladeXIndex[16];
+int BladeYIndex[6];
 
 //Index list for Firefly
 int FireflyIndex[15];
@@ -53,7 +58,6 @@ void SetupKeyboardGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_l
 
 void RazerChroma::Initialize()
 {
-    int device_type = RAZER_NO_DEVICE;
     char driver_path[512];
     DIR *dir;
     struct dirent *ent;
@@ -145,6 +149,13 @@ void RazerChroma::Initialize()
 
                             device_type = RAZER_ORNATA_CHROMA;
                         }
+                        else if(!strncmp(device_string, "Razer Blade Stealth", strlen("Razer Blade Stealth")))
+                        {
+                            //Device is Razer Blade Stealth
+                            printf("Blade Stealth Detected\r\n");
+
+                            device_type = RAZER_BLADE_STEALTH;
+                        }
                         else if(!strncmp(device_string, "Razer Tartarus Chroma", strlen("Razer Tartarus Chroma")))
                         {
                             //Device is Razer Tartarus Chroma
@@ -233,6 +244,7 @@ void RazerChroma::Initialize()
                                     case RAZER_BLACKWIDOW_CHROMA:
                                     case RAZER_DEATHSTALKER_CHROMA:
                                     case RAZER_ORNATA_CHROMA:
+                                    case RAZER_BLADE_STEALTH:
                                     case RAZER_FIREFLY_CHROMA:
                                     case RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA:
                                     case RAZER_DIAMONDBACK_CHROMA:
@@ -342,6 +354,9 @@ void RazerChroma::Initialize()
     //Build index list for BlackWidow
     SetupKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex);
 
+    //Build index list for Blade
+    SetupKeyboardGrid(16, 6, BladeXIndex, BladeYIndex);
+
     //Build index list for Firefly
     for (int x = 0; x < 15; x++)
     {
@@ -362,11 +377,6 @@ void RazerChroma::Initialize()
 
 bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 {
-//    if(!razer_fd_1 || !razer_fd_2)
-//    {
-//        return false;
-//    }
-//    else
     {
         for(int i = 0; i < razer_fd_1.size(); i++)
         {
@@ -401,6 +411,30 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
                         write(razer_fd_1[i], &BlackWidowEffect, sizeof(BlackWidowEffect));
                     }
                     write(razer_fd_2[i], &BlackWidowEffect, 1);
+                }
+                break;
+
+            case RAZER_BLADE_STEALTH:
+                {
+                    char BladeEffect[((3 * 16)) + 3];
+
+                    BladeEffect[1] = 0;
+                    BladeEffect[2] = 15;
+
+                    for(int y = 0; y < 6; y++)
+                    {
+                        BladeEffect[0] = y;
+
+                        for(int x = 0; x < 16; x++)
+                        {
+                            BladeEffect[3 + (x * 3)] = GetRValue(pixels[BladeYIndex[y]][BladeXIndex[x]]);
+                            BladeEffect[4 + (x * 3)] = GetGValue(pixels[BladeYIndex[y]][BladeXIndex[x]]);
+                            BladeEffect[5 + (x * 3)] = GetBValue(pixels[BladeYIndex[y]][BladeXIndex[x]]);
+                        }
+
+                        write(razer_fd_1[i], &BladeEffect, sizeof(BladeEffect));
+                    }
+                    write(razer_fd_2[i], &BladeEffect, 1);
                 }
                 break;
 
