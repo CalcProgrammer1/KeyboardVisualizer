@@ -192,6 +192,8 @@ bool net_port::tcp_server(const char * port)
         return false;
     }
 
+    port = strtok((char *)port, "\r");
+
     myAddress.sin_family = AF_INET;
     myAddress.sin_addr.s_addr = inet_addr("0.0.0.0");
     myAddress.sin_port = htons(atoi(port));
@@ -284,7 +286,6 @@ int net_port::tcp_write(char * buffer, int length)
     int ret = length;
     int val = length;
 
-    fd_set writefd;
     timeval waitd;
 
     waitd.tv_sec = 1;
@@ -294,14 +295,6 @@ int net_port::tcp_write(char * buffer, int length)
     {
         val = length;
 
-        FD_ZERO(&writefd);
-        FD_SET(*(clients[i]), &writefd);
-
-        while (!select(*(clients[i]), NULL, &writefd, NULL, &waitd))
-        {
-            waitd.tv_sec = 1;
-            waitd.tv_usec = 0;
-        }
         val = send(*(clients[i]), (const char *)&length, sizeof(length), 0);
 
         if (val == -1)
@@ -310,11 +303,6 @@ int net_port::tcp_write(char * buffer, int length)
             return 0;
         }
 
-        while (!select(*(clients[i]), NULL, &writefd, NULL, &waitd))
-        {
-            waitd.tv_sec = 1;
-            waitd.tv_usec = 0;
-        }
         val = send(*(clients[i]), buffer, length, 0);
 
         if (val == -1)
