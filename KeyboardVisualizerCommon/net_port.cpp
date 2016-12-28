@@ -279,15 +279,45 @@ int net_port::udp_write(char * buffer, int length)
 int net_port::tcp_write(char * buffer, int length)
 {
     int ret = length;
+    int val = length;
+
+    fd_set writefd;
+    timeval waitd;
+
+    waitd.tv_sec = 1;
+    waitd.tv_usec = 0;
+
     for (unsigned int i = 0; i < clients.size(); i++)
     {
-        int val = length;
+        val = length;
+
+        FD_ZERO(&writefd);
+        FD_SET(*(clients[i]), &writefd);
+
+        while (!select(*(clients[i]), NULL, &writefd, NULL, &waitd))
+        {
+            waitd.tv_sec = 1;
+            waitd.tv_usec = 0;
+        }
         val = send(*(clients[i]), (const char *)&length, sizeof(length), 0);
+
+        if (val == -1)
+        {
+            clients.erase(clients.begin() + i);
+            return 0;
+        }
+
+        while (!select(*(clients[i]), NULL, &writefd, NULL, &waitd))
+        {
+            waitd.tv_sec = 1;
+            waitd.tv_usec = 0;
+        }
         val = send(*(clients[i]), buffer, length, 0);
 
         if (val == -1)
         {
             clients.erase(clients.begin() + i);
+            return 0;
         }
 
         if (val != length)
