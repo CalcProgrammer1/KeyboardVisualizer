@@ -100,6 +100,8 @@ bool net_port::tcp_client(const char * client_name, const char * port)
     }
 #endif
 
+    port = strtok((char *)port, "\r");
+
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     getaddrinfo(client_name, port, &hints, &result_list);
@@ -130,6 +132,11 @@ bool net_port::tcp_client_connect()
 
         ioctlsocket(sock, FIONBIO, &arg);
 
+        if(result_list == NULL)
+        {
+            connected = false;
+            return(false);
+        }
         connect(sock, result_list->ai_addr, result_list->ai_addrlen);
 
         FD_ZERO(&fdset);
@@ -220,23 +227,25 @@ int net_port::tcp_listen(char * recv_data, int length)
     int len = 0;
     timeval waitd;
 
-    waitd.tv_sec = 1;
-    waitd.tv_usec = 0;
+    fd_set readfd;
+
+    FD_SET(sock, &readfd);
 
     if (connected)
     {
         while(ret != sizeof(len))
         {
-            if (select(sock, NULL, NULL, 0, &waitd))
+            waitd.tv_sec = 1;
+            waitd.tv_usec = 0;
+
+            if (select(sock + 1, &readfd, NULL, NULL, &waitd))
             {
                 ret = recv(sock, (char *)&len, sizeof(len), 0);
             }
             if (ret == -1)
             {
                 connected = false;
-
                 closesocket(sock);
-
                 return(0);
             }
         }
@@ -244,16 +253,17 @@ int net_port::tcp_listen(char * recv_data, int length)
         ret = 0;
         while(ret != len)
         {
-            if (select(sock, NULL, NULL, 0, &waitd))
+            waitd.tv_sec = 1;
+            waitd.tv_usec = 0;
+
+            if (select(sock + 1, &readfd, NULL, NULL, &waitd))
             {
                 ret = recv(sock, recv_data + ret, len, 0);
             }
             if (ret == -1)
             {
                 connected = false;
-
                 closesocket(sock);
-
                 return(0);
             }
         }
