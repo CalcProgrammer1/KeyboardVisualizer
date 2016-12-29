@@ -71,7 +71,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_DELAY,85,90,50,14,ES_AUTOHSCROLL
     LTEXT           "Decay (% per step)",IDC_STATIC,14,73,64,8
     LTEXT           "Delay (ms)",IDC_STATIC,43,92,35,8
-    LTEXT           "github.com/CalcProgrammer1/KeyboardVisualizerVCUI",IDC_STATIC,7,190,174,8
+    LTEXT           "github.com/CalcProgrammer1/KeyboardVisualizer",IDC_STATIC,7,190,174,8
     COMBOBOX        IDC_COMBO_FRGD_MODE,215,50,80,120,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Foreground Mode",IDC_STATIC,146,53,58,8
     COMBOBOX        IDC_COMBO_AVG_MODE,215,90,80,80,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
