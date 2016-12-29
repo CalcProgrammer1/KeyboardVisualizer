@@ -103,6 +103,8 @@ void KeyboardVisDlg::update()
 
     if(vis_ptr->update_ui)
     {
+        vis_ptr->update_ui = false;
+
         ui->lineEdit_Normalization_Offset->setText(QString::number(vis_ptr->nrml_ofst));
         ui->lineEdit_Normalization_Scale->setText(QString::number(vis_ptr->nrml_scl));
         ui->lineEdit_Animation_Speed->setText(QString::number(vis_ptr->anim_speed));

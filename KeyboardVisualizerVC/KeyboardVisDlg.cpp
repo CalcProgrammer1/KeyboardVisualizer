@@ -161,6 +161,43 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
 	HBITMAP hBitmap = CreateBitmap(256, 64, 1, 32, pixels_bgr);
 	((CStatic *)GetDlgItem(IDC_IMAGE_VISUALIZATION))->SetBitmap(hBitmap);
 	DeleteObject(hBitmap);
+
+    if (vis->update_ui)
+    {
+        char nrml_ofst_str[64];
+        char nrml_scl_str[64];
+        char anim_speed_str[64];
+
+        vis->update_ui = false;
+
+        snprintf(nrml_ofst_str, 64, "%f", vis->nrml_ofst);
+        snprintf(nrml_scl_str, 64, "%f", vis->nrml_scl);
+        snprintf(anim_speed_str, 64, "%f", vis->anim_speed);
+
+        SetDlgItemInt(IDC_EDIT_AMPLITUDE, vis->amplitude);
+        SetDlgItemInt(IDC_EDIT_BACKGROUND_BRIGHTNESS, vis->bkgd_bright);
+        SetDlgItemInt(IDC_EDIT_AVERAGE_SIZE, vis->avg_size);
+        SetDlgItemInt(IDC_EDIT_DECAY, vis->decay);
+        SetDlgItemInt(IDC_EDIT_DELAY, vis->delay);
+        SetDlgItemText(IDC_EDIT_ANIM_SPEED, anim_speed_str);
+        SetDlgItemText(IDC_EDIT_NRML_OFST, nrml_ofst_str);
+        SetDlgItemText(IDC_EDIT_NRML_SCL, nrml_scl_str);
+
+        CComboBox* windowBox = (CComboBox*)GetDlgItem(IDC_COMBO_WINDOW);
+        windowBox->SetCurSel(vis->window_mode);
+
+        CComboBox* bkgdModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_BKGD_MODE);
+        bkgdModeBox->SetCurSel(vis->bkgd_mode);
+
+        CComboBox* frgdModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_FRGD_MODE);
+        frgdModeBox->SetCurSel(vis->frgd_mode);
+
+        CComboBox* snglClrModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_SNGL_CLR_MODE);
+        snglClrModeBox->SetCurSel(vis->single_color_mode);
+
+        CComboBox* avgModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_AVG_MODE);
+        avgModeBox->SetCurSel(vis->avg_mode);
+    }
 }
 
 LRESULT KeyboardVisDlg::OnTrayIconEvent(WPARAM wParam, LPARAM lParam)
