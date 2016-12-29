@@ -238,6 +238,8 @@ void Visualizer::Initialize()
     frgd_mode            = VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED;
     single_color_mode    = VISUALIZER_SINGLE_COLOR_FOLLOW_FOREGROUND;
 
+    update_ui            = false;
+
     hanning(win_hanning, 256);
     hamming(win_hamming, 256);
     blackman(win_blackman, 256);
@@ -969,6 +971,7 @@ void Visualizer::NetUpdateThread()
                     nrml_scl = ((settings_pkt_type *)buf)->nrml_scl;
                     frgd_mode = ((settings_pkt_type *)buf)->frgd_mode;
                     bkgd_step = ((settings_pkt_type *)buf)->bkgd_step;
+                    update_ui = TRUE;
                 }
                 else if(size == sizeof(fft))
                 {

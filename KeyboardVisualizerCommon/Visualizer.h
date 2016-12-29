@@ -126,6 +126,9 @@ public:
     int decay;
     int delay;
 
+    //Flag to update UI
+    bool update_ui;
+
     //Visualizer Background
     vis_pixels pixels_bg;
 

@@ -100,6 +100,39 @@ void KeyboardVisDlg::update()
     scene->addPixmap(pixmap);
 
     ui->graphicsView_Visualization_Preview->show();
+
+    if(vis_ptr->update_ui)
+    {
+        ui->lineEdit_Normalization_Offset->setText(QString::number(vis_ptr->nrml_ofst));
+        ui->lineEdit_Normalization_Scale->setText(QString::number(vis_ptr->nrml_scl));
+        ui->lineEdit_Animation_Speed->setText(QString::number(vis_ptr->anim_speed));
+
+        ui->lineEdit_Amplitude->setText(QString::number(vis_ptr->amplitude));
+        ui->lineEdit_Background_Brightness->setText(QString::number(vis_ptr->bkgd_bright));
+        ui->lineEdit_Average_Size->setText(QString::number(vis_ptr->avg_size));
+        ui->lineEdit_Decay->setText(QString::number(vis_ptr->decay));
+        ui->lineEdit_Delay->setText(QString::number(vis_ptr->delay));
+
+        ui->comboBox_Average_Mode->blockSignals(true);
+        ui->comboBox_Average_Mode->setCurrentIndex(vis_ptr->avg_mode);
+        ui->comboBox_Average_Mode->blockSignals(false);
+
+        ui->comboBox_Background_Mode->blockSignals(true);
+        ui->comboBox_Background_Mode->setCurrentIndex(vis_ptr->bkgd_mode);
+        ui->comboBox_Background_Mode->blockSignals(false);
+
+        ui->comboBox_FFT_Window_Mode->blockSignals(true);
+        ui->comboBox_FFT_Window_Mode->setCurrentIndex(vis_ptr->window_mode);
+        ui->comboBox_FFT_Window_Mode->blockSignals(false);
+
+        ui->comboBox_Foreground_Mode->blockSignals(true);
+        ui->comboBox_Foreground_Mode->setCurrentIndex(vis_ptr->frgd_mode);
+        ui->comboBox_Foreground_Mode->blockSignals(false);
+
+        ui->comboBox_Single_Color_Mode->blockSignals(true);
+        ui->comboBox_Single_Color_Mode->setCurrentIndex(vis_ptr->single_color_mode);
+        ui->comboBox_Single_Color_Mode->blockSignals(false);
+    }
 }
 
 void KeyboardVisDlg::SetVisualizer(Visualizer* v)
