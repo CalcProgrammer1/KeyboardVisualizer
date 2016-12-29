@@ -398,7 +398,6 @@ void Visualizer::OnSettingsChanged()
         settings.nrml_ofst = nrml_ofst;
         settings.nrml_scl = nrml_scl;
         settings.frgd_mode = frgd_mode;
-        settings.bkgd_step = bkgd_step;
 
         port->tcp_write((char *)&settings, sizeof(settings));
     }
@@ -943,9 +942,9 @@ void Visualizer::NetUpdateThread()
 
         case NET_MODE_SERVER:
             port->tcp_write((char *)fft, sizeof(fft));
-            if (counter++ > 60)
+            if (counter++ > 30)
             {
-                OnSettingsChanged();
+                port->tcp_write((char *)&bkgd_step, sizeof(bkgd_step));
             }
             Sleep(20);
             break;
@@ -955,7 +954,15 @@ void Visualizer::NetUpdateThread()
             {
                 int size = port->tcp_listen((char *)buf, sizeof(buf));
 
-                if (size == sizeof(settings_pkt_type))
+                if (size == sizeof(fft))
+                {
+                    memcpy(&fft, buf, sizeof(fft));
+                }
+                else if (size == sizeof(bkgd_step))
+                {
+                    memcpy(&bkgd_step, buf, sizeof(bkgd_step));
+                }
+                else if (size == sizeof(settings_pkt_type))
                 {
                     amplitude = ((settings_pkt_type *)buf)->amplitude;
                     avg_mode = ((settings_pkt_type *)buf)->avg_mode;
@@ -970,12 +977,7 @@ void Visualizer::NetUpdateThread()
                     nrml_ofst = ((settings_pkt_type *)buf)->nrml_ofst;
                     nrml_scl = ((settings_pkt_type *)buf)->nrml_scl;
                     frgd_mode = ((settings_pkt_type *)buf)->frgd_mode;
-                    bkgd_step = ((settings_pkt_type *)buf)->bkgd_step;
                     update_ui = TRUE;
-                }
-                else if(size == sizeof(fft))
-                {
-                    memcpy(&fft, buf, sizeof(fft));
                 }
             }
             else

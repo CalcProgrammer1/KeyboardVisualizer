@@ -48,7 +48,6 @@ typedef struct
     float nrml_ofst;
     float nrml_scl;
     int frgd_mode;
-    float bkgd_step;
 } settings_pkt_type;
 
 typedef int net_mode;
