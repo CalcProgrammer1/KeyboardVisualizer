@@ -61,6 +61,7 @@ enum
     VISUALIZER_PATTERN_ANIM_RAINBOW_HSV,
     VISUALIZER_PATTERN_ANIM_COLOR_WHEEL,
     VISUALIZER_PATTERN_ANIM_SPECTRUM_CYCLE,
+    VISUALIZER_PATTERN_ANIM_SINUSOIDAL_CYCLE,
 
     //Number of Patterns
     VISUALIZER_NUM_PATTERNS
@@ -86,7 +87,8 @@ const char * const visualizer_pattern_labels[VISUALIZER_NUM_PATTERNS] =
     "Original",
     "Rainbow",
     "Color Wheel",
-    "Spectrum Cycle"
+    "Spectrum Cycle",
+    "Sinusoidal Cycle"
 };
 
 typedef unsigned int VISUALIZER_SINGLE_COLOR;

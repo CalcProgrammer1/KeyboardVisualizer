@@ -725,16 +725,35 @@ void DrawColorWheel(int bright, int bkgd_step, vis_pixels *pixels)
 void DrawSpectrumCycle(int bright, int bkgd_step, vis_pixels *pixels)
 {
     bright = bright * (255.0f / 100.0f);
+    hsv_t hsv2 = { bkgd_step, 255, bright };
+    COLORREF color = hsv2rgb(&hsv2);
+
     for (int x = 0; x < 256; x++)
     {
         for (int y = 0; y < 64; y++)
         {
-            hsv_t hsv2 = { bkgd_step, 255, bright };
-            pixels->pixels[y][x] = hsv2rgb(&hsv2);
+            pixels->pixels[y][x] = color;
         }
     }
 }
 
+void DrawSinusoidalCycle(int bright, int bkgd_step, vis_pixels *pixels)
+{
+    COLORREF color;
+    bright = bright * (255.0f / 100.0f);
+    int red = 127 * (sin((((((int)((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1);
+    int grn = 127 * (sin((((((int)((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1);
+    int blu = 127 * (sin((((((int)((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) + (6.28f / 3)) + 1);
+    color = RGB(((bright * red) / 256), ((bright * grn) / 256), ((bright * blu) / 256));
+
+    for (int x = 0; x < 256; x++)
+    {
+        for (int y = 0; y < 64; y++)
+        {
+            pixels->pixels[y][x] = color;
+        }
+    }
+}
 void DrawSingleColorBackground(float amplitude, vis_pixels *bg_pixels, vis_pixels *out_pixels)
 {
     if (amplitude >= 1.0f)
@@ -894,6 +913,10 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
 
     case VISUALIZER_PATTERN_ANIM_SPECTRUM_CYCLE:
         DrawSpectrumCycle(bright, bkgd_step, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_ANIM_SINUSOIDAL_CYCLE:
+        DrawSinusoidalCycle(bright, bkgd_step, pixels);
         break;
     }
 }
