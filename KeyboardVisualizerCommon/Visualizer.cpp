@@ -708,14 +708,14 @@ void DrawRainbow(int bright, int bkgd_step, vis_pixels *pixels)
     }
 }
 
-void DrawColorWheel(int bright, int bkgd_step, vis_pixels *pixels)
+void DrawColorWheel(int bright, int bkgd_step, int center_x, int center_y, vis_pixels *pixels)
 {
     bright = bright * (255.0f / 100.0f);
     for (int x = 0; x < 256; x++)
     {
         for (int y = 0; y < 64; y++)
         {
-            float hue = bkgd_step + (int)(180 + atan2(y - 32.1, x - 128.1) * (180.0 / 3.14159)) % 360;
+            float hue = bkgd_step + (int)(180 + atan2(y - center_y, x - center_x) * (180.0 / 3.14159)) % 360;
             hsv_t hsv2 = { hue, 255, bright };
             pixels->pixels[y][x] = hsv2rgb(&hsv2);
         }
@@ -908,7 +908,11 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
         break;
 
     case VISUALIZER_PATTERN_ANIM_COLOR_WHEEL:
-        DrawColorWheel(bright, bkgd_step, pixels);
+        DrawColorWheel(bright, bkgd_step, 128, 32, pixels);
+        break;
+
+    case VISUALIZER_PATTERN_ANIM_COLOR_WHEEL_2:
+        DrawColorWheel(bright, bkgd_step, 128, 64, pixels);
         break;
 
     case VISUALIZER_PATTERN_ANIM_SPECTRUM_CYCLE:

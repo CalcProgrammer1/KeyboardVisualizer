@@ -60,6 +60,7 @@ enum
     VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL,
     VISUALIZER_PATTERN_ANIM_RAINBOW_HSV,
     VISUALIZER_PATTERN_ANIM_COLOR_WHEEL,
+    VISUALIZER_PATTERN_ANIM_COLOR_WHEEL_2,
     VISUALIZER_PATTERN_ANIM_SPECTRUM_CYCLE,
     VISUALIZER_PATTERN_ANIM_SINUSOIDAL_CYCLE,
 
@@ -87,6 +88,7 @@ const char * const visualizer_pattern_labels[VISUALIZER_NUM_PATTERNS] =
     "Original",
     "Rainbow",
     "Color Wheel",
+    "Color Wheel 2",
     "Spectrum Cycle",
     "Sinusoidal Cycle"
 };
