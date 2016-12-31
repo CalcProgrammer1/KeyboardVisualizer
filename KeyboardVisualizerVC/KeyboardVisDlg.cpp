@@ -109,6 +109,13 @@ BOOL KeyboardVisDlg::OnInitDialog()
     avgModeBox->AddString("Low Pass");
     avgModeBox->SetCurSel(vis->avg_mode);
 
+    CComboBox* audioDeviceBox = (CComboBox*)GetDlgItem(IDC_COMBO_AUDIO_DEVICE);
+    for (int i = 0; i < vis->audio_devices.size(); i++)
+    {
+        audioDeviceBox->AddString(vis->audio_devices[i]);
+    }
+    audioDeviceBox->SetCurSel(vis->audio_device_idx);
+
     ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->SetCheck(vis->reactive_bkgd);
 
 	timer = SetTimer(1, 25, NULL);
@@ -249,6 +256,7 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BUTTON_SAVE, &KeyboardVisDlg::OnClickedSave)
     ON_EN_CHANGE(IDC_EDIT_ANIM_SPEED, &KeyboardVisDlg::OnEnChangeEditAnimSpeed)
     ON_BN_CLICKED(IDC_CHECK_REACTIVE_BACKGROUND, &KeyboardVisDlg::OnBnClickedCheckReactiveBackground)
+    ON_CBN_SELCHANGE(IDC_COMBO_AUDIO_DEVICE, &KeyboardVisDlg::OnCbnSelchangeComboAudioDevice)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
@@ -363,4 +371,15 @@ void KeyboardVisDlg::OnBnClickedCheckReactiveBackground()
 {
     vis->reactive_bkgd = ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->GetCheck();
     vis->OnSettingsChanged();
+}
+
+
+void KeyboardVisDlg::OnCbnSelchangeComboAudioDevice()
+{
+    int new_idx = ((CComboBox*)GetDlgItem(IDC_COMBO_AUDIO_DEVICE))->GetCurSel();
+    if (vis->audio_device_idx != new_idx)
+    {
+        vis->audio_device_idx = new_idx;
+        vis->ChangeAudioDevice();
+    }
 }

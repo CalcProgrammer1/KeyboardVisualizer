@@ -174,7 +174,15 @@ public:
     std::vector<char *> audio_devices;
 
 private:
-#ifndef WIN32
+#ifdef WIN32
+    //WASAPI objects if building for Windows
+    IMMDeviceEnumerator *pMMDeviceEnumerator;
+    std::vector<IMMDevice *> pMMDevices;
+    IMMDeviceCollection *pMMDeviceCollection;
+    IAudioClient *pAudioClient;
+    IAudioCaptureClient *pAudioCaptureClient;
+    WAVEFORMATEX *waveformat;
+#else
     //Audio Device Pointer
     ALCdevice *device;
 #endif
