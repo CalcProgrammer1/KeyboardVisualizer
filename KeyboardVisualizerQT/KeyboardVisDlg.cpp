@@ -12,13 +12,24 @@ using namespace Ui;
 KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new KeyboardVisualizerDlg)
 {
     ui->setupUi(this);
+    QIcon icon(":Icon.png");
+    setWindowIcon(icon);
+
+    QAction* actionExit = new QAction( "Show/Hide", this );
+    connect( actionExit, SIGNAL( triggered() ), this, SLOT( show_hide() ));
+
+    QMenu* myTrayIconMenu = new QMenu( this );
+    myTrayIconMenu->addAction( actionExit );
+
+    trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setIcon(icon);
+    trayIcon->setToolTip("Keyboard Visualizer");
+    trayIcon->setContextMenu(myTrayIconMenu);
+    trayIcon->show();
 }
 
 void KeyboardVisDlg::show()
 {
-    QIcon icon(":Icon.png");
-    setWindowIcon(icon);
-
     ui->lineEdit_Normalization_Offset->setText(QString::number(vis_ptr->nrml_ofst));
     ui->lineEdit_Normalization_Scale->setText(QString::number(vis_ptr->nrml_scl));
     ui->lineEdit_Animation_Speed->setText(QString::number(vis_ptr->anim_speed));
@@ -91,6 +102,20 @@ void KeyboardVisDlg::show()
 KeyboardVisDlg::~KeyboardVisDlg()
 {
     delete ui;
+}
+
+void KeyboardVisDlg::show_hide()
+{
+    if(isHidden())
+    {
+        timer->start(15);
+        show();
+    }
+    else
+    {
+        hide();
+        timer->stop();
+    }
 }
 
 void KeyboardVisDlg::update()

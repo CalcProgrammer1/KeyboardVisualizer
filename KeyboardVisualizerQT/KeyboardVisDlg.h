@@ -5,6 +5,8 @@
 #include "ui_keyboardvisualizer.h"
 #include <QMainWindow>
 #include <QTimer>
+#include <QSystemTrayIcon>
+#include <QMenu>
 
 namespace Ui
 {
@@ -26,6 +28,8 @@ public:
 
 private slots:
     void update();
+
+    void show_hide();
 
     void on_lineEdit_Background_Brightness_textChanged(const QString &arg1);
 
@@ -61,6 +65,7 @@ private slots:
 
 private:
     Ui::KeyboardVisualizerDlg *ui;
+    QSystemTrayIcon* trayIcon;
     QTimer* timer;
     QGraphicsScene* scene;
     QImage* image;
