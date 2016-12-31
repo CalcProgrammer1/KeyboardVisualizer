@@ -362,4 +362,5 @@ void KeyboardVisDlg::OnEnChangeEditAnimSpeed()
 void KeyboardVisDlg::OnBnClickedCheckReactiveBackground()
 {
     vis->reactive_bkgd = ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->GetCheck();
+    vis->OnSettingsChanged();
 }

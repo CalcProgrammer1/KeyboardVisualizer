@@ -154,68 +154,81 @@ void KeyboardVisDlg::StartMinimized(boolean startmin)
 void KeyboardVisDlg::on_lineEdit_Amplitude_textChanged(const QString &arg1)
 {
     vis_ptr->amplitude = arg1.toInt();
+    vis_ptr->OnSettingsChanged();
 }
 
 void KeyboardVisDlg::on_lineEdit_Background_Brightness_textChanged(const QString &arg1)
 {
     vis_ptr->bkgd_bright = arg1.toInt();
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_lineEdit_Average_Size_textChanged(const QString &arg1)
 {
     vis_ptr->avg_size = arg1.toInt();
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_lineEdit_Decay_textChanged(const QString &arg1)
 {
     vis_ptr->decay = arg1.toInt();
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_lineEdit_Delay_textChanged(const QString &arg1)
 {
     vis_ptr->delay = arg1.toInt();
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_lineEdit_Normalization_Offset_textChanged(const QString &arg1)
 {
     vis_ptr->nrml_ofst = arg1.toFloat();
     vis_ptr->SetNormalization(vis_ptr->nrml_ofst, vis_ptr->nrml_scl);
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_lineEdit_Normalization_Scale_textChanged(const QString &arg1)
 {
     vis_ptr->nrml_scl = arg1.toFloat();
     vis_ptr->SetNormalization(vis_ptr->nrml_ofst, vis_ptr->nrml_scl);
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_lineEdit_Animation_Speed_textChanged(const QString &arg1)
 {
     vis_ptr->anim_speed = arg1.toFloat();
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_comboBox_FFT_Window_Mode_currentIndexChanged(int index)
 {
     vis_ptr->window_mode = index;
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_comboBox_Background_Mode_currentIndexChanged(int index)
 {
     vis_ptr->bkgd_mode = index;
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_comboBox_Foreground_Mode_currentIndexChanged(int index)
 {
     vis_ptr->frgd_mode = index;
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_comboBox_Single_Color_Mode_currentIndexChanged(int index)
 {
     vis_ptr->single_color_mode = index;
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_comboBox_Average_Mode_currentIndexChanged(int index)
 {
     vis_ptr->avg_mode = index;
+    vis_ptr->OnSettingsChanged();
 }
 
 void Ui::KeyboardVisDlg::on_pushButton_Save_Settings_clicked()
@@ -226,4 +239,5 @@ void Ui::KeyboardVisDlg::on_pushButton_Save_Settings_clicked()
 void Ui::KeyboardVisDlg::on_checkBox_Reactive_Background_stateChanged(int arg1)
 {
     vis_ptr->reactive_bkgd = (bool)arg1;
+    vis_ptr->OnSettingsChanged();
 }

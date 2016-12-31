@@ -1011,6 +1011,7 @@ void Visualizer::NetUpdateThread()
                     nrml_scl = ((settings_pkt_type *)buf)->nrml_scl;
                     frgd_mode = ((settings_pkt_type *)buf)->frgd_mode;
                     reactive_bkgd = ((settings_pkt_type *)buf)->reactive_bkgd;
+                    SetNormalization(nrml_ofst, nrml_scl);
                     update_ui = TRUE;
                 }
             }
