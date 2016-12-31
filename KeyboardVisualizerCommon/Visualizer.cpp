@@ -183,7 +183,7 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
     xmas.push_back(newstr);
 }
 
-void Visualizer::Initialize()
+void Visualizer::InitAudioDeviceList()
 {
 #ifdef WIN32
     //If using WASAPI, start WASAPI loopback capture device
@@ -198,14 +198,70 @@ void Visualizer::Initialize()
     pAudioClient->GetService(__uuidof(IAudioCaptureClient), (void**)&pAudioCaptureClient);
 
     pAudioClient->Start();
-
 #else
     //If using OpenAL, start OpenAL capture on default capture device
     ALCchar* devices;
     devices = (ALCchar *) alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
-    device = alcCaptureOpenDevice(devices, 10000, AL_FORMAT_MONO8, 2048);
-    alcCaptureStart(device);
+
+    //Loop through detected capture devices and stop at the configured one
+    int idx = 0;
+    char devicestring[512];
+    char *devicep = devicestring;
+    for(int i = 0; i < 512; i++)
+    {
+        *devicep = *devices;
+        if(*devicep == '\0')
+        {
+            if(strlen(devicestring) > 0)
+            {
+                char* new_device = new char[strlen(devicestring) + 1];
+                strcpy(new_device, devicestring);
+                audio_devices.push_back(new_device);
+            }
+
+
+            i = 0;
+            devices++;
+            if(*devicep == '\0' && *devicestring == '\0')
+            {
+                break;
+            }
+
+            devicep = devicestring;
+        }
+        else
+        {
+            devices++;
+            devicep++;
+        }
+    }
 #endif
+}
+
+void Visualizer::ChangeAudioDevice()
+{
+#ifndef WIN32
+    if(device != NULL)
+    {
+        alcCaptureStop(device);
+    }
+
+    if(audio_device_idx < audio_devices.size())
+    {
+        device = alcCaptureOpenDevice(audio_devices[audio_device_idx], 10000, AL_FORMAT_MONO8, 2048);
+        alcCaptureStart(device);
+    }
+    else if(audio_devices.size() > 0)
+    {
+        audio_device_idx = 0;
+        ChangeAudioDevice();
+    }
+#endif
+}
+
+void Visualizer::Initialize()
+{
+    InitAudioDeviceList();
 
     //Initialize devices supported only under Windows
 #ifdef WIN32
@@ -238,6 +294,7 @@ void Visualizer::Initialize()
     frgd_mode            = VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED;
     single_color_mode    = VISUALIZER_SINGLE_COLOR_FOLLOW_FOREGROUND;
     reactive_bkgd        = false;
+    audio_device_idx     = 0;
 
     update_ui            = false;
 
@@ -251,6 +308,7 @@ void Visualizer::Initialize()
     pixels_render = &pixels_vs1;
     pixels_out = &pixels_vs2;
 
+    ChangeAudioDevice();
     SetNormalization(nrml_ofst, nrml_scl);
 }
 
@@ -356,6 +414,10 @@ void Visualizer::SaveSettings()
     snprintf(out_str, 1024, "reactive_bkgd=%d\r\n", reactive_bkgd);
     outfile.write(out_str, strlen(out_str));
 
+    //Save Audio Device Index
+    snprintf(out_str, 1024, "audio_device_idx=%d\r\n", audio_device_idx);
+    outfile.write(out_str, strlen(out_str));
+
     //Save LED Strip Configurations
     for (int i = 0; i < str.size(); i++)
     {
@@ -455,11 +517,14 @@ void Visualizer::Update()
     //Only update FFT if there are at least 256 samples in the sample buffer
     int samples;
 
-    do
+    if(device != NULL)
     {
-        alcGetIntegerv(device, ALC_CAPTURE_SAMPLES, 1, &samples);
-        Sleep(1);
-    } while (samples < 512);
+        do
+        {
+            alcGetIntegerv(device, ALC_CAPTURE_SAMPLES, 1, &samples);
+            Sleep(1);
+        } while (samples < 512);
+    }
 
     //Capture 256 audio samples
     alcCaptureSamples(device, (ALCvoid *)buffer, 256);

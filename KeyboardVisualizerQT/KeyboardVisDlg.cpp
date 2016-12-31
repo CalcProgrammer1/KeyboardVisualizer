@@ -67,6 +67,14 @@ void KeyboardVisDlg::show()
     ui->comboBox_Average_Mode->setCurrentIndex(vis_ptr->avg_mode);
     ui->comboBox_Average_Mode->blockSignals(false);
 
+    ui->comboBox_Audio_Device->blockSignals(true);
+    for(int i = 0; i < vis_ptr->audio_devices.size(); i++)
+    {
+        ui->comboBox_Audio_Device->addItem(vis_ptr->audio_devices[i]);
+    }
+    ui->comboBox_Audio_Device->setCurrentIndex(vis_ptr->audio_device_idx);
+    ui->comboBox_Audio_Device->blockSignals(false);
+
     ui->checkBox_Reactive_Background->setChecked(vis_ptr->reactive_bkgd);
 
     timer = new QTimer(this);
@@ -240,4 +248,13 @@ void Ui::KeyboardVisDlg::on_checkBox_Reactive_Background_stateChanged(int arg1)
 {
     vis_ptr->reactive_bkgd = (bool)arg1;
     vis_ptr->OnSettingsChanged();
+}
+
+void Ui::KeyboardVisDlg::on_comboBox_Audio_Device_currentIndexChanged(int index)
+{
+    if(index != vis_ptr->audio_device_idx)
+    {
+        vis_ptr->audio_device_idx = index;
+        vis_ptr->ChangeAudioDevice();
+    }
 }

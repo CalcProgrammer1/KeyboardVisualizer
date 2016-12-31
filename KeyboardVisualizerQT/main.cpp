@@ -130,6 +130,12 @@ void parse_argument_string(char * argument, char * value)
     {
         vis.reactive_bkgd = atoi(value);
     }
+
+    if (strcmp(argument, "audio_device_idx") == 0)
+    {
+        vis.audio_device_idx = atoi(value);
+        vis.ChangeAudioDevice();
+    }
 }
 
 bool parse_command_line(int argc, char *argv[])

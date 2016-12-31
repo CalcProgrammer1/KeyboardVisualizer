@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>300</height>
+    <height>330</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -294,7 +294,7 @@
     <property name="geometry">
      <rect>
       <x>290</x>
-      <y>160</y>
+      <y>190</y>
       <width>140</width>
       <height>16</height>
      </rect>
@@ -307,7 +307,7 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>155</y>
+      <y>185</y>
       <width>150</width>
       <height>25</height>
      </rect>
@@ -317,7 +317,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>215</y>
+      <y>245</y>
       <width>256</width>
       <height>64</height>
      </rect>
@@ -354,7 +354,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>220</y>
+      <y>250</y>
       <width>140</width>
       <height>16</height>
      </rect>
@@ -367,7 +367,7 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>215</y>
+      <y>245</y>
       <width>150</width>
       <height>25</height>
      </rect>
@@ -380,7 +380,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>280</y>
+      <y>310</y>
       <width>581</width>
       <height>16</height>
      </rect>
@@ -393,7 +393,7 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>185</y>
+      <y>215</y>
       <width>150</width>
       <height>26</height>
      </rect>
@@ -406,13 +406,36 @@
     <property name="geometry">
      <rect>
       <x>290</x>
-      <y>190</y>
+      <y>220</y>
       <width>140</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string>Reactive Background</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Audio_Device">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>160</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Audio Device</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_Audio_Device">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>155</y>
+      <width>150</width>
+      <height>27</height>
+     </rect>
     </property>
    </widget>
   </widget>

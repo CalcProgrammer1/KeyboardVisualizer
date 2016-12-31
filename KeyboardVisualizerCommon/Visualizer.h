@@ -67,6 +67,9 @@ public:
     //Initializes the visualizer
     void Initialize();
 
+    //Initialize the audio devices list
+    void InitAudioDeviceList();
+
     //Function to start thread
     void StartThread();
 
@@ -99,6 +102,9 @@ public:
     //Initialize CLient
     void InitClient(char * clientstring);
 
+    //Change Audio Device
+    void ChangeAudioDevice();
+
     //Update function
     void Update();
 
@@ -125,6 +131,7 @@ public:
     int window_mode;
     int decay;
     int delay;
+    int audio_device_idx;
 
     //Flag to update UI
     bool update_ui;
@@ -162,6 +169,9 @@ public:
 
     //Foreground Variables
     int frgd_mode;
+
+    //Audio Device List
+    std::vector<char *> audio_devices;
 
 private:
 #ifndef WIN32

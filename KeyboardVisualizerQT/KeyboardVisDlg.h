@@ -57,6 +57,8 @@ private slots:
 
     void on_checkBox_Reactive_Background_stateChanged(int arg1);
 
+    void on_comboBox_Audio_Device_currentIndexChanged(int index);
+
 private:
     Ui::KeyboardVisualizerDlg *ui;
     QTimer* timer;
