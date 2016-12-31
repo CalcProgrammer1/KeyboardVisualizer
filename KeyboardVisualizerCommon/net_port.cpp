@@ -286,11 +286,6 @@ int net_port::tcp_write(char * buffer, int length)
     int ret = length;
     int val = length;
 
-    timeval waitd;
-
-    waitd.tv_sec = 1;
-    waitd.tv_usec = 0;
-
     for (unsigned int i = 0; i < clients.size(); i++)
     {
         val = length;

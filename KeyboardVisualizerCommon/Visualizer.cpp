@@ -9,8 +9,10 @@
 //Thread functions have different types in Windows and Linux
 #ifdef WIN32
 #define THREAD static void
+#define THREADRETURN
 #else
 #define THREAD static void*
+#define THREADRETURN return(NULL);
 #endif
 
 //Include pthread and Unix standard libraries if not building for Windows
@@ -61,17 +63,21 @@ THREAD thread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->VisThread();
+    THREADRETURN
 }
 
 THREAD netconthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->NetConnectThread();
+    THREADRETURN
 }
+
 THREAD netupdthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->NetUpdateThread();
+    THREADRETURN
 }
 
 //Threads for devices supported only under Windows
@@ -80,6 +86,7 @@ THREAD cmkbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->CmKeyboardUpdateThread();
+    THREADRETURN
 }
 
 //Threads for devices supported only under Linux
@@ -92,30 +99,35 @@ THREAD rkbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->RazerChromaUpdateThread();
+    THREADRETURN
 }
 
 THREAD ckbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->CorsairKeyboardUpdateThread();
+    THREADRETURN
 }
 
 THREAD skbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->SteelSeriesKeyboardUpdateThread();
+    THREADRETURN
 }
 
 THREAD mkbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->MSIKeyboardUpdateThread();
+    THREADRETURN
 }
 
 THREAD lsthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->LEDStripUpdateThread();
+    THREADRETURN
 }
 
 //Visualizer class functions start here

@@ -129,7 +129,7 @@ void RazerChroma::Initialize()
                     strcat(device_string, "/device_type");
                     test_fd = open(device_string, O_RDONLY);
 
-                    if(test_fd != NULL)
+                    if(test_fd)
                     {
                         read(test_fd, device_string, sizeof(device_string));
                         close(test_fd);
@@ -215,7 +215,7 @@ void RazerChroma::Initialize()
                             test_fd = open(device_string, O_RDONLY);
 
                             printf("Reading serial from %s\r\n", device_string);
-                            if(test_fd != NULL)
+                            if(test_fd)
                             {
                                 //Device has a serial number
                                 bool match = false;
@@ -229,7 +229,7 @@ void RazerChroma::Initialize()
                                 serial[15] = '\0';
 
                                 //Make sure this serial number isn't already registered
-                                for(int i = 0; i < razer_device_serial.size(); i++)
+                                for(unsigned int i = 0; i < razer_device_serial.size(); i++)
                                 {
                                     printf("Comparing serial %s with %s\r\n", serial, razer_device_serial[i]);
                                     if(strncmp(serial, razer_device_serial[i], 15) == 0)
@@ -386,7 +386,7 @@ void RazerChroma::Initialize()
 bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 {
     {
-        for(int i = 0; i < razer_fd_1.size(); i++)
+        for(unsigned int i = 0; i < razer_fd_1.size(); i++)
         {
             switch(razer_device_type[i])
             {

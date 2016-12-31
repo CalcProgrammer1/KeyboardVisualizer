@@ -26,7 +26,7 @@ void MSIKeyboard::Initialize()
     //Look for MSI SteelSeries Keyboard
     if (usb.OpenDevice(0x1770, 0xFF00, 0))
     {
-        init_ok == true;
+        init_ok = true;
     }
     else
     {
