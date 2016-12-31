@@ -389,6 +389,32 @@
      <string>https://github.com/CalcProgrammer1/KeyboardVisualizer</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="checkBox_Reactive_Background">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>185</y>
+      <width>150</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Reactive_Background">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>190</y>
+      <width>140</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reactive Background</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

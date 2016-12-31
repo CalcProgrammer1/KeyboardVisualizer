@@ -55,6 +55,8 @@ private slots:
 
     void on_pushButton_Save_Settings_clicked();
 
+    void on_checkBox_Reactive_Background_stateChanged(int arg1);
+
 private:
     Ui::KeyboardVisualizerDlg *ui;
     QTimer* timer;

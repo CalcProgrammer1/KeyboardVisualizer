@@ -67,6 +67,8 @@ void KeyboardVisDlg::show()
     ui->comboBox_Average_Mode->setCurrentIndex(vis_ptr->avg_mode);
     ui->comboBox_Average_Mode->blockSignals(false);
 
+    ui->checkBox_Reactive_Background->setChecked(vis_ptr->reactive_bkgd);
+
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(15);
@@ -134,6 +136,8 @@ void KeyboardVisDlg::update()
         ui->comboBox_Single_Color_Mode->blockSignals(true);
         ui->comboBox_Single_Color_Mode->setCurrentIndex(vis_ptr->single_color_mode);
         ui->comboBox_Single_Color_Mode->blockSignals(false);
+
+        ui->checkBox_Reactive_Background->setChecked(vis_ptr->reactive_bkgd);
     }
 }
 
@@ -217,4 +221,9 @@ void Ui::KeyboardVisDlg::on_comboBox_Average_Mode_currentIndexChanged(int index)
 void Ui::KeyboardVisDlg::on_pushButton_Save_Settings_clicked()
 {
     vis_ptr->SaveSettings();
+}
+
+void Ui::KeyboardVisDlg::on_checkBox_Reactive_Background_stateChanged(int arg1)
+{
+    vis_ptr->reactive_bkgd = (bool)arg1;
 }

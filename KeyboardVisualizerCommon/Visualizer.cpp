@@ -237,6 +237,7 @@ void Visualizer::Initialize()
     decay                = 80;
     frgd_mode            = VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED;
     single_color_mode    = VISUALIZER_SINGLE_COLOR_FOLLOW_FOREGROUND;
+    reactive_bkgd        = false;
 
     update_ui            = false;
 
@@ -351,6 +352,10 @@ void Visualizer::SaveSettings()
     snprintf(out_str, 1024, "anim_speed=%f\r\n", anim_speed);
     outfile.write(out_str, strlen(out_str));
 
+    //Save Reactive Background Flag
+    snprintf(out_str, 1024, "reactive_bkgd=%d\r\n", reactive_bkgd);
+    outfile.write(out_str, strlen(out_str));
+
     //Save LED Strip Configurations
     for (int i = 0; i < str.size(); i++)
     {
@@ -398,6 +403,7 @@ void Visualizer::OnSettingsChanged()
         settings.nrml_ofst = nrml_ofst;
         settings.nrml_scl = nrml_scl;
         settings.frgd_mode = frgd_mode;
+        settings.reactive_bkgd = reactive_bkgd;
 
         port->tcp_write((char *)&settings, sizeof(settings));
     }
@@ -1037,13 +1043,13 @@ void Visualizer::VisThread()
         //Draw active foreground
         DrawPattern(frgd_mode, 100, &pixels_fg);
 
+        float brightness = fft[5];
+
         //Loop through all 256x64 pixels in visualization image
         for (int x = 0; x < 256; x++)
         {
             for (int y = 0; y < 64; y++)
             {
-                float brightness = bkgd_bright * (255.0f / 100.0f);
-
                 //Draw Spectrograph Foreground
                 if (fft[x] >((1 / 64.0f)*(64.0f - y)))
                 {
@@ -1051,7 +1057,16 @@ void Visualizer::VisThread()
                 }
                 else
                 {
-                    pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
+                    if(reactive_bkgd)
+                    {
+                        int in_color = pixels_bg.pixels[y][x];
+                        pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                    }
+                    else
+                    {
+                        pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
+                    }
+
                 }
 
                 //Draw Bar Graph Foreground
@@ -1085,7 +1100,6 @@ void Visualizer::VisThread()
 
 
         //If music isn't playing, fade in the single color LEDs after 2 seconds
-        float brightness = fft[5];
         single_color_timeout++;
         for (int i = 0; i < 128; i++)
         {

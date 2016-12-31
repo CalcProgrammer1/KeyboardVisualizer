@@ -48,6 +48,7 @@ typedef struct
     float nrml_ofst;
     float nrml_scl;
     int frgd_mode;
+    bool reactive_bkgd;
 } settings_pkt_type;
 
 typedef int net_mode;
@@ -150,6 +151,7 @@ public:
     float anim_speed;
     int bkgd_bright;
     int bkgd_mode;
+    bool reactive_bkgd;
 
     //Single Color Mode
     int single_color_mode;
