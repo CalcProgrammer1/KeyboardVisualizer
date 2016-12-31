@@ -1099,7 +1099,15 @@ void Visualizer::VisThread()
                         }
                         else
                         {
-                            pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
+                            if(reactive_bkgd)
+                            {
+                                int in_color = pixels_bg.pixels[y][x];
+                                pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                            }
+                            else
+                            {
+                                pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
+                            }
                         }
                     }
                     else
@@ -1110,7 +1118,15 @@ void Visualizer::VisThread()
                         }
                         else
                         {
-                            pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
+                            if(reactive_bkgd)
+                            {
+                                int in_color = pixels_bg.pixels[y][x];
+                                pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                            }
+                            else
+                            {
+                                pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
+                            }
                         }
                     }
                 }
