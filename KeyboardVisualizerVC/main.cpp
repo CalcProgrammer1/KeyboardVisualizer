@@ -132,6 +132,11 @@ void parse_argument_string(char * argument, char * value)
     {
         vis.InitClient(value);
     }
+
+    if (strcmp(argument, "reactive_bkgd") == 0)
+    {
+        vis.reactive_bkgd = atoi(value);
+    }
 }
 
 boolean parse_command_line(char * command_line)

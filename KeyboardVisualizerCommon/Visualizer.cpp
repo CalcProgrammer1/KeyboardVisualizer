@@ -1010,6 +1010,7 @@ void Visualizer::NetUpdateThread()
                     nrml_ofst = ((settings_pkt_type *)buf)->nrml_ofst;
                     nrml_scl = ((settings_pkt_type *)buf)->nrml_scl;
                     frgd_mode = ((settings_pkt_type *)buf)->frgd_mode;
+                    reactive_bkgd = ((settings_pkt_type *)buf)->reactive_bkgd;
                     update_ui = TRUE;
                 }
             }
@@ -1044,6 +1045,23 @@ void Visualizer::VisThread()
         DrawPattern(frgd_mode, 100, &pixels_fg);
 
         float brightness = fft[5];
+        //If music isn't playing, fade in the single color LEDs after 2 seconds
+        single_color_timeout++;
+        for (int i = 0; i < 128; i++)
+        {
+            if (fft[2 * i] >= 0.0001f)
+            {
+                single_color_timeout = 0;
+            }
+        }
+        if (single_color_timeout >= 120)
+        {
+            if (single_color_timeout >= 360.0f)
+            {
+                single_color_timeout = 360.0f;
+            }
+            brightness = (single_color_timeout - 120) / 240.0f;
+        }
 
         //Loop through all 256x64 pixels in visualization image
         for (int x = 0; x < 256; x++)
@@ -1098,30 +1116,9 @@ void Visualizer::VisThread()
             }
         }
 
-
-        //If music isn't playing, fade in the single color LEDs after 2 seconds
-        single_color_timeout++;
-        for (int i = 0; i < 128; i++)
+        if (single_color_mode == VISUALIZER_SINGLE_COLOR_FOLLOW_BACKGROUND)
         {
-            if (fft[2 * i] >= 0.0001f)
-            {
-                single_color_timeout = 0;
-            }
-        }
-        if (single_color_timeout >= 120)
-        {
-            if (single_color_timeout >= 360.0f)
-            {
-                single_color_timeout = 360.0f;
-            }
-            if (single_color_mode == VISUALIZER_SINGLE_COLOR_FOLLOW_BACKGROUND)
-            {
-                brightness = (single_color_timeout - 120) / 240.0f;
-            }
-            else
-            {
-                brightness = (bkgd_bright / 100.0f) * (single_color_timeout - 120) / 240.0f;
-            }
+            brightness = (bkgd_bright / 100.0f) * brightness;
         }
 
         //Draw brightness based visualizer for single LED devices

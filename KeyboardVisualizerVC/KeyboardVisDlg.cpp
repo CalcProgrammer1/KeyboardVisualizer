@@ -109,6 +109,8 @@ BOOL KeyboardVisDlg::OnInitDialog()
     avgModeBox->AddString("Low Pass");
     avgModeBox->SetCurSel(vis->avg_mode);
 
+    ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->SetCheck(vis->reactive_bkgd);
+
 	timer = SetTimer(1, 25, NULL);
 
     firstrun = TRUE;
@@ -197,6 +199,8 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
 
         CComboBox* avgModeBox = (CComboBox*)GetDlgItem(IDC_COMBO_AVG_MODE);
         avgModeBox->SetCurSel(vis->avg_mode);
+
+        ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->SetCheck(vis->reactive_bkgd);
     }
 }
 
@@ -244,6 +248,7 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_EN_CHANGE(IDC_EDIT_NRML_SCL, &KeyboardVisDlg::OnEnChangedEditNrmlScl)
     ON_BN_CLICKED(IDC_BUTTON_SAVE, &KeyboardVisDlg::OnClickedSave)
     ON_EN_CHANGE(IDC_EDIT_ANIM_SPEED, &KeyboardVisDlg::OnEnChangeEditAnimSpeed)
+    ON_BN_CLICKED(IDC_CHECK_REACTIVE_BACKGROUND, &KeyboardVisDlg::OnBnClickedCheckReactiveBackground)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
@@ -352,4 +357,9 @@ void KeyboardVisDlg::OnEnChangeEditAnimSpeed()
     GetDlgItemText(IDC_EDIT_ANIM_SPEED, (LPTSTR)&val, 64);
     vis->anim_speed = strtod(val, NULL);
     vis->OnSettingsChanged();
+}
+
+void KeyboardVisDlg::OnBnClickedCheckReactiveBackground()
+{
+    vis->reactive_bkgd = ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->GetCheck();
 }

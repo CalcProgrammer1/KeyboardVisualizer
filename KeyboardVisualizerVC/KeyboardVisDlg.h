@@ -55,6 +55,7 @@ public:
     afx_msg void OnEnChangedEditNrmlScl();
     afx_msg void OnClickedSave();
     afx_msg void OnEnChangeEditAnimSpeed();
+    afx_msg void OnBnClickedCheckReactiveBackground();
 };
 
 #endif
