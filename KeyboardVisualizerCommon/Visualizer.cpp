@@ -129,14 +129,14 @@ void Visualizer::AddLEDStrip(char* ledstring)
 {
     //Scan through already registered LED strips and
     //verify that the port name is not already in use
-    for (int i = 0; i < str.size(); i++)
+    for (unsigned int i = 0; i < str.size(); i++)
     {
         if (strcmp(str[i]->GetLEDString(), ledstring) == 0)
         {
             return;
         }
     }
-    for (int i = 0; i < xmas.size(); i++)
+    for (unsigned int i = 0; i < xmas.size(); i++)
     {
         if (strcmp(xmas[i]->GetLEDString(), ledstring) == 0)
         {
@@ -153,14 +153,14 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
 {
     //Scan through already registered LED strips and
     //verify that the port name is not already in use
-    for (int i = 0; i < str.size(); i++)
+    for (unsigned int i = 0; i < str.size(); i++)
     {
         if (strcmp(str[i]->GetLEDString(), ledstring) == 0)
         {
             return;
         }
     }
-    for (int i = 0; i < xmas.size(); i++)
+    for (unsigned int i = 0; i < xmas.size(); i++)
     {
         if (strcmp(xmas[i]->GetLEDString(), ledstring) == 0)
         {
@@ -222,7 +222,6 @@ void Visualizer::InitAudioDeviceList()
     devices = (ALCchar *) alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
 
     //Loop through detected capture devices and stop at the configured one
-    int idx = 0;
     char devicestring[512];
     char *devicep = devicestring;
     for(int i = 0; i < 512; i++)
@@ -462,7 +461,7 @@ void Visualizer::SaveSettings()
     outfile.write(out_str, strlen(out_str));
 
     //Save LED Strip Configurations
-    for (int i = 0; i < str.size(); i++)
+    for (unsigned int i = 0; i < str.size(); i++)
     {
         //Save LED Strip Configuration
         snprintf(out_str, 1024, "ledstrip=%s\r\n", str[i]->GetLEDString());
@@ -470,7 +469,7 @@ void Visualizer::SaveSettings()
     }
 
     //Save Xmas Strip Configurations
-    for (int i = 0; i < xmas.size(); i++)
+    for (unsigned int i = 0; i < xmas.size(); i++)
     {
         //Save Xmas Strip Configuration
         snprintf(out_str, 1024, "xmas=%s\r\n", xmas[i]->GetLEDString());
@@ -516,10 +515,7 @@ void Visualizer::OnSettingsChanged()
 
 void Visualizer::Update()
 {
-    static float input_wave[512];
-    float fft_tmp[512];
-
-    unsigned int buffer_pos = 0;
+    float fft_tmp[512];  
 
     for (int i = 0; i < 256; i++)
     {
@@ -531,6 +527,9 @@ void Visualizer::Update()
     }
 
 #ifdef WIN32
+    unsigned int buffer_pos = 0;
+    static float input_wave[512];
+
     if (pAudioCaptureClient != NULL)
     {
         unsigned int nextPacketSize = 1;
@@ -818,7 +817,7 @@ void DrawRainbow(int bright, int bkgd_step, vis_pixels *pixels)
         for (int y = 0; y < 64; y++)
         {
             int hsv_h = ((bkgd_step + (256 - x)) % 360);
-            hsv_t hsv = { hsv_h, 255, bright };
+            hsv_t hsv = { hsv_h, 255, (unsigned char)bright };
             pixels->pixels[y][x] = hsv2rgb(&hsv);
         }
     }
@@ -832,7 +831,7 @@ void DrawColorWheel(int bright, int bkgd_step, int center_x, int center_y, vis_p
         for (int y = 0; y < 64; y++)
         {
             float hue = bkgd_step + (int)(180 + atan2(y - center_y, x - center_x) * (180.0 / 3.14159)) % 360;
-            hsv_t hsv2 = { hue, 255, bright };
+            hsv_t hsv2 = { (int)hue, 255, (unsigned char)bright };
             pixels->pixels[y][x] = hsv2rgb(&hsv2);
         }
     }
@@ -841,7 +840,7 @@ void DrawColorWheel(int bright, int bkgd_step, int center_x, int center_y, vis_p
 void DrawSpectrumCycle(int bright, int bkgd_step, vis_pixels *pixels)
 {
     bright = bright * (255.0f / 100.0f);
-    hsv_t hsv2 = { bkgd_step, 255, bright };
+    hsv_t hsv2 = { (unsigned char)bkgd_step, 255, (unsigned char)bright };
     COLORREF color = hsv2rgb(&hsv2);
 
     for (int x = 0; x < 256; x++)
@@ -1136,8 +1135,6 @@ void Visualizer::NetUpdateThread()
 
 void Visualizer::VisThread()
 {
-    float red, grn, blu;
-
     while (1)
     {
         if (!(netmode == NET_MODE_CLIENT && port->connected))
@@ -1375,12 +1372,12 @@ void Visualizer::LEDStripUpdateThread()
     {
         while (TRUE)
         {
-            for (int i = 0; i < str.size(); i++)
+            for (unsigned int i = 0; i < str.size(); i++)
             {
                 str[i]->SetLEDs(pixels_out->pixels);
             }
 
-            for (int i = 0; i < xmas.size(); i++)
+            for (unsigned int i = 0; i < xmas.size(); i++)
             {
                 xmas[i]->SetLEDsXmas(pixels_out->pixels);
             }

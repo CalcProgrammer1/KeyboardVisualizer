@@ -131,7 +131,7 @@ public:
     int window_mode;
     int decay;
     int delay;
-    int audio_device_idx;
+    unsigned int audio_device_idx;
 
     //Flag to update UI
     bool update_ui;

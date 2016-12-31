@@ -79,7 +79,7 @@ void KeyboardVisDlg::show()
     ui->comboBox_Average_Mode->blockSignals(false);
 
     ui->comboBox_Audio_Device->blockSignals(true);
-    for(int i = 0; i < vis_ptr->audio_devices.size(); i++)
+    for(unsigned int i = 0; i < vis_ptr->audio_devices.size(); i++)
     {
         ui->comboBox_Audio_Device->addItem(vis_ptr->audio_devices[i]);
     }
@@ -277,7 +277,7 @@ void Ui::KeyboardVisDlg::on_checkBox_Reactive_Background_stateChanged(int arg1)
 
 void Ui::KeyboardVisDlg::on_comboBox_Audio_Device_currentIndexChanged(int index)
 {
-    if(index != vis_ptr->audio_device_idx)
+    if((unsigned int)index != vis_ptr->audio_device_idx)
     {
         vis_ptr->audio_device_idx = index;
         vis_ptr->ChangeAudioDevice();
