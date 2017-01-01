@@ -11,6 +11,9 @@ using namespace Ui;
 
 KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new KeyboardVisualizerDlg)
 {
+    startminimized = false;
+    firstrun = true;
+
     ui->setupUi(this);
     QIcon icon(":Icon.png");
     setWindowIcon(icon);
@@ -120,6 +123,13 @@ void KeyboardVisDlg::show_hide()
 
 void KeyboardVisDlg::update()
 {
+    if (startminimized && firstrun)
+    {
+        firstrun = false;
+        hide();
+        timer->stop();
+    }
+
     for(int x = 0; x < 256; x++)
     {
         for(int y = 0; y < 64; y++)

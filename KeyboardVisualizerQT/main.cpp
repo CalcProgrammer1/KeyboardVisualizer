@@ -13,128 +13,116 @@ static boolean startminimized;
 
 void parse_argument_string(char * argument, char * value)
 {
-    if (strcmp(argument, "startminimized") == 0)
-    {
-        startminimized = true;
-    }
+    //Strip off new line characters if present
+    argument = strtok(argument, "\r\n");
+    value    = strtok(value, "\r\n");
 
-    if (strcmp(argument, "amplitude") == 0)
+    if(argument)
     {
-        vis.amplitude = atoi(value);
-    }
-
-    if (strcmp(argument, "bkgd_bright") == 0)
-    {
-        vis.bkgd_bright = atoi(value);
-    }
-
-    if (strcmp(argument, "avg_size") == 0)
-    {
-        vis.avg_size = atoi(value);
-        if (vis.avg_size < 1)
+        if (strcmp(argument, "startminimized") == 0)
         {
-            vis.avg_size = 1;
+            startminimized = true;
         }
-        else if (vis.avg_size > 128)
+        else if (strcmp(argument, "amplitude") == 0)
         {
-            vis.avg_size = 128;
+            vis.amplitude = atoi(value);
         }
-    }
-
-    if (strcmp(argument, "decay") == 0)
-    {
-        vis.decay = atoi(value);
-    }
-
-    if (strcmp(argument, "delay") == 0)
-    {
-        vis.delay = atoi(value);
-    }
-
-    if (strcmp(argument, "nrml_ofst") == 0)
-    {
-        vis.nrml_ofst = strtod(value, NULL);
-    }
-
-    if (strcmp(argument, "nrml_scl") == 0)
-    {
-        vis.nrml_scl = strtod(value, NULL);
-    }
-
-    if (strcmp(argument, "anim_speed") == 0)
-    {
-        vis.anim_speed = strtod(value, NULL);
-    }
-
-    if (strcmp(argument, "window_mode") == 0)
-    {
-        if ((atoi(value) >= 0) && (atoi(value) <= 4))
+        else if (strcmp(argument, "bkgd_bright") == 0)
         {
-            vis.window_mode = atoi(value);
+            vis.bkgd_bright = atoi(value);
         }
-    }
-
-    if (strcmp(argument, "bkgd_mode") == 0)
-    {
-        if ((atoi(value) >= 0) && (atoi(value) <= VISUALIZER_NUM_PATTERNS))
+        else if (strcmp(argument, "avg_size") == 0)
         {
-            vis.bkgd_mode = atoi(value);
+            vis.avg_size = atoi(value);
+            if (vis.avg_size < 1)
+            {
+                vis.avg_size = 1;
+            }
+            else if (vis.avg_size > 128)
+            {
+                vis.avg_size = 128;
+            }
         }
-    }
-
-    if (strcmp(argument, "frgd_mode") == 0)
-    {
-        if ((atoi(value) >= 0) && (atoi(value) <= VISUALIZER_NUM_PATTERNS))
+        else if (strcmp(argument, "decay") == 0)
         {
-            vis.frgd_mode = atoi(value);
+            vis.decay = atoi(value);
         }
-    }
-
-    if (strcmp(argument, "single_color_mode") == 0)
-    {
-        if ((atoi(value) >= 0) && (atoi(value) <= VISUALIZER_NUM_SINGLE_COLOR))
+        else if (strcmp(argument, "delay") == 0)
         {
-            vis.single_color_mode = atoi(value);
+            vis.delay = atoi(value);
         }
-    }
-
-    if (strcmp(argument, "avg_mode") == 0)
-    {
-        if ((atoi(value) >= 0) && (atoi(value) <= 1))
+        else if (strcmp(argument, "nrml_ofst") == 0)
         {
-            vis.avg_mode = atoi(value);
+            vis.nrml_ofst = strtod(value, NULL);
         }
-    }
-
-    if (strcmp(argument, "ledstrip") == 0)
-    {
-        vis.AddLEDStrip(value);
-    }
-
-    if (strcmp(argument, "xmas") == 0)
-    {
-        vis.AddLEDStripXmas(value);
-    }
-
-    if (strcmp(argument, "server") == 0)
-    {
-        vis.InitServer(value);
-    }
-
-    if (strcmp(argument, "client") == 0)
-    {
-        vis.InitClient(value);
-    }
-
-    if (strcmp(argument, "reactive_bkgd") == 0)
-    {
-        vis.reactive_bkgd = atoi(value);
-    }
-
-    if (strcmp(argument, "audio_device_idx") == 0)
-    {
-        vis.audio_device_idx = atoi(value);
-        vis.ChangeAudioDevice();
+        else if (strcmp(argument, "nrml_scl") == 0)
+        {
+            vis.nrml_scl = strtod(value, NULL);
+        }
+        else if (strcmp(argument, "anim_speed") == 0)
+        {
+            vis.anim_speed = strtod(value, NULL);
+        }
+        else if (strcmp(argument, "window_mode") == 0)
+        {
+            if ((atoi(value) >= 0) && (atoi(value) <= 4))
+            {
+                vis.window_mode = atoi(value);
+            }
+        }
+        else if (strcmp(argument, "bkgd_mode") == 0)
+        {
+            if ((atoi(value) >= 0) && (atoi(value) <= VISUALIZER_NUM_PATTERNS))
+            {
+                vis.bkgd_mode = atoi(value);
+            }
+        }
+        else if (strcmp(argument, "frgd_mode") == 0)
+        {
+            if ((atoi(value) >= 0) && (atoi(value) <= VISUALIZER_NUM_PATTERNS))
+            {
+                vis.frgd_mode = atoi(value);
+            }
+        }
+        else if (strcmp(argument, "single_color_mode") == 0)
+        {
+            if ((atoi(value) >= 0) && (atoi(value) <= VISUALIZER_NUM_SINGLE_COLOR))
+            {
+                vis.single_color_mode = atoi(value);
+            }
+        }
+        else if (strcmp(argument, "avg_mode") == 0)
+        {
+            if ((atoi(value) >= 0) && (atoi(value) <= 1))
+            {
+                vis.avg_mode = atoi(value);
+            }
+        }
+        else if (strcmp(argument, "ledstrip") == 0)
+        {
+            vis.AddLEDStrip(value);
+        }
+        else if (strcmp(argument, "xmas") == 0)
+        {
+            vis.AddLEDStripXmas(value);
+        }
+        else if (strcmp(argument, "server") == 0)
+        {
+            vis.InitServer(value);
+        }
+        else if (strcmp(argument, "client") == 0)
+        {
+            vis.InitClient(value);
+        }
+        else if (strcmp(argument, "reactive_bkgd") == 0)
+        {
+            vis.reactive_bkgd = atoi(value);
+        }
+        else if (strcmp(argument, "audio_device_idx") == 0)
+        {
+            vis.audio_device_idx = atoi(value);
+            vis.ChangeAudioDevice();
+        }
     }
 }
 
