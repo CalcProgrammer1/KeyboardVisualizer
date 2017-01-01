@@ -64,7 +64,7 @@ void CmKeyboard::Initialize()
 
     for (int y = 0; y < 6; y++)
     {
-        y_idx_list[y] = ROW_IDX_SPECTROGRAPH_TOP + (y * (SPECTROGRAPH_ROWS / 6)) + (0.5f * (SPECTROGRAPH_ROWS / 6));
+        y_idx_list[y] = (int)(ROW_IDX_SPECTROGRAPH_TOP + (y * (SPECTROGRAPH_ROWS / 6)) + (0.5f * (SPECTROGRAPH_ROWS / 6)));
     }
 
 	// count "col" by device type

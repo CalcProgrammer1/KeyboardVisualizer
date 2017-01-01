@@ -59,7 +59,7 @@ void SteelSeriesGameSense::Initialize()
 
     for (int y = 0; y < ROWS; y++)
     {
-        y_idx_list[y] = ROW_IDX_SPECTROGRAPH_TOP + (y * (SPECTROGRAPH_ROWS / ROWS)) + (0.5f * (SPECTROGRAPH_ROWS / ROWS));
+        y_idx_list[y] = (int)(ROW_IDX_SPECTROGRAPH_TOP + (y * (SPECTROGRAPH_ROWS / ROWS)) + (0.5f * (SPECTROGRAPH_ROWS / ROWS)));
     }
     for (int x = 0; x < COLS; x++)
     {

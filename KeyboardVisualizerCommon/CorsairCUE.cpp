@@ -78,8 +78,8 @@ void CorsairCUE::Initialize()
         for (int i = 0; i < positions->numberOfLed; i++)
         {
             led_idx[i] = positions->pLedPosition[i].ledId;
-            x_idx[i] = SPECTROGRAPH_COLS * (positions->pLedPosition[i].left / width);
-            y_idx[i] = ROW_IDX_SPECTROGRAPH_TOP + (SPECTROGRAPH_ROWS * (positions->pLedPosition[i].top / height)) + (0.5f * (SPECTROGRAPH_ROWS / height));
+            x_idx[i] = (int)(SPECTROGRAPH_COLS * (positions->pLedPosition[i].left / width));
+            y_idx[i] = (int)(ROW_IDX_SPECTROGRAPH_TOP + (SPECTROGRAPH_ROWS * (positions->pLedPosition[i].top / height)) + (0.5f * (SPECTROGRAPH_ROWS / height)));
         }
 
         failed = FALSE;

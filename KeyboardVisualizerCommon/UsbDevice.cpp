@@ -119,6 +119,8 @@ bool UsbDevice::OpenDevice(unsigned short vendor, unsigned short product, unsign
     {
         return false;
     }
+
+    return true;
 #endif
 }
 

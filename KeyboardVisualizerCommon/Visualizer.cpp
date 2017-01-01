@@ -552,7 +552,7 @@ void Visualizer::Update()
             float *buf;
             pAudioCaptureClient->GetBuffer((BYTE**)&buf, &nextPacketSize, (DWORD *)&flags, NULL, NULL);
 
-            for (int i = 0; i < nextPacketSize; i += 4)
+            for (unsigned int i = 0; i < nextPacketSize; i += 4)
             {
                 for (int j = 0; j < 255; j++)
                 {
@@ -750,7 +750,7 @@ void Visualizer::StartThread()
 
 void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)
 {
-    bright = bright * (255.0f / 100.0f);
+    bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
     {
         for (int y = 0; y < 64; y++)
@@ -762,12 +762,12 @@ void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)
 
 void DrawVerticalBars(int bright, COLORREF * colors, int num_colors, vis_pixels *pixels)
 {
-    bright = bright * (255.0f / 100.0f);
+    bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
     {
         for (int y = 0; y < 64; y++)
         {
-            int idx = (float)x * ((float)num_colors / 255.0f);
+            int idx = (int)((float)x * ((float)num_colors / 255.0f));
             pixels->pixels[y][x] = RGB(((bright * GetRValue(colors[idx])) / 256), ((bright * GetGValue(colors[idx])) / 256), ((bright * GetBValue(colors[idx])) / 256));
         }
     }
@@ -775,7 +775,7 @@ void DrawVerticalBars(int bright, COLORREF * colors, int num_colors, vis_pixels 
 
 void DrawHorizontalBars(int bright, COLORREF * colors, int num_colors, vis_pixels *pixels)
 {
-    bright = bright * (255.0f / 100.0f);
+    bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
     {
         for (int y = 0; y < 64; y++)
@@ -784,7 +784,7 @@ void DrawHorizontalBars(int bright, COLORREF * colors, int num_colors, vis_pixel
             {
                 if (x < 128)
                 {
-                    int idx = num_colors - ((float)x * ((float)num_colors / 128.0f));
+                    int idx = (int)(num_colors - ((float)x * ((float)num_colors / 128.0f)));
                     if (idx >= num_colors)
                     {
                         idx = num_colors - 1;
@@ -793,66 +793,66 @@ void DrawHorizontalBars(int bright, COLORREF * colors, int num_colors, vis_pixel
                 }
                 else
                 {
-                    int idx = ((float)(x - 128) * ((float)num_colors / 128.0f));
+                    int idx = (int)(((float)(x - 128) * ((float)num_colors / 128.0f)));
                     pixels->pixels[y][x] = RGB(((bright * GetRValue(colors[idx])) / 256), ((bright * GetGValue(colors[idx])) / 256), ((bright * GetBValue(colors[idx])) / 256));
                 }
             }
             else
             {
-                int idx = num_colors - ((float)y * ((float)num_colors / 63.0f));
+                int idx = (int)(num_colors - ((float)y * ((float)num_colors / 63.0f)));
                 pixels->pixels[y][x] = RGB(((bright * GetRValue(colors[idx])) / 256), ((bright * GetGValue(colors[idx])) / 256), ((bright * GetBValue(colors[idx])) / 256));
             }
         }
     }
 }
 
-void DrawRainbowSinusoidal(int bright, int bkgd_step, vis_pixels *pixels)
+void DrawRainbowSinusoidal(int bright, float bkgd_step, vis_pixels *pixels)
 {
-    bright = bright * (255.0f / 100.0f);
+    bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
     {
         for (int y = 0; y < 64; y++)
         {
-            int red = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1);
-            int grn = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1);
-            int blu = 127 * (sin((((((int)(x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) + (6.28f / 3)) + 1);
+            int red = (int)(127 * (sin(((((int)((x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1));
+            int grn = (int)(127 * (sin(((((int)((x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1));
+            int blu = (int)(127 * (sin(((((int)((x * (360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) + (6.28f / 3)) + 1));
             pixels->pixels[y][x] = RGB(((bright * red) / 256), ((bright * grn) / 256), ((bright * blu) / 256));
         }
     }
 }
 
-void DrawRainbow(int bright, int bkgd_step, vis_pixels *pixels)
+void DrawRainbow(int bright, float bkgd_step, vis_pixels *pixels)
 {
-    bright = bright * (255.0f / 100.0f);
+    bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
     {
         for (int y = 0; y < 64; y++)
         {
-            int hsv_h = ((bkgd_step + (256 - x)) % 360);
+            int hsv_h = ((int)(bkgd_step + (256 - x)) % 360);
             hsv_t hsv = { hsv_h, 255, (unsigned char)bright };
             pixels->pixels[y][x] = hsv2rgb(&hsv);
         }
     }
 }
 
-void DrawColorWheel(int bright, int bkgd_step, int center_x, int center_y, vis_pixels *pixels)
+void DrawColorWheel(int bright, float bkgd_step, int center_x, int center_y, vis_pixels *pixels)
 {
-    bright = bright * (255.0f / 100.0f);
+    bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
     {
         for (int y = 0; y < 64; y++)
         {
-            float hue = bkgd_step + (int)(180 + atan2(y - center_y, x - center_x) * (180.0 / 3.14159)) % 360;
+            float hue = (float)(bkgd_step + (int)(180 + atan2(y - center_y, x - center_x) * (180.0 / 3.14159)) % 360);
             hsv_t hsv2 = { (int)hue, 255, (unsigned char)bright };
             pixels->pixels[y][x] = hsv2rgb(&hsv2);
         }
     }
 }
 
-void DrawSpectrumCycle(int bright, int bkgd_step, vis_pixels *pixels)
+void DrawSpectrumCycle(int bright, float bkgd_step, vis_pixels *pixels)
 {
-    bright = bright * (255.0f / 100.0f);
-    hsv_t hsv2 = { (unsigned char)bkgd_step, 255, (unsigned char)bright };
+    bright = (int)(bright * (255.0f / 100.0f));
+    hsv_t hsv2 = { (int)bkgd_step, 255, (unsigned char)bright };
     COLORREF color = hsv2rgb(&hsv2);
 
     for (int x = 0; x < 256; x++)
@@ -864,13 +864,13 @@ void DrawSpectrumCycle(int bright, int bkgd_step, vis_pixels *pixels)
     }
 }
 
-void DrawSinusoidalCycle(int bright, int bkgd_step, vis_pixels *pixels)
+void DrawSinusoidalCycle(int bright, float bkgd_step, vis_pixels *pixels)
 {
     COLORREF color;
-    bright = bright * (255.0f / 100.0f);
-    int red = 127 * (sin((((((int)((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1);
-    int grn = 127 * (sin((((((int)((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1);
-    int blu = 127 * (sin((((((int)((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) + (6.28f / 3)) + 1);
+    bright = (int)(bright * (255.0f / 100.0f));
+    int red = (int)(127 * (sin(((((int)(((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1));
+    int grn = (int)(127 * (sin(((((int)(((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1));
+    int blu = (int)(127 * (sin(((((int)(((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) + (6.28f / 3)) + 1));
     color = RGB(((bright * red) / 256), ((bright * grn) / 256), ((bright * blu) / 256));
 
     for (int x = 0; x < 256; x++)
@@ -911,7 +911,7 @@ void Visualizer::DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixel
         amplitude = 0.0f;
     }
 
-    int idx = 64.0f - (amplitude * 62.0f);
+    int idx = (int)(64.0f - (amplitude * 62.0f));
     int in_color = fg_pixels->pixels[idx][0];
     int out_color = RGB(((amplitude * GetRValue(in_color))), ((amplitude * GetGValue(in_color))), ((amplitude * GetBValue(in_color))));
     for (int x = 0; x < 256; x++)
@@ -1176,9 +1176,9 @@ void Visualizer::VisThread()
         }
         if (single_color_timeout >= 120)
         {
-            if (single_color_timeout >= 360.0f)
+            if (single_color_timeout >= 360)
             {
-                single_color_timeout = 360.0f;
+                single_color_timeout = 360;
             }
             brightness = (single_color_timeout - 120) / 240.0f;
         }
