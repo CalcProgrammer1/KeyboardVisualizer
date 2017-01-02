@@ -146,13 +146,16 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         Mice
         - Diamondback Chroma (bar and single color)
         - Mamba Tournament Edition (bar and single color)
+        - Mamba Chroma Wireless (bar and single color, wired and wireless)
         - DeathAdder Chroma (single color)
         - Naga Epic Chroma (single color, wired only)
         - Naga Chroma (single color)
+        - Orochi Chroma (single color, wired only)
         
         Headsets
         - Kraken 7.1 Chroma (single color)
         - Kraken 7.1 Chroma V2 (single color)
+        - ManO'War (single color)
         
         Mouse Mats
         - Firefly (bar)
@@ -198,7 +201,7 @@ Keyboard Visualizer allows you to save your custom settings in two different way
 
 # Supported Devices (Linux)
 
-    * Razer Drivers (https://github.com/terrycain/razer-drivers)
+    * Razer Linux Drivers (https://github.com/terrycain/razer-drivers)
 
         Keyboards
         - BlackWidow Chroma (spectrograph)
