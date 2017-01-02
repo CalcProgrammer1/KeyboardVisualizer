@@ -297,6 +297,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             }
         }
 
+        CreateEffect(ChromaSDK::OROCHI_CHROMA, ChromaSDK::CHROMA_NONE, NULL, NULL); // Quick-fix for "lazy" Orochi Chroma color transition effect, see https://gfycat.com/DiscreteDisfiguredBluetickcoonhound
         CreateMouseEffect(ChromaSDK::Mouse::CHROMA_CUSTOM2, &MouseEffect, NULL);
 
         //Kraken Chroma
