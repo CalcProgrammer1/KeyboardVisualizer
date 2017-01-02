@@ -33,72 +33,6 @@ KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new Ke
 
 void KeyboardVisDlg::show()
 {
-    ui->lineEdit_Normalization_Offset->setText(QString::number(vis_ptr->nrml_ofst));
-    ui->lineEdit_Normalization_Scale->setText(QString::number(vis_ptr->nrml_scl));
-    ui->lineEdit_Animation_Speed->setText(QString::number(vis_ptr->anim_speed));
-
-    ui->lineEdit_Amplitude->setText(QString::number(vis_ptr->amplitude));
-    ui->lineEdit_Background_Brightness->setText(QString::number(vis_ptr->bkgd_bright));
-    ui->lineEdit_Average_Size->setText(QString::number(vis_ptr->avg_size));
-    ui->lineEdit_Decay->setText(QString::number(vis_ptr->decay));
-    ui->lineEdit_Delay->setText(QString::number(vis_ptr->delay));
-
-    ui->comboBox_FFT_Window_Mode->blockSignals(true);
-    ui->comboBox_FFT_Window_Mode->addItem("None");
-    ui->comboBox_FFT_Window_Mode->addItem("Hanning");
-    ui->comboBox_FFT_Window_Mode->addItem("Hamming");
-    ui->comboBox_FFT_Window_Mode->addItem("Blackman");
-    ui->comboBox_FFT_Window_Mode->setCurrentIndex(vis_ptr->window_mode);
-    ui->comboBox_FFT_Window_Mode->blockSignals(false);
-
-    ui->comboBox_Background_Mode->blockSignals(true);
-    for(int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
-    {
-        ui->comboBox_Background_Mode->addItem(visualizer_pattern_labels[i]);
-    }
-    ui->comboBox_Background_Mode->setCurrentIndex(vis_ptr->bkgd_mode);
-    ui->comboBox_Background_Mode->blockSignals(false);
-
-    ui->comboBox_Foreground_Mode->blockSignals(true);
-    for(int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
-    {
-        ui->comboBox_Foreground_Mode->addItem(visualizer_pattern_labels[i]);
-    }
-    ui->comboBox_Foreground_Mode->setCurrentIndex(vis_ptr->frgd_mode);
-    ui->comboBox_Foreground_Mode->blockSignals(false);
-
-    ui->comboBox_Single_Color_Mode->blockSignals(true);
-    for(int i = 0; i < VISUALIZER_NUM_SINGLE_COLOR; i++)
-    {
-        ui->comboBox_Single_Color_Mode->addItem(visualizer_single_color_labels[i]);
-    }
-    ui->comboBox_Single_Color_Mode->setCurrentIndex(vis_ptr->single_color_mode);
-    ui->comboBox_Single_Color_Mode->blockSignals(false);
-
-    ui->comboBox_Average_Mode->blockSignals(true);
-    ui->comboBox_Average_Mode->addItem("Binning");
-    ui->comboBox_Average_Mode->addItem("Low Pass");
-    ui->comboBox_Average_Mode->setCurrentIndex(vis_ptr->avg_mode);
-    ui->comboBox_Average_Mode->blockSignals(false);
-
-    ui->comboBox_Audio_Device->blockSignals(true);
-    for(unsigned int i = 0; i < vis_ptr->audio_devices.size(); i++)
-    {
-        ui->comboBox_Audio_Device->addItem(vis_ptr->audio_devices[i]);
-    }
-    ui->comboBox_Audio_Device->setCurrentIndex(vis_ptr->audio_device_idx);
-    ui->comboBox_Audio_Device->blockSignals(false);
-
-    ui->checkBox_Reactive_Background->setChecked(vis_ptr->reactive_bkgd);
-
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(15);
-
-    image = new QImage(256, 64, QImage::Format_RGB32);
-    scene = new QGraphicsScene(this);
-    ui->graphicsView_Visualization_Preview->setScene(scene);
-
     QMainWindow::show();
 }
 
@@ -187,6 +121,72 @@ void KeyboardVisDlg::update()
 void KeyboardVisDlg::SetVisualizer(Visualizer* v)
 {
     vis_ptr = v;
+
+    ui->lineEdit_Normalization_Offset->setText(QString::number(vis_ptr->nrml_ofst));
+    ui->lineEdit_Normalization_Scale->setText(QString::number(vis_ptr->nrml_scl));
+    ui->lineEdit_Animation_Speed->setText(QString::number(vis_ptr->anim_speed));
+
+    ui->lineEdit_Amplitude->setText(QString::number(vis_ptr->amplitude));
+    ui->lineEdit_Background_Brightness->setText(QString::number(vis_ptr->bkgd_bright));
+    ui->lineEdit_Average_Size->setText(QString::number(vis_ptr->avg_size));
+    ui->lineEdit_Decay->setText(QString::number(vis_ptr->decay));
+    ui->lineEdit_Delay->setText(QString::number(vis_ptr->delay));
+
+    ui->comboBox_FFT_Window_Mode->blockSignals(true);
+    ui->comboBox_FFT_Window_Mode->addItem("None");
+    ui->comboBox_FFT_Window_Mode->addItem("Hanning");
+    ui->comboBox_FFT_Window_Mode->addItem("Hamming");
+    ui->comboBox_FFT_Window_Mode->addItem("Blackman");
+    ui->comboBox_FFT_Window_Mode->setCurrentIndex(vis_ptr->window_mode);
+    ui->comboBox_FFT_Window_Mode->blockSignals(false);
+
+    ui->comboBox_Background_Mode->blockSignals(true);
+    for(int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
+    {
+        ui->comboBox_Background_Mode->addItem(visualizer_pattern_labels[i]);
+    }
+    ui->comboBox_Background_Mode->setCurrentIndex(vis_ptr->bkgd_mode);
+    ui->comboBox_Background_Mode->blockSignals(false);
+
+    ui->comboBox_Foreground_Mode->blockSignals(true);
+    for(int i = 0; i < VISUALIZER_NUM_PATTERNS; i++)
+    {
+        ui->comboBox_Foreground_Mode->addItem(visualizer_pattern_labels[i]);
+    }
+    ui->comboBox_Foreground_Mode->setCurrentIndex(vis_ptr->frgd_mode);
+    ui->comboBox_Foreground_Mode->blockSignals(false);
+
+    ui->comboBox_Single_Color_Mode->blockSignals(true);
+    for(int i = 0; i < VISUALIZER_NUM_SINGLE_COLOR; i++)
+    {
+        ui->comboBox_Single_Color_Mode->addItem(visualizer_single_color_labels[i]);
+    }
+    ui->comboBox_Single_Color_Mode->setCurrentIndex(vis_ptr->single_color_mode);
+    ui->comboBox_Single_Color_Mode->blockSignals(false);
+
+    ui->comboBox_Average_Mode->blockSignals(true);
+    ui->comboBox_Average_Mode->addItem("Binning");
+    ui->comboBox_Average_Mode->addItem("Low Pass");
+    ui->comboBox_Average_Mode->setCurrentIndex(vis_ptr->avg_mode);
+    ui->comboBox_Average_Mode->blockSignals(false);
+
+    ui->comboBox_Audio_Device->blockSignals(true);
+    for(unsigned int i = 0; i < vis_ptr->audio_devices.size(); i++)
+    {
+        ui->comboBox_Audio_Device->addItem(vis_ptr->audio_devices[i]);
+    }
+    ui->comboBox_Audio_Device->setCurrentIndex(vis_ptr->audio_device_idx);
+    ui->comboBox_Audio_Device->blockSignals(false);
+
+    ui->checkBox_Reactive_Background->setChecked(vis_ptr->reactive_bkgd);
+
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(15);
+
+    image = new QImage(256, 64, QImage::Format_RGB32);
+    scene = new QGraphicsScene(this);
+    ui->graphicsView_Visualization_Preview->setScene(scene);
 }
 
 void KeyboardVisDlg::StartMinimized(boolean startmin)
