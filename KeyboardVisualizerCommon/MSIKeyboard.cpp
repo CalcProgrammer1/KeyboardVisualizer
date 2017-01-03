@@ -71,5 +71,24 @@ bool MSIKeyboard::SetLEDs(COLORREF pixels[64][256])
 
     usb.SendToDevice(buf, 8);
 
+    buf[3] = 4;
+    buf[4] = GetRValue(pixels[ROW_IDX_SINGLE_COLOR][192]);
+    buf[5] = GetGValue(pixels[ROW_IDX_SINGLE_COLOR][192]);
+    buf[6] = GetBValue(pixels[ROW_IDX_SINGLE_COLOR][192]);
+
+    usb.SendToDevice(buf, 8);
+
+    buf[3] = 5;
+
+    usb.SendToDevice(buf, 8);
+
+    buf[3] = 6;
+
+    usb.SendToDevice(buf, 8);
+
+    buf[3] = 7;
+
+    usb.SendToDevice(buf, 8);
+
     return init_ok;
 }
