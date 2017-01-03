@@ -178,6 +178,7 @@ private:
     //WASAPI objects if building for Windows
     IMMDeviceEnumerator *pMMDeviceEnumerator;
     std::vector<IMMDevice *> pMMDevices;
+    std::vector<bool> isCapture;
     IMMDeviceCollection *pMMDeviceCollection;
     IAudioClient *pAudioClient;
     IAudioCaptureClient *pAudioCaptureClient;

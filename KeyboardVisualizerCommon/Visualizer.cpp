@@ -222,6 +222,44 @@ void Visualizer::InitAudioDeviceList()
                 strncat(new_device, " (Loopback)", len);
                 audio_devices.push_back(new_device);
                 pMMDevices.push_back(pEndpoint);
+                isCapture.push_back(false);
+            }
+            delete varName;
+            pProps->Release();
+        }
+    }
+    pMMDeviceCollection->Release();
+
+    //Enumerate audio inputs
+    pMMDeviceEnumerator->EnumAudioEndpoints(eCapture, DEVICE_STATE_ACTIVE, &pMMDeviceCollection);
+
+    if (pMMDeviceCollection != NULL)
+    {
+        UINT count;
+        pMMDeviceCollection->GetCount(&count);
+        for (UINT i = 0; i < count; i++)
+        {
+            IMMDevice* pEndpoint;
+            IPropertyStore* pProps;
+            PROPVARIANT* varName = new PROPVARIANT();
+
+            //Query the item from the list
+            pMMDeviceCollection->Item(i, &pEndpoint);
+
+            //Open property store for the given item
+            pEndpoint->OpenPropertyStore(STGM_READ, &pProps);
+
+            //Get the friendly device name string
+            pProps->GetValue(PKEY_Device_FriendlyName, varName);
+
+            if (varName->pwszVal != NULL)
+            {
+                int len = wcslen(varName->pwszVal) + 1;
+                char* new_device = new char[len];
+                wcstombs(new_device, varName->pwszVal, len);
+                audio_devices.push_back(new_device);
+                pMMDevices.push_back(pEndpoint);
+                isCapture.push_back(true);
             }
             delete varName;
             pProps->Release();
@@ -284,7 +322,15 @@ void Visualizer::ChangeAudioDevice()
 
         pAudioClient->GetMixFormat(&waveformat);
 
-        pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_LOOPBACK, 0, 0, waveformat, 0);
+        if (isCapture[audio_device_idx])
+        {
+            pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, 0, 0, waveformat, 0);
+        }
+        else
+        {
+            pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_LOOPBACK, 0, 0, waveformat, 0);
+        }
+        
         pAudioClient->GetService(__uuidof(IAudioCaptureClient), (void**)&pAudioCaptureClient);
 
         pAudioClient->Start();
