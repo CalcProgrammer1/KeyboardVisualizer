@@ -239,17 +239,24 @@ int net_port::tcp_listen(char * recv_data, int length)
     {
         while(ret != sizeof(len))
         {
-            waitd.tv_sec = 1;
+            waitd.tv_sec = 10;
             waitd.tv_usec = 0;
 
             if (select(sock + 1, &readfd, NULL, NULL, &waitd))
             {
                 ret = recv(sock, (char *)&len, sizeof(len), 0);
+
+                if (ret == -1 || ret == 0)
+                {
+                    closesocket(sock);
+                    connected = false;
+                    return(0);
+                }
             }
-            if (ret == -1)
+            else
             {
-                connected = false;
                 closesocket(sock);
+                connected = false;
                 return(0);
             }
         }
@@ -257,18 +264,26 @@ int net_port::tcp_listen(char * recv_data, int length)
         ret = 0;
         while(tot != len)
         {
-            waitd.tv_sec = 1;
+            waitd.tv_sec = 10;
             waitd.tv_usec = 0;
 
             if (select(sock + 1, &readfd, NULL, NULL, &waitd))
             {
                 ret = recv(sock, recv_data + ret, len - ret, 0);
+
+                if (ret == -1 || ret == 0)
+                {
+                    closesocket(sock);
+                    connected = false;
+                    return(0);
+                }
+
                 tot += ret;
             }
-            if (ret == -1)
+            else
             {
-                connected = false;
                 closesocket(sock);
+                connected = false;
                 return(0);
             }
         }
