@@ -214,6 +214,8 @@ void net_port::tcp_server_listen()
     SOCKET * client = new SOCKET();
     listen(sock, 10);
     *client = accept(sock, NULL, NULL);
+    u_long arg = 0;
+    ioctlsocket(*client, FIONBIO, &arg);
     setsockopt(*client, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes));
     clients.push_back(client);
 }
@@ -301,29 +303,57 @@ int net_port::tcp_write(char * buffer, int length)
     int ret = length;
     int val = length;
 
+    timeval waitd;
+    fd_set writefd;
+
     for (unsigned int i = 0; i < clients.size(); i++)
     {
         val = length;
 
-        val = send(*(clients[i]), (const char *)&length, sizeof(length), 0);
+        FD_ZERO(&writefd);
+        FD_SET(*(clients[i]), &writefd);
 
-        if (val == -1)
+        waitd.tv_sec = 5;
+        waitd.tv_usec = 0;
+
+        if (select(*(clients[i]) + 1, NULL, &writefd, NULL, &waitd))
+        {
+            val = send(*(clients[i]), (const char *)&length, sizeof(length), 0);
+
+            if (val == -1)
+            {
+                clients.erase(clients.begin() + i);
+                return 0;
+            }
+        }
+        else
         {
             clients.erase(clients.begin() + i);
             return 0;
         }
 
-        val = send(*(clients[i]), buffer, length, 0);
+        waitd.tv_sec = 5;
+        waitd.tv_usec = 0;
 
-        if (val == -1)
+        if (select(*(clients[i]) + 1, NULL, &writefd, NULL, &waitd))
+        {
+            val = send(*(clients[i]), buffer, length, 0);
+
+            if (val == -1)
+            {
+                clients.erase(clients.begin() + i);
+                return 0;
+            }
+
+            if (val != length)
+            {
+                ret = val;
+            }
+        }
+        else
         {
             clients.erase(clients.begin() + i);
             return 0;
-        }
-
-        if (val != length)
-        {
-            ret = val;
         }
     }
     return(ret);
