@@ -611,7 +611,9 @@ void Visualizer::Update()
                     input_wave[2 * j] = input_wave[2 * (j + 1)];
                     input_wave[(2 * j) + 1] = input_wave[2 * j];
                 }
-                input_wave[510] = buf[i] * 2.0f * amplitude;
+                
+                float avg_buf = (buf[i] + buf[i + 1] + buf[i + 2] + buf[i + 3]) / 4;
+                input_wave[510] = avg_buf * 2.0f * amplitude;
                 input_wave[511] = input_wave[510];
             }
 
