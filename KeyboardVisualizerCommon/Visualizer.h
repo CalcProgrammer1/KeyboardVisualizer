@@ -96,6 +96,9 @@ public:
     //Called when settings changed
     void OnSettingsChanged();
 
+    //Send Settings to network clients
+    void SendSettings();
+
     //Initialize Server
     void InitServer(char * serverstring);
 
@@ -202,6 +205,9 @@ private:
     float win_hamming[256];
     float win_blackman[256];
     float fft_tmp[512];
+
+    //Settings Changed Flag
+    bool settings_changed;
 
     //Audio Sample Buffer
     unsigned char buffer[256];

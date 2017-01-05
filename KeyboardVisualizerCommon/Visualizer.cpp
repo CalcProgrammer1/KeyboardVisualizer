@@ -204,7 +204,7 @@ void Visualizer::InitAudioDeviceList()
             IMMDevice* pEndpoint;
             IPropertyStore* pProps;
             PROPVARIANT* varName = new PROPVARIANT();
-            
+
             //Query the item from the list
             pMMDeviceCollection->Item(i, &pEndpoint);
 
@@ -330,7 +330,7 @@ void Visualizer::ChangeAudioDevice()
         {
             pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_LOOPBACK, 0, 0, waveformat, 0);
         }
-        
+
         pAudioClient->GetService(__uuidof(IAudioCaptureClient), (void**)&pAudioCaptureClient);
 
         pAudioClient->Start();
@@ -396,6 +396,7 @@ void Visualizer::Initialize()
     reactive_bkgd        = false;
     audio_device_idx     = 0;
 
+    settings_changed     = false;
     update_ui            = false;
 
     hanning(win_hanning, 256);
@@ -549,6 +550,11 @@ void Visualizer::SetNormalization(float offset, float scale)
 
 void Visualizer::OnSettingsChanged()
 {
+    settings_changed = true;
+}
+
+void Visualizer::SendSettings()
+{
     if (netmode == NET_MODE_SERVER)
     {
         settings_pkt_type settings;
@@ -573,7 +579,7 @@ void Visualizer::OnSettingsChanged()
 
 void Visualizer::Update()
 {
-    float fft_tmp[512];  
+    float fft_tmp[512];
 
     for (int i = 0; i < 256; i++)
     {
@@ -1113,7 +1119,7 @@ void Visualizer::NetConnectThread()
             port->tcp_server_listen();
 
             //When a new client connects, send settings
-            OnSettingsChanged();
+            SendSettings();
             break;
 
         case NET_MODE_CLIENT:
@@ -1145,6 +1151,11 @@ void Visualizer::NetUpdateThread()
             if (counter++ > 30)
             {
                 port->tcp_write((char *)&bkgd_step, sizeof(bkgd_step));
+            }
+            if (settings_changed)
+            {
+                SendSettings();
+                settings_changed = false;
             }
             Sleep(20);
             break;
