@@ -20,6 +20,7 @@ enum
     RAZER_DIAMONDBACK_CHROMA,
     RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA,
     RAZER_FIREFLY_CHROMA,
+    RAZER_MUG_HOLDER,
     RAZER_NUM_DEVICES
 };
 
@@ -73,7 +74,7 @@ void RazerChroma::Initialize()
     bool done = false;
     int driver_to_read = 0;
 
-    while(driver_to_read < 3)
+    while(driver_to_read < 4)
     {
         switch(driver_to_read)
         {
@@ -88,6 +89,9 @@ void RazerChroma::Initialize()
         case 2:
             strcpy(driver_path, "/sys/bus/hid/drivers/razerfirefly/");
             break;
+
+        case 3:
+            strcpy(driver_path, "/sys/bus/hid/drivers/razermug/");
         }
 
         done = false;
@@ -206,6 +210,13 @@ void RazerChroma::Initialize()
 
                             device_type = RAZER_FIREFLY_CHROMA;
                         }
+                        else if(!strncmp(device_string, "Razer Chroma Mug Holder", strlen("Razer Chroma Mug Holder")))
+                        {
+                            //Device is Razer Chroma Mug Holder
+                            printf("Mug Holder Detected\r\n");
+
+                            device_type = RAZER_MUG_HOLDER;
+                        }
 
                         if(device_type != RAZER_NO_DEVICE)
                         {
@@ -254,6 +265,7 @@ void RazerChroma::Initialize()
                                     case RAZER_ORNATA_CHROMA:
                                     case RAZER_BLADE_STEALTH:
                                     case RAZER_FIREFLY_CHROMA:
+                                    case RAZER_MUG_HOLDER:
                                     case RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA:
                                     case RAZER_DIAMONDBACK_CHROMA:
                                         {
@@ -467,6 +479,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
                 break;
 
             case RAZER_FIREFLY_CHROMA:
+            case RAZER_MUG_HOLDER:
                 {
                     char FireflyEffect[(3 * 15) + 3];
 
