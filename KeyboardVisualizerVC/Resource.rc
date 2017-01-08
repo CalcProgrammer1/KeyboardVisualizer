@@ -52,7 +52,7 @@ END
 
 IDD_KEYBOARD_VISUALIZER_DLG DIALOGEX 0, 0, 309, 230
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Keyboard Visualizer 3.00"
+CAPTION "Keyboard Visualizer 3.01"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CTEXT           "Amplitude (%)",IDC_STATIC,30,13,47,8
@@ -130,7 +130,6 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON                ICON                    "icon.ico"
-
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 

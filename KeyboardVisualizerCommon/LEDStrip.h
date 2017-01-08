@@ -7,8 +7,8 @@
 #ifndef LED_STRIP_H
 #define LED_STRIP_H
 
-#include "serial_port.h"
 #include "net_port.h"
+#include "serial_port.h"
 
 #include "VisualizerDefines.h"
 
