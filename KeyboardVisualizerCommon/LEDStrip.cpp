@@ -90,7 +90,7 @@ void LEDStrip::InitializeSerial(char* portname, int baud)
     strcpy(port_name, portname);
     baud_rate = baud;
     serialport = new serial_port(port_name, baud_rate);
-    //udpport = NULL;
+    udpport = NULL;
 }
 
 void LEDStrip::InitializeUDP(char * clientname, char * port)
@@ -98,7 +98,7 @@ void LEDStrip::InitializeUDP(char * clientname, char * port)
     strcpy(client_name, clientname);
     strcpy(port_name, port);
 
-    //udpport = new net_port(client_name, port_name);
+    udpport = new net_port(client_name, port_name);
     serialport = NULL;
 }
 
@@ -114,8 +114,7 @@ void LEDStrip::SetNumLEDs(int numleds)
 
 void LEDStrip::SetLEDs(COLORREF pixels[64][256])
 {
-    //if (serialport != NULL || udpport != NULL)
-    if(serialport != NULL)
+    if (serialport != NULL || udpport != NULL)
     {
         unsigned char *serial_buf;
 
@@ -146,10 +145,10 @@ void LEDStrip::SetLEDs(COLORREF pixels[64][256])
             serialport->serial_write((char *)serial_buf, (num_leds * 3) + 3);
             serialport->serial_flush_tx();
         }
-        //else if (udpport != NULL)
-        //{
-            //udpport->udp_write((char *)serial_buf, (num_leds * 3) + 3);
-        //}
+        else if (udpport != NULL)
+        {
+            udpport->udp_write((char *)serial_buf, (num_leds * 3) + 3);
+        }
 
         delete[] serial_buf;
     }

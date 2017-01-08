@@ -8,7 +8,7 @@
 #define LED_STRIP_H
 
 #include "serial_port.h"
-//#include "net_port.h"
+#include "net_port.h"
 
 #include "VisualizerDefines.h"
 
@@ -38,7 +38,7 @@ private:
     char port_name[128];
     char client_name[1024];
     serial_port *serialport;
-    //net_port *udpport;
+    net_port *udpport;
 };
 
 #endif
