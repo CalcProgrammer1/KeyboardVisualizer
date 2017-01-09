@@ -31,8 +31,12 @@ int BlackWidowXIndex[22];
 int BlackWidowYIndex[6];
 
 //Index lists for Blade
-int BladeXIndex[25];
+int BladeXIndex[16];
 int BladeYIndex[6];
+
+//Index lists for Blade Pro 2016
+int BladeProXIndex[25];
+int BladeProYIndex[6];
 
 //Index list for Firefly
 int FireflyIndex[15];
@@ -393,7 +397,10 @@ void RazerChroma::Initialize()
     SetupKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex);
 
     //Build index list for Blade
-    SetupKeyboardGrid(25, 6, BladeXIndex, BladeYIndex);
+    SetupKeyboardGrid(16, 6, BladeXIndex, BladeYIndex);
+
+    //Build index list for Blade Pro 2016
+    SetupKeyboardGrid(25, 6, BladeProXIndex, BladeProYIndex);
 
     //Build index list for Firefly
     for (int x = 0; x < 15; x++)
@@ -489,9 +496,9 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
                         for(int x = 0; x < 25; x++)
                         {
-                            BladeEffect[3 + (x * 3)] = GetRValue(pixels[BladeYIndex[y]][BladeXIndex[x]]);
-                            BladeEffect[4 + (x * 3)] = GetGValue(pixels[BladeYIndex[y]][BladeXIndex[x]]);
-                            BladeEffect[5 + (x * 3)] = GetBValue(pixels[BladeYIndex[y]][BladeXIndex[x]]);
+                            BladeEffect[3 + (x * 3)] = GetRValue(pixels[BladeProYIndex[y]][BladeProXIndex[x]]);
+                            BladeEffect[4 + (x * 3)] = GetGValue(pixels[BladeProYIndex[y]][BladeProXIndex[x]]);
+                            BladeEffect[5 + (x * 3)] = GetBValue(pixels[BladeProYIndex[y]][BladeProXIndex[x]]);
                         }
 
                         write(razer_fd_1[i], &BladeEffect, sizeof(BladeEffect));
