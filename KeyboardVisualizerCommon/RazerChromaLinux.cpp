@@ -14,8 +14,10 @@ enum
     RAZER_DEATHSTALKER_CHROMA,
     RAZER_ORNATA_CHROMA,
     RAZER_BLADE_STEALTH,
+    RAZER_BLADE_PRO,
     RAZER_TARTARUS_CHROMA,
     RAZER_DEATHADDER_CHROMA,
+    RAZER_DEATHADDER_ELITE,
     RAZER_NAGA_CHROMA,
     RAZER_DIAMONDBACK_CHROMA,
     RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA,
@@ -29,7 +31,7 @@ int BlackWidowXIndex[22];
 int BlackWidowYIndex[6];
 
 //Index lists for Blade
-int BladeXIndex[16];
+int BladeXIndex[25];
 int BladeYIndex[6];
 
 //Index list for Firefly
@@ -168,6 +170,13 @@ void RazerChroma::Initialize()
 
                             device_type = RAZER_BLADE_STEALTH;
                         }
+                        else if(!strncmp(device_string, "Razer Blade Pro (Late 2016)", strlen("Razer Blade Pro (Late 2016)")))
+                        {
+                            //Device is Razer Blade Pro 2016
+                            printf("Blade Pro 2016 Detected\r\n");
+
+                            device_type = RAZER_BLADE_PRO;
+                        }
                         else if(!strncmp(device_string, "Razer Tartarus Chroma", strlen("Razer Tartarus Chroma")))
                         {
                             //Device is Razer Tartarus Chroma
@@ -181,6 +190,13 @@ void RazerChroma::Initialize()
                             printf("DeathAdder Chroma Detected\r\n");
 
                             device_type = RAZER_DEATHADDER_CHROMA;
+                        }
+                        else if(!strncmp(device_string, "Razer DeathAdder Elite", strlen("Razer DeathAdder Elite")))
+                        {
+                            //Device is Razer DeathAdder Elite
+                            printf("DeathAdder Elite Detected\r\n");
+
+                            device_type = RAZER_DEATHADDER_ELITE;
                         }
                         else if(!strncmp(device_string, "Razer Naga Chroma", strlen("Razer Naga Chroma")))
                         {
@@ -264,6 +280,7 @@ void RazerChroma::Initialize()
                                     case RAZER_DEATHSTALKER_CHROMA:
                                     case RAZER_ORNATA_CHROMA:
                                     case RAZER_BLADE_STEALTH:
+                                    case RAZER_BLADE_PRO:
                                     case RAZER_FIREFLY_CHROMA:
                                     case RAZER_MUG_HOLDER:
                                     case RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA:
@@ -325,6 +342,7 @@ void RazerChroma::Initialize()
                                     //Devices with logo LED rgb and effect parameters
                                     case RAZER_DEATHADDER_CHROMA:
                                     case RAZER_NAGA_CHROMA:
+                                    case RAZER_DEATHADDER_ELITE:
                                         {
                                             //Device is unique, go ahead and register it
                                             strcpy(device_string, driver_path);
@@ -375,7 +393,7 @@ void RazerChroma::Initialize()
     SetupKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex);
 
     //Build index list for Blade
-    SetupKeyboardGrid(16, 6, BladeXIndex, BladeYIndex);
+    SetupKeyboardGrid(25, 6, BladeXIndex, BladeYIndex);
 
     //Build index list for Firefly
     for (int x = 0; x < 15; x++)
@@ -446,6 +464,30 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
                         BladeEffect[0] = y;
 
                         for(int x = 0; x < 16; x++)
+                        {
+                            BladeEffect[3 + (x * 3)] = GetRValue(pixels[BladeYIndex[y]][BladeXIndex[x]]);
+                            BladeEffect[4 + (x * 3)] = GetGValue(pixels[BladeYIndex[y]][BladeXIndex[x]]);
+                            BladeEffect[5 + (x * 3)] = GetBValue(pixels[BladeYIndex[y]][BladeXIndex[x]]);
+                        }
+
+                        write(razer_fd_1[i], &BladeEffect, sizeof(BladeEffect));
+                    }
+                    write(razer_fd_2[i], &BladeEffect, 1);
+                }
+                break;
+
+            case RAZER_BLADE_PRO:
+                {
+                    char BladeEffect[((3 * 25)) + 3];
+
+                    BladeEffect[1] = 0;
+                    BladeEffect[2] = 24;
+
+                    for(int y = 0; y < 6; y++)
+                    {
+                        BladeEffect[0] = y;
+
+                        for(int x = 0; x < 25; x++)
                         {
                             BladeEffect[3 + (x * 3)] = GetRValue(pixels[BladeYIndex[y]][BladeXIndex[x]]);
                             BladeEffect[4 + (x * 3)] = GetGValue(pixels[BladeYIndex[y]][BladeXIndex[x]]);
@@ -601,6 +643,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
             case RAZER_DEATHADDER_CHROMA:
             case RAZER_NAGA_CHROMA:
+            case RAZER_DEATHADDER_ELITE:
                 {
                     char DeathAdderEffect[3];
 
