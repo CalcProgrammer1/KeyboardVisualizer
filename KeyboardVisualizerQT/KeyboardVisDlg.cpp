@@ -293,3 +293,16 @@ void Ui::KeyboardVisDlg::on_comboBox_Audio_Device_currentIndexChanged(int index)
         vis_ptr->ChangeAudioDevice();
     }
 }
+
+void Ui::KeyboardVisDlg::on_lineEdit_Filter_Constant_textChanged(const QString &arg1)
+{
+    vis_ptr->filter_constant = arg1.toFloat();
+    if(vis_ptr->filter_constant > 1.0f)
+    {
+        vis_ptr->filter_constant = 1.0f;
+    }
+    else if(vis_ptr->filter_constant < 0.0f)
+    {
+        vis_ptr->filter_constant = 0.0f;
+    }
+}

@@ -57,6 +57,7 @@ std::vector<LEDStrip *> xmas;
 
 int single_color_timeout;
 float fft_nrml[256];
+float fft_fltr[256];
 
 //Threads for Visualizer.cpp
 THREAD thread(void *param)
@@ -395,6 +396,7 @@ void Visualizer::Initialize()
     single_color_mode    = VISUALIZER_SINGLE_COLOR_FOLLOW_FOREGROUND;
     reactive_bkgd        = false;
     audio_device_idx     = 0;
+    filter_constant      = 1.0f;
 
     settings_changed     = false;
     update_ui            = false;
@@ -611,7 +613,7 @@ void Visualizer::Update()
                     input_wave[2 * j] = input_wave[2 * (j + 1)];
                     input_wave[(2 * j) + 1] = input_wave[2 * j];
                 }
-                
+
                 float avg_buf = (buf[i] + buf[i + 1] + buf[i + 2] + buf[i + 3]) / 4;
                 input_wave[510] = avg_buf * 2.0f * amplitude;
                 input_wave[511] = input_wave[510];
@@ -772,6 +774,10 @@ void Visualizer::Update()
 
             fft[i] = sum / (2 * avg_size + 1);
         }
+    }
+    for(int i = 0; i < 256; i++)
+    {
+        fft_fltr[i] = fft_fltr[i] + (filter_constant * (fft[i] - fft_fltr[i]));
     }
 }
 
@@ -1223,12 +1229,12 @@ void Visualizer::VisThread()
         //Draw active foreground
         DrawPattern(frgd_mode, 100, &pixels_fg);
 
-        float brightness = fft[5];
+        float brightness = fft_fltr[5];
         //If music isn't playing, fade in the single color LEDs after 2 seconds
         single_color_timeout++;
         for (int i = 0; i < 128; i++)
         {
-            if (fft[2 * i] >= 0.0001f)
+            if (fft_fltr[2 * i] >= 0.0001f)
             {
                 single_color_timeout = 0;
             }
@@ -1248,7 +1254,7 @@ void Visualizer::VisThread()
             for (int y = 0; y < 64; y++)
             {
                 //Draw Spectrograph Foreground
-                if (fft[x] >((1 / 64.0f)*(64.0f - y)))
+                if (fft_fltr[x] >((1 / 64.0f)*(64.0f - y)))
                 {
                     pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
                 }
@@ -1271,7 +1277,7 @@ void Visualizer::VisThread()
                 {
                     if (x < 128)
                     {
-                        if ((fft[5] - 0.05f) >((1 / 128.0f)*(127-x)))
+                        if ((fft_fltr[5] - 0.05f) >((1 / 128.0f)*(127-x)))
                         {
                             pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
                         }
@@ -1290,7 +1296,7 @@ void Visualizer::VisThread()
                     }
                     else
                     {
-                        if ((fft[5] - 0.05f) >((1 / 128.0f)*((x-128))))
+                        if ((fft_fltr[5] - 0.05f) >((1 / 128.0f)*((x-128))))
                         {
                             pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
                         }

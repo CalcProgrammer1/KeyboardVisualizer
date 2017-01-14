@@ -170,6 +170,9 @@ public:
     float nrml_ofst;
     float nrml_scl;
 
+    //Filter Constant
+    float filter_constant;
+
     //Foreground Variables
     int frgd_mode;
 

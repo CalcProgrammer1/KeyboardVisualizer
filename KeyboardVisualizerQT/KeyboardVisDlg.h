@@ -63,6 +63,8 @@ private slots:
 
     void on_comboBox_Audio_Device_currentIndexChanged(int index);
 
+    void on_lineEdit_Filter_Constant_textChanged(const QString &arg1);
+
 private:
     Ui::KeyboardVisualizerDlg *ui;
     QSystemTrayIcon* trayIcon;

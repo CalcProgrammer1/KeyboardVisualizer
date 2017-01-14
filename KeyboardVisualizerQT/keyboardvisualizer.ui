@@ -438,6 +438,29 @@
      </rect>
     </property>
    </widget>
+   <widget class="QLineEdit" name="lineEdit_Filter_Constant">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>215</y>
+      <width>130</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Filter_Constant">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>220</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Filter Constant</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
