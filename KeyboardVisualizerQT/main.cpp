@@ -165,7 +165,7 @@ bool parse_command_line(int argc, char *argv[])
             printf("    delay             - Milliseconds between each device update\r\n");
             printf("    nrml_ofst         - Normalization offset, floating point value\r\n");
             printf("    nrml_scl          - Normalization scale, floating point value\r\n");
-            printf("    fltr_const        - Low pass filter constant, floating point value 0-1\r\n")
+            printf("    fltr_const        - Low pass filter constant, floating point value 0-1\r\n");
             printf("    window_mode       - FFT windowing mode selector, values are:\r\n");
             printf("                      - 0:  No windowing\r\n");
             printf("                      - 1:  Hanning window\r\n");

@@ -87,13 +87,13 @@ void KeyboardVisDlg::update()
         ui->lineEdit_Normalization_Offset->setText(QString::number(vis_ptr->nrml_ofst));
         ui->lineEdit_Normalization_Scale->setText(QString::number(vis_ptr->nrml_scl));
         ui->lineEdit_Animation_Speed->setText(QString::number(vis_ptr->anim_speed));
+        ui->lineEdit_Filter_Constant->setText(QString::number(vis_ptr->filter_constant));
 
         ui->lineEdit_Amplitude->setText(QString::number(vis_ptr->amplitude));
         ui->lineEdit_Background_Brightness->setText(QString::number(vis_ptr->bkgd_bright));
         ui->lineEdit_Average_Size->setText(QString::number(vis_ptr->avg_size));
         ui->lineEdit_Decay->setText(QString::number(vis_ptr->decay));
         ui->lineEdit_Delay->setText(QString::number(vis_ptr->delay));
-        ui->lineEdit_Filter_Constant->setText(QString::number(vis_ptr->delay));
 
         ui->comboBox_Average_Mode->blockSignals(true);
         ui->comboBox_Average_Mode->setCurrentIndex(vis_ptr->avg_mode);
@@ -126,13 +126,13 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
     ui->lineEdit_Normalization_Offset->setText(QString::number(vis_ptr->nrml_ofst));
     ui->lineEdit_Normalization_Scale->setText(QString::number(vis_ptr->nrml_scl));
     ui->lineEdit_Animation_Speed->setText(QString::number(vis_ptr->anim_speed));
+    ui->lineEdit_Filter_Constant->setText(QString::number(vis_ptr->filter_constant));
 
     ui->lineEdit_Amplitude->setText(QString::number(vis_ptr->amplitude));
     ui->lineEdit_Background_Brightness->setText(QString::number(vis_ptr->bkgd_bright));
     ui->lineEdit_Average_Size->setText(QString::number(vis_ptr->avg_size));
     ui->lineEdit_Decay->setText(QString::number(vis_ptr->decay));
     ui->lineEdit_Delay->setText(QString::number(vis_ptr->delay));
-    ui->lineEdit_Filter_Constant->setText(QString::number(vis_ptr->delay));
 
     ui->comboBox_FFT_Window_Mode->blockSignals(true);
     ui->comboBox_FFT_Window_Mode->addItem("None");
