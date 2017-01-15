@@ -57,6 +57,7 @@ public:
     afx_msg void OnEnChangeEditAnimSpeed();
     afx_msg void OnBnClickedCheckReactiveBackground();
     afx_msg void OnCbnSelchangeComboAudioDevice();
+    afx_msg void OnEnChangeEditFilterConstant();
 };
 
 #endif

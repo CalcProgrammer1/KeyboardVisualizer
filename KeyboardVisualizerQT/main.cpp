@@ -59,6 +59,18 @@ void parse_argument_string(char * argument, char * value)
         {
             vis.nrml_scl = strtod(value, NULL);
         }
+        else if (strcmp(argument, "fltr_const") == 0)
+        {
+            vis.filter_constant = strtod(value, NULL);
+            if (vis.filter_constant > 1.0f)
+            {
+                vis.filter_constant = 1.0f;
+            }
+            else if (vis.filter_constant < 0.0f)
+            {
+                vis.filter_constant = 0.0f;
+            }
+        }
         else if (strcmp(argument, "anim_speed") == 0)
         {
             vis.anim_speed = strtod(value, NULL);
@@ -153,6 +165,7 @@ bool parse_command_line(int argc, char *argv[])
             printf("    delay             - Milliseconds between each device update\r\n");
             printf("    nrml_ofst         - Normalization offset, floating point value\r\n");
             printf("    nrml_scl          - Normalization scale, floating point value\r\n");
+            printf("    fltr_const        - Low pass filter constant, floating point value 0-1\r\n")
             printf("    window_mode       - FFT windowing mode selector, values are:\r\n");
             printf("                      - 0:  No windowing\r\n");
             printf("                      - 1:  Hanning window\r\n");

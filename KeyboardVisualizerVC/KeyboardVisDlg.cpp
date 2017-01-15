@@ -62,10 +62,12 @@ BOOL KeyboardVisDlg::OnInitDialog()
     char nrml_ofst_str[64];
     char nrml_scl_str[64];
     char anim_speed_str[64];
+    char fltr_const_str[64];
 
     snprintf(nrml_ofst_str, 64, "%f", vis->nrml_ofst);
     snprintf(nrml_scl_str,  64, "%f", vis->nrml_scl);
     snprintf(anim_speed_str, 64, "%f", vis->anim_speed);
+    snprintf(fltr_const_str, 64, "%f", vis->filter_constant);
 
 	SetDlgItemInt(IDC_EDIT_AMPLITUDE, vis->amplitude);
 	SetDlgItemInt(IDC_EDIT_BACKGROUND_BRIGHTNESS, vis->bkgd_bright);
@@ -75,6 +77,7 @@ BOOL KeyboardVisDlg::OnInitDialog()
     SetDlgItemText(IDC_EDIT_ANIM_SPEED, anim_speed_str);
     SetDlgItemText(IDC_EDIT_NRML_OFST, nrml_ofst_str);
     SetDlgItemText(IDC_EDIT_NRML_SCL, nrml_scl_str);
+    SetDlgItemText(IDC_EDIT_FILTER_CONSTANT, fltr_const_str);
 
 	CComboBox* windowBox = (CComboBox*)GetDlgItem(IDC_COMBO_WINDOW);
 	windowBox->AddString("None");
@@ -176,12 +179,14 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
         char nrml_ofst_str[64];
         char nrml_scl_str[64];
         char anim_speed_str[64];
+        char fltr_const_str[64];
 
         vis->update_ui = false;
 
         snprintf(nrml_ofst_str, 64, "%f", vis->nrml_ofst);
         snprintf(nrml_scl_str, 64, "%f", vis->nrml_scl);
         snprintf(anim_speed_str, 64, "%f", vis->anim_speed);
+        snprintf(fltr_const_str, 64, "%f", vis->filter_constant);
 
         SetDlgItemInt(IDC_EDIT_AMPLITUDE, vis->amplitude);
         SetDlgItemInt(IDC_EDIT_BACKGROUND_BRIGHTNESS, vis->bkgd_bright);
@@ -191,6 +196,7 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
         SetDlgItemText(IDC_EDIT_ANIM_SPEED, anim_speed_str);
         SetDlgItemText(IDC_EDIT_NRML_OFST, nrml_ofst_str);
         SetDlgItemText(IDC_EDIT_NRML_SCL, nrml_scl_str);
+        SetDlgItemText(IDC_EDIT_FILTER_CONSTANT, fltr_const_str);
 
         CComboBox* windowBox = (CComboBox*)GetDlgItem(IDC_COMBO_WINDOW);
         windowBox->SetCurSel(vis->window_mode);
@@ -257,6 +263,7 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_EN_CHANGE(IDC_EDIT_ANIM_SPEED, &KeyboardVisDlg::OnEnChangeEditAnimSpeed)
     ON_BN_CLICKED(IDC_CHECK_REACTIVE_BACKGROUND, &KeyboardVisDlg::OnBnClickedCheckReactiveBackground)
     ON_CBN_SELCHANGE(IDC_COMBO_AUDIO_DEVICE, &KeyboardVisDlg::OnCbnSelchangeComboAudioDevice)
+    ON_EN_CHANGE(IDC_EDIT_FILTER_CONSTANT, &KeyboardVisDlg::OnEnChangeEditFilterConstant)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
@@ -382,4 +389,21 @@ void KeyboardVisDlg::OnCbnSelchangeComboAudioDevice()
         vis->audio_device_idx = new_idx;
         vis->ChangeAudioDevice();
     }
+}
+
+
+void KeyboardVisDlg::OnEnChangeEditFilterConstant()
+{
+    char val[64];
+    GetDlgItemText(IDC_EDIT_FILTER_CONSTANT, (LPTSTR)&val, 64);
+    vis->filter_constant = strtod(val, NULL);
+    if (vis->filter_constant > 1.0f)
+    {
+        vis->filter_constant = 1.0f;
+    }
+    else if (vis->filter_constant < 0.0f)
+    {
+        vis->filter_constant = 0.0f;
+    }
+    vis->OnSettingsChanged();
 }

@@ -52,7 +52,7 @@ END
 
 IDD_KEYBOARD_VISUALIZER_DLG DIALOGEX 0, 0, 309, 230
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Keyboard Visualizer 3.01"
+CAPTION "Keyboard Visualizer 3.02"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CTEXT           "Amplitude (%)",IDC_STATIC,30,13,47,8
@@ -89,6 +89,8 @@ BEGIN
     LTEXT           "Reactive Background",IDC_STATIC,142,152,69,8
     COMBOBOX        IDC_COMBO_AUDIO_DEVICE,215,110,80,30,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Audio Device",IDC_STATIC,159,113,47,8
+    EDITTEXT        IDC_EDIT_FILTER_CONSTANT,85,150,50,14,ES_AUTOHSCROLL
+    LTEXT           "Filter Constant",IDC_STATIC,30,152,46,8
 END
 
 
@@ -130,6 +132,7 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON                ICON                    "icon.ico"
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 

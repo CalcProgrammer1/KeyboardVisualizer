@@ -55,6 +55,7 @@ MSIKeyboard             mkb;
 std::vector<LEDStrip *> str;
 std::vector<LEDStrip *> xmas;
 
+char * net_string;
 int single_color_timeout;
 float fft_nrml[256];
 float fft_fltr[256];
@@ -419,6 +420,8 @@ void Visualizer::InitClient(char * clientstring)
 {
     if (netmode == NET_MODE_DISABLED)
     {
+        net_string = new char[strlen(clientstring) + 1];
+        strcpy(net_string, clientstring);
         LPSTR client_name;
         LPSTR port_name;
         client_name = strtok_s(clientstring, ",", &port_name);
@@ -433,6 +436,8 @@ void Visualizer::InitServer(char * serverstring)
 {
     if (netmode == NET_MODE_DISABLED)
     {
+        net_string = new char[strlen(serverstring) + 1];
+        strcpy(net_string, serverstring);
         netmode = NET_MODE_SERVER;
         port = new net_port();
         port->tcp_server(serverstring);
@@ -489,6 +494,10 @@ void Visualizer::SaveSettings()
     snprintf(out_str, 1024, "nrml_scl=%f\r\n", nrml_scl);
     outfile.write(out_str, strlen(out_str));
 
+    //Save Filter Constant
+    snprintf(out_str, 1024, "fltr_const=%f\r\n", filter_constant);
+    outfile.write(out_str, strlen(out_str));
+
     //Save Window Mode
     snprintf(out_str, 1024, "window_mode=%d\r\n", window_mode);
     outfile.write(out_str, strlen(out_str));
@@ -537,6 +546,22 @@ void Visualizer::SaveSettings()
         outfile.write(out_str, strlen(out_str));
     }
 
+    //Save Network Mode
+    switch (netmode)
+    {
+    case NET_MODE_CLIENT:
+        //Save Client Configuration
+        snprintf(out_str, 1024, "client=%s\r\n", net_string);
+        outfile.write(out_str, strlen(out_str));
+        break;
+
+    case NET_MODE_SERVER:
+        //Save Server Configuration
+        snprintf(out_str, 1024, "server=%s\r\n", net_string);
+        outfile.write(out_str, strlen(out_str));
+        break;
+    }
+
     //Close Output File
     outfile.close();
 }
@@ -572,6 +597,7 @@ void Visualizer::SendSettings()
         settings.single_color_mode = single_color_mode;
         settings.nrml_ofst = nrml_ofst;
         settings.nrml_scl = nrml_scl;
+        settings.filter_constant = filter_constant;
         settings.frgd_mode = frgd_mode;
         settings.reactive_bkgd = reactive_bkgd;
 
@@ -1144,7 +1170,7 @@ void Visualizer::NetConnectThread()
 void Visualizer::NetUpdateThread()
 {
     int counter = 0;
-    char buf[sizeof(fft)];
+    char buf[sizeof(fft_fltr)];
 
     while (1)
     {
@@ -1155,7 +1181,7 @@ void Visualizer::NetUpdateThread()
             break;
 
         case NET_MODE_SERVER:
-            port->tcp_write((char *)fft, sizeof(fft));
+            port->tcp_write((char *)fft_fltr, sizeof(fft_fltr));
             if (counter++ > 30)
             {
                 port->tcp_write((char *)&bkgd_step, sizeof(bkgd_step));
@@ -1173,9 +1199,9 @@ void Visualizer::NetUpdateThread()
             {
                 int size = port->tcp_listen((char *)buf, sizeof(buf));
 
-                if (size == sizeof(fft))
+                if (size == sizeof(fft_fltr))
                 {
-                    memcpy(&fft, buf, sizeof(fft));
+                    memcpy(&fft_fltr, buf, sizeof(fft_fltr));
                 }
                 else if (size == sizeof(bkgd_step))
                 {
@@ -1195,6 +1221,7 @@ void Visualizer::NetUpdateThread()
                     single_color_mode = ((settings_pkt_type *)buf)->single_color_mode;
                     nrml_ofst = ((settings_pkt_type *)buf)->nrml_ofst;
                     nrml_scl = ((settings_pkt_type *)buf)->nrml_scl;
+                    filter_constant = ((settings_pkt_type *)buf)->filter_constant;
                     frgd_mode = ((settings_pkt_type *)buf)->frgd_mode;
                     reactive_bkgd = ((settings_pkt_type *)buf)->reactive_bkgd;
                     SetNormalization(nrml_ofst, nrml_scl);
@@ -1420,7 +1447,7 @@ void Visualizer::RazerChromaUpdateThread()
 
 void Visualizer::CorsairKeyboardUpdateThread()
 {
-//    while (ckb.SetLEDs(pixels_out->pixels))
+    while (ckb.SetLEDs(pixels_out->pixels))
     {
         Sleep(delay);
     }

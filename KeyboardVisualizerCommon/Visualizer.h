@@ -47,6 +47,7 @@ typedef struct
     int single_color_mode;
     float nrml_ofst;
     float nrml_scl;
+    float filter_constant;
     int frgd_mode;
     bool reactive_bkgd;
 } settings_pkt_type;

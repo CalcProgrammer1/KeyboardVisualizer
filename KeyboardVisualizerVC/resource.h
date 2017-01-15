@@ -22,6 +22,7 @@
 #define IDC_EDIT_ANIM_SPEED             1016
 #define IDC_CHECK_REACTIVE_BACKGROUND   1017
 #define IDC_COMBO_AUDIO_DEVICE          1018
+#define IDC_EDIT_FILTER_CONSTANT        1019
 
 // Next default values for new objects
 // 

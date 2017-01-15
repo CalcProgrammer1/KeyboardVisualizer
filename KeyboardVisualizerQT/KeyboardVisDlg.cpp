@@ -93,6 +93,7 @@ void KeyboardVisDlg::update()
         ui->lineEdit_Average_Size->setText(QString::number(vis_ptr->avg_size));
         ui->lineEdit_Decay->setText(QString::number(vis_ptr->decay));
         ui->lineEdit_Delay->setText(QString::number(vis_ptr->delay));
+        ui->lineEdit_Filter_Constant->setText(QString::number(vis_ptr->delay));
 
         ui->comboBox_Average_Mode->blockSignals(true);
         ui->comboBox_Average_Mode->setCurrentIndex(vis_ptr->avg_mode);
@@ -131,6 +132,7 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
     ui->lineEdit_Average_Size->setText(QString::number(vis_ptr->avg_size));
     ui->lineEdit_Decay->setText(QString::number(vis_ptr->decay));
     ui->lineEdit_Delay->setText(QString::number(vis_ptr->delay));
+    ui->lineEdit_Filter_Constant->setText(QString::number(vis_ptr->delay));
 
     ui->comboBox_FFT_Window_Mode->blockSignals(true);
     ui->comboBox_FFT_Window_Mode->addItem("None");
@@ -305,4 +307,5 @@ void Ui::KeyboardVisDlg::on_lineEdit_Filter_Constant_textChanged(const QString &
     {
         vis_ptr->filter_constant = 0.0f;
     }
+    vis_ptr->OnSettingsChanged();
 }
