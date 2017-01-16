@@ -217,10 +217,10 @@ bool parse_command_line(int argc, char *argv[])
             printf("                      -  Takes the IP/hostname of the server and port as arguments,\r\n");
             printf("                      -  i.e. client=192.168.1.100,1234\r\n");
             printf("    ledstrip          - LED config strings :\r\n");
-            printf("                      - Serial : ledstrip = port, baud, num_leds\r\n");
-            printf("                      - (ex.ledstrip = COM1, 115200, 30)\r\n");
-            printf("                      - UDP : ledstrip = client, port, num_leds\r\n");
-            printf("                      - (ex.ledstrip = 192.168.1.5, 1234, 30)\r\n");
+            printf("                      - Serial : ledstrip=port,baud,num_leds\r\n");
+            printf("                      - (ex.ledstrip=COM1,115200,30)\r\n");
+            printf("                      - UDP : ledstrip=udp:client,port,num_leds\r\n");
+            printf("                      - (ex.ledstrip=udp:192.168.1.5,1234,30)\r\n");
             printf("    xmas              - COM port, ex. xmas=COM2\r\n");
             return false;
         }

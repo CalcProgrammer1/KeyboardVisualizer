@@ -24,12 +24,19 @@ There are many settings you can tweak to make Keyboard Visualizer work with your
                              your song is bass heavy
     * Normalization Scale - Amount to scale up each consecutive frequency bar over normalization offset, to amplify
                             higher frequencies.  Increase if the right side of the visualizer is low.
+    * Filter Constant - Amount of signal to blend per update, 0-1 floating point.  A value of 1 disables filtering
+                        and updates the spectrum every cycle, a value between 0 and 1 blends the new value with the
+                        previous value, slowing the response.  A value of 0 holds the existing value and ignores
+                        new samples.
     * FFT Window Mode - Select between None, Hamming, Hanning, and Blackman windowing functions
                         (see https://en.wikipedia.org/wiki/Window_function for the math behind FFT windowing)
     * Background Mode - Select between various static and animated background colors and patterns
     * Foreground Mode - Select between various static foreground colors and patterns
     * Single Color Mode - Select between various color options for devices that use the single color effect
     * Average Mode - Select between discrete bars (binning) or a smoothed line (low pass) output
+    * Animation Speed - Speed of background and foreground animated patterns, default 100, can be negative
+                        to reverse the direction of the pattern, can be increased to speed up the pattern or
+                        decreased to slow it down.
 
 # Command Line Options and Settings File
 
@@ -49,6 +56,7 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         delay             - Milliseconds between each device update
         nrml_ofst         - Normalization offset, floating point value
         nrml_scl          - Normalization scale, floating point value
+        fltr_const        - Low pass filter constant, floating point value 0-1
         window_mode       - FFT windowing mode selector, values are:
                           - 0:  No windowing
                           - 1:  Hanning window
@@ -117,10 +125,10 @@ Keyboard Visualizer allows you to save your custom settings in two different way
                           -  Takes the IP/hostname of the server and port as arguments,
                           -  i.e. client=192.168.1.100,1234
         ledstrip          - LED config strings :
-                          - Serial : ledstrip = port, baud, num_leds
-                          - (ex.ledstrip = COM1, 115200, 30)
-                          - UDP : ledstrip = client, port, num_leds
-                          - (ex.ledstrip = 192.168.1.5, 1234, 30)
+                          - Serial : ledstrip=port,baud,num_leds
+                          - (ex.ledstrip=COM1,115200,30)
+                          - UDP : ledstrip=udp:client,port,num_leds
+                          - (ex.ledstrip=udp:192.168.1.5,1234,30)
         xmas              - COM port, ex. xmas=COM2
 
 # Available Visual Effects
@@ -143,6 +151,10 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         - Razer Blade (spectrograph)
         - Razer Ornata Chroma (spectrograph)
         
+        Keypads
+        - Razer Orbweaver Chroma (spectrograph)
+        - Razer Tartarus Chroma (single color)
+
         Mice
         - Diamondback Chroma (bar and single color)
         - Mamba Tournament Edition (bar and single color)
@@ -162,6 +174,9 @@ Keyboard Visualizer allows you to save your custom settings in two different way
     
         External Graphics Dock
         - Razer Core (bar)
+
+        Other
+        - Razer Chroma Mug (bar)
 
     * Corsair CUE SDK
     
@@ -183,7 +198,7 @@ Keyboard Visualizer allows you to save your custom settings in two different way
     * MSI SteelSeries
         
         Keyboards
-        - MSI 3-zone laptop keyboards (MSI GS63VR, etc) (bar)
+        - MSI 3-zone laptop keyboards and additional LED zones (MSI GS63VR, etc) (bar, single color)
 
     * WS28XX Pixel LED Strips
     
@@ -208,7 +223,12 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         - BlackWidow Chroma Tournament Edition (spectrograph)
         - DeathStalker Chroma (horizontal bar)
         - Razer Ornata Chroma (spectrograph)
-        
+        - Razer Blade Stealth (spectrograph)
+        - Razer Blade Pro (spectrograph)
+
+        Keypads
+        - Razer Tartarus Chroma (single color)
+
         Mice
         - Diamondback Chroma (bar and single color)
         - Mamba Tournament Edition (bar and single color)
@@ -216,6 +236,9 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         
         Mouse Mats
         - Firefly (bar)
+
+        Other
+        - Razer Chroma Mug (bar)
 
     * SteelSeries
 
@@ -225,7 +248,7 @@ Keyboard Visualizer allows you to save your custom settings in two different way
     * MSI SteelSeries
         
         Keyboards
-        - MSI 3-zone laptop keyboards (MSI GS63VR, etc) (bar)
+        - MSI 3-zone laptop keyboards and additional LED zones (MSI GS63VR, etc) (bar, single color)
 
     * WS28XX Pixel LED Strips
     
