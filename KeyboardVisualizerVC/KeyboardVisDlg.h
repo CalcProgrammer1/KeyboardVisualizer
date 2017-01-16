@@ -58,6 +58,7 @@ public:
     afx_msg void OnBnClickedCheckReactiveBackground();
     afx_msg void OnCbnSelchangeComboAudioDevice();
     afx_msg void OnEnChangeEditFilterConstant();
+    afx_msg void OnCbnDropdownComboAudioDevice();
 };
 
 #endif

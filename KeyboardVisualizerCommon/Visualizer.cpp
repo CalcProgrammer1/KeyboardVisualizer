@@ -194,6 +194,16 @@ void Visualizer::InitAudioDeviceList()
     CoInitializeEx(NULL, COINIT_MULTITHREADED);
     CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&pMMDeviceEnumerator);
 
+    for (int i = 0; i < pMMDevices.size(); i++)
+    {
+        pMMDevices[i]->Release();
+        delete audio_devices[i];
+    }
+
+    pMMDevices.clear();
+    audio_devices.clear();
+    isCapture.clear();
+
     //Enumerate audio outputs
     pMMDeviceEnumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &pMMDeviceCollection);
 
