@@ -632,35 +632,46 @@ void Visualizer::Update()
     unsigned int buffer_pos = 0;
     static float input_wave[512];
 
-    if (pAudioCaptureClient != NULL)
-    {
-        unsigned int nextPacketSize = 1;
-        unsigned int flags;
+    unsigned int nextPacketSize = 1;
+    unsigned int flags;
 
-        while (nextPacketSize > 0)
+    while (nextPacketSize > 0)
+    {
+        float *buf;
+        if (pAudioCaptureClient != NULL)
         {
-            float *buf;
             pAudioCaptureClient->GetBuffer((BYTE**)&buf, &nextPacketSize, (DWORD *)&flags, NULL, NULL);
 
-            for (unsigned int i = 0; i < nextPacketSize; i += 4)
+            if (buf == NULL && nextPacketSize > 0)
             {
-                for (int j = 0; j < 255; j++)
+                pAudioClient->Stop();
+                pAudioCaptureClient->Release();
+                pAudioClient->Release();
+                pAudioCaptureClient = NULL;
+                pAudioClient = NULL;
+            }
+            else
+            {
+                for (unsigned int i = 0; i < nextPacketSize; i += 4)
                 {
-                    input_wave[2 * j] = input_wave[2 * (j + 1)];
-                    input_wave[(2 * j) + 1] = input_wave[2 * j];
+                    for (int j = 0; j < 255; j++)
+                    {
+                        input_wave[2 * j] = input_wave[2 * (j + 1)];
+                        input_wave[(2 * j) + 1] = input_wave[2 * j];
+                    }
+
+                    float avg_buf = (buf[i] + buf[i + 1] + buf[i + 2] + buf[i + 3]) / 4;
+                    input_wave[510] = avg_buf * 2.0f * amplitude;
+                    input_wave[511] = input_wave[510];
                 }
 
-                float avg_buf = (buf[i] + buf[i + 1] + buf[i + 2] + buf[i + 3]) / 4;
-                input_wave[510] = avg_buf * 2.0f * amplitude;
-                input_wave[511] = input_wave[510];
+                buffer_pos += nextPacketSize / 4;
+                pAudioCaptureClient->ReleaseBuffer(nextPacketSize);
             }
-
-            buffer_pos += nextPacketSize / 4;
-            pAudioCaptureClient->ReleaseBuffer(nextPacketSize);
         }
-
-        memcpy(fft_tmp, input_wave, sizeof(input_wave));
     }
+
+    memcpy(fft_tmp, input_wave, sizeof(input_wave));
 #else
     //Only update FFT if there are at least 256 samples in the sample buffer
     int samples;

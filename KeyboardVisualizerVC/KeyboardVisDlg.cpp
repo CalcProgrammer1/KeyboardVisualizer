@@ -419,4 +419,5 @@ void KeyboardVisDlg::OnCbnDropdownComboAudioDevice()
     {
         audioDeviceBox->AddString(vis->audio_devices[i]);
     }
+    audioDeviceBox->SetCurSel(vis->audio_device_idx);
 }
