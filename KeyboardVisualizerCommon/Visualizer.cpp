@@ -190,6 +190,10 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
 void Visualizer::InitAudioDeviceList()
 {
 #ifdef WIN32
+    IMMDevice* pEndpoint;
+    IPropertyStore* pProps;
+    PROPVARIANT* varName;
+
     //If using WASAPI, start WASAPI loopback capture device
     CoInitializeEx(NULL, COINIT_MULTITHREADED);
     CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&pMMDeviceEnumerator);
@@ -197,12 +201,21 @@ void Visualizer::InitAudioDeviceList()
     for (int i = 0; i < pMMDevices.size(); i++)
     {
         pMMDevices[i]->Release();
-        delete audio_devices[i];
+        if (i != 0)
+        {
+            delete audio_devices[i];
+        }
     }
 
     pMMDevices.clear();
     audio_devices.clear();
     isCapture.clear();
+
+    //Enumerate default audio output
+    pMMDeviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pEndpoint);
+    audio_devices.push_back("Default Loopback Device");
+    pMMDevices.push_back(pEndpoint);
+    isCapture.push_back(false);
 
     //Enumerate audio outputs
     pMMDeviceEnumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &pMMDeviceCollection);
@@ -213,9 +226,7 @@ void Visualizer::InitAudioDeviceList()
         pMMDeviceCollection->GetCount(&count);
         for (UINT i = 0; i < count; i++)
         {
-            IMMDevice* pEndpoint;
-            IPropertyStore* pProps;
-            PROPVARIANT* varName = new PROPVARIANT();
+            varName = new PROPVARIANT();
 
             //Query the item from the list
             pMMDeviceCollection->Item(i, &pEndpoint);
@@ -251,9 +262,7 @@ void Visualizer::InitAudioDeviceList()
         pMMDeviceCollection->GetCount(&count);
         for (UINT i = 0; i < count; i++)
         {
-            IMMDevice* pEndpoint;
-            IPropertyStore* pProps;
-            PROPVARIANT* varName = new PROPVARIANT();
+            varName = new PROPVARIANT();
 
             //Query the item from the list
             pMMDeviceCollection->Item(i, &pEndpoint);
