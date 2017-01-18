@@ -78,7 +78,7 @@ void LEDStrip::Initialize(char* ledstring)
         }
     }
 
-    if (strlen(numleds))
+    if (numleds != NULL && strlen(numleds))
     {
         SetNumLEDs(atoi(numleds));
     }
@@ -87,6 +87,7 @@ void LEDStrip::Initialize(char* ledstring)
 
 void LEDStrip::InitializeSerial(char* portname, int baud)
 {
+    portname = strtok(portname, "\r");
     strcpy(port_name, portname);
     baud_rate = baud;
     serialport = new serial_port(port_name, baud_rate);
