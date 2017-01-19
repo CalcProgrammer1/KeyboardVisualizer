@@ -16,7 +16,7 @@ https://drive.google.com/folderview?id=0B1Fq0HEJolPtWDNsNV93NVl5Vms&usp=sharing
     * Razer Chroma
     
         Keyboards
-        - BlackWidow Chroma (spectrograph)
+        - BlackWidow Chroma (spectrograph, single color, bar, reverse bar, mid-to-side bar, side-to-mid bar)
         - BlackWidow Chroma Tournament Edition (spectrograph)
         - DeathStalker Chroma (horizontal bar)
         
@@ -31,7 +31,7 @@ https://drive.google.com/folderview?id=0B1Fq0HEJolPtWDNsNV93NVl5Vms&usp=sharing
         - Kraken 7.1 Chroma (single color)
         
         Mouse Mats
-        - Firefly (bar)
+        - Firefly (single color, bar, reverse bar)
     
     * Corsair RGB
     
