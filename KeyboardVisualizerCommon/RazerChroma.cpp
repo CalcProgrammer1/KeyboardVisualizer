@@ -60,7 +60,11 @@ void SetupKeyboardGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_l
 {
     for (int x = 0; x < x_count; x++)
     {
-        if (x < ((x_count) / 2))
+        if (x_count < 10)
+        {
+            x_idx_list[x] = (int)((x * (SPECTROGRAPH_COLS / (x_count))) + (0.5f * (SPECTROGRAPH_COLS / (x_count))));
+        }
+        else if (x < ((x_count) / 2))
         {
             x_idx_list[x] = (int)((x * (SPECTROGRAPH_COLS / (x_count - 1))) + (0.5f * (SPECTROGRAPH_COLS / (x_count - 1))));
         }
