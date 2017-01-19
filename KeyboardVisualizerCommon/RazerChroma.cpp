@@ -206,7 +206,7 @@ void RazerChroma::Initialize()
             //Build index list for DeathStalker
             for (int x = 0; x < 6; x++)
             {
-                DeathStalkerXIndex[x] = 128 + (x * (256 / 12));
+                DeathStalkerXIndex[x] = 128 + (x * (256 / 12) + (256 / 24));
             }
 		}
 	}
