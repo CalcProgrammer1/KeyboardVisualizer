@@ -156,6 +156,16 @@ void parse_argument_string(char * argument, char * value)
         vis.audio_device_idx = atoi(value);
         vis.ChangeAudioDevice();
     }
+
+    if (strcmp(argument, "razer_use_keyboard_generic_effect") == 0)
+    {
+        vis.SetDeviceProperty(argument);
+    }
+
+    if (strcmp(argument, "razer_use_headset_custom_effect") == 0)
+    {
+        vis.SetDeviceProperty(argument);
+    }
 }
 
 boolean parse_command_line(char * command_line)

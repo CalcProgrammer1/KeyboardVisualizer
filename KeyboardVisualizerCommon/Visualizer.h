@@ -119,6 +119,9 @@ public:
     void AddLEDStrip(char* ledstring);
     void AddLEDStripXmas(char * ledstring);
 
+    //Function to set custom properties for devices
+    void SetDeviceProperty(char * devprop);
+
     //Save Settings File
     void SaveSettings();
 

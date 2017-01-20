@@ -187,6 +187,18 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
     xmas.push_back(newstr);
 }
 
+void Visualizer::SetDeviceProperty(char * devprop)
+{
+    if (strcmp(devprop, "razer_use_keyboard_generic_effect") == 0)
+    {
+        rkb.use_keyboard_generic_effect = true;
+    }
+    else if (strcmp(devprop, "razer_use_headset_custom_effect") == 0)
+    {
+        rkb.use_headset_custom_effect = true;
+    }
+}
+
 void Visualizer::InitAudioDeviceList()
 {
 #ifdef WIN32

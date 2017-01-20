@@ -107,6 +107,10 @@ void FillKeypadGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list
 
 void RazerChroma::Initialize()
 {
+    // Initialize variables
+    use_keyboard_generic_effect = false;
+    use_headset_custom_effect = false;
+
 	// Dynamically loads the Chroma SDK library.
 	hModule = LoadLibrary(CHROMASDKDLL);
 	if (hModule)
@@ -227,38 +231,66 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
     }
     else
     {
-        //Blackwidow Chroma
-        ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowEffect;
+        //The use_generic_keyboard option uses the generic keyboard effect to apply the same pattern
+        //to all Chroma SDK supported keyboards.  This effect is a workaround for missing Blade Stealth
+        //Kaby Lake support in the SDK, as the generic effect seems to be the only working way to
+        //support this product
+        if (use_keyboard_generic_effect)
+        {
+            //Keyboard Effect
+            ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE KeyboardEffect;
 
-        FillKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex, &BlackWidowEffect, pixels);
+            FillKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex, &KeyboardEffect, pixels);
+            //Set Razer "Three Headed Snake" logo to the background color of the 11th column
+            KeyboardEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
 
-        //Set Razer "Three Headed Snake" logo to the background color of the 11th column
-        BlackWidowEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
+            CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_CUSTOM, &KeyboardEffect, NULL);
+        }
+        else
+        {
+            //Blackwidow Chroma
+            ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowEffect;
 
-        CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
+            FillKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex, &BlackWidowEffect, pixels);
 
-        CreateEffect(ChromaSDK::BLACKWIDOW_X_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
-        CreateEffect(ChromaSDK::BLACKWIDOW_X_TE_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
-        CreateEffect(ChromaSDK::OVERWATCH_KEYBOARD, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
-        CreateEffect(ChromaSDK::ORNATA_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
-        
-        //Blackwidow Chroma Tournament Edition
-        ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowTEEffect;
+            //Set Razer "Three Headed Snake" logo to the background color of the 11th column
+            BlackWidowEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
 
-        FillKeyboardGrid(18, 6, BlackWidowTEXIndex, BlackWidowTEYIndex, &BlackWidowTEEffect, pixels);
+            CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
 
-        //Set Razer "Three Headed Snake" logo to the background color of the 11th column
-        BlackWidowTEEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
+            CreateEffect(ChromaSDK::BLACKWIDOW_X_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
+            CreateEffect(ChromaSDK::BLACKWIDOW_X_TE_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
+            CreateEffect(ChromaSDK::OVERWATCH_KEYBOARD, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
+            CreateEffect(ChromaSDK::ORNATA_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
 
-        CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &BlackWidowTEEffect, NULL);
+            //Blackwidow Chroma Tournament Edition
+            ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowTEEffect;
 
-        //Blade Stealth and Blade 14
-        ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BladeStealthEffect;
+            FillKeyboardGrid(18, 6, BlackWidowTEXIndex, BlackWidowTEYIndex, &BlackWidowTEEffect, pixels);
 
-        FillKeyboardGrid(16, 6, BladeStealthXIndex, BladeStealthYIndex, &BladeStealthEffect, pixels);
+            //Set Razer "Three Headed Snake" logo to the background color of the 11th column
+            BlackWidowTEEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
 
-        CreateEffect(ChromaSDK::BLADE_STEALTH, ChromaSDK::CHROMA_CUSTOM, &BladeStealthEffect, NULL);
-        CreateEffect(ChromaSDK::BLADE, ChromaSDK::CHROMA_CUSTOM, &BladeStealthEffect, NULL);
+            CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA_TE, ChromaSDK::CHROMA_CUSTOM, &BlackWidowTEEffect, NULL);
+
+            //Blade Stealth and Blade 14
+            ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BladeStealthEffect;
+
+            FillKeyboardGrid(16, 6, BladeStealthXIndex, BladeStealthYIndex, &BladeStealthEffect, pixels);
+
+            CreateEffect(ChromaSDK::BLADE_STEALTH, ChromaSDK::CHROMA_CUSTOM, &BladeStealthEffect, NULL);
+            CreateEffect(ChromaSDK::BLADE, ChromaSDK::CHROMA_CUSTOM, &BladeStealthEffect, NULL);
+
+            //DeathStalker Chroma
+            ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE DeathStalkerEffect;
+
+            for (int x = 0; x < 6; x++)
+            {
+                DeathStalkerEffect.Color[1][DeathStalkerXLEDIndex[x]] = (pixels[ROW_IDX_BAR_GRAPH][DeathStalkerXIndex[x]] & 0x00FFFFFF);
+            }
+
+            CreateEffect(ChromaSDK::DEATHSTALKER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &DeathStalkerEffect, NULL);
+        }
 
         //Orbweaver Chroma
         ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE OrbweaverEffect;
@@ -267,6 +299,13 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
         CreateEffect(ChromaSDK::ORBWEAVER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &OrbweaverEffect, NULL);
         
+        //Tartarus Chroma
+        ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE TartarusEffect;
+
+        TartarusEffect.Color[0][0] = pixels[ROW_IDX_SINGLE_COLOR][0];
+
+        CreateEffect(ChromaSDK::TARTARUS_CHROMA, ChromaSDK::CHROMA_CUSTOM, &TartarusEffect, NULL);
+
         //Firefly Chroma
         ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE FireflyEffect = {};
 
@@ -304,31 +343,31 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         CreateEffect(ChromaSDK::OROCHI_CHROMA, ChromaSDK::CHROMA_NONE, NULL, NULL); // Quick-fix for "lazy" Orochi Chroma color transition effect, see https://gfycat.com/DiscreteDisfiguredBluetickcoonhound
         CreateMouseEffect(ChromaSDK::Mouse::CHROMA_CUSTOM2, &MouseEffect, NULL);
 
-        //Kraken Chroma
-        ChromaSDK::Headset::STATIC_EFFECT_TYPE KrakenEffect;
-
-        KrakenEffect.Color = pixels[ROW_IDX_SINGLE_COLOR][0];
-
-        CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_NONE, &KrakenEffect, NULL);
-        CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &KrakenEffect, NULL);
-
-        //DeathStalker Chroma
-        
-        ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE DeathStalkerEffect;
-
-        for (int x = 0; x < 6; x++)
+        //The Kraken 7.1 Chroma v1 headset (as well as possibly others) does not support custom effects.
+        //To work around this, I set a NONE effect followed by a STATIC effect, which instantly updates
+        //the color at the expense of a slight flicker.
+        //The Kraken 7.1 Chroma v2 does support custom effects, but using them means the v1 gets no
+        //pattern at all.  Until the SDK is updated to break these two devices into separate IDs,
+        //I'm adding a workaround to select whether to use custom or static effects.
+        if (use_headset_custom_effect)
         {
-            DeathStalkerEffect.Color[1][DeathStalkerXLEDIndex[x]] = (pixels[ROW_IDX_BAR_GRAPH][DeathStalkerXIndex[x]] & 0x00FFFFFF);
+            //Kraken Chroma V2
+            ChromaSDK::Headset::STATIC_EFFECT_TYPE KrakenEffect;
+
+            KrakenEffect.Color = pixels[ROW_IDX_SINGLE_COLOR][0];
+
+            CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_CUSTOM, &KrakenEffect, NULL);
         }
+        else
+        {
+            //Kraken Chroma V1
+            ChromaSDK::Headset::STATIC_EFFECT_TYPE KrakenEffect;
 
-        CreateEffect(ChromaSDK::DEATHSTALKER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &DeathStalkerEffect, NULL);
+            KrakenEffect.Color = pixels[ROW_IDX_SINGLE_COLOR][0];
 
-        //Tartarus Chroma
-        ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE TartarusEffect;
-
-        TartarusEffect.Color[0][0] = pixels[ROW_IDX_SINGLE_COLOR][0];
-
-        CreateEffect(ChromaSDK::TARTARUS_CHROMA, ChromaSDK::CHROMA_CUSTOM, &TartarusEffect, NULL);
+            CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_NONE, &KrakenEffect, NULL);
+            CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &KrakenEffect, NULL);
+        }
 
         return TRUE;
     }
