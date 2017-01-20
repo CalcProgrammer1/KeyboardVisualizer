@@ -55,6 +55,8 @@ MSIKeyboard             mkb;
 std::vector<LEDStrip *> str;
 std::vector<LEDStrip *> xmas;
 
+std::vector<char *>     device_properties;
+
 char * net_string;
 int single_color_timeout;
 float fft_nrml[256];
@@ -189,6 +191,12 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
 
 void Visualizer::SetDeviceProperty(char * devprop)
 {
+    //Save device property to list of device properties
+    char * buf = new char[strlen(devprop) + 1];
+    strcpy(buf, devprop);
+    device_properties.push_back(buf);
+
+    //Parse device property
     if (strcmp(devprop, "razer_use_keyboard_generic_effect") == 0)
     {
         rkb.use_keyboard_generic_effect = true;
@@ -591,6 +599,14 @@ void Visualizer::SaveSettings()
         snprintf(out_str, 1024, "server=%s\r\n", net_string);
         outfile.write(out_str, strlen(out_str));
         break;
+    }
+
+    //Save Device Properties
+    for (int i = 0; i < device_properties.size(); i++)
+    {
+        //Save Device Property
+        snprintf(out_str, 1024, "%s\r\n", device_properties[i]);
+        outfile.write(out_str, strlen(out_str));
     }
 
     //Close Output File
