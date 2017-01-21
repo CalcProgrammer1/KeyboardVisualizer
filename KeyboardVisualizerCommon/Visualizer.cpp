@@ -196,7 +196,8 @@ void Visualizer::SetDeviceProperty(char * devprop)
     strcpy(buf, devprop);
     device_properties.push_back(buf);
 
-    //Parse device property
+    //Parse device properties exclusive to Windows
+#ifdef WIN32
     if (strcmp(devprop, "razer_use_keyboard_generic_effect") == 0)
     {
         rkb.use_keyboard_generic_effect = true;
@@ -205,6 +206,7 @@ void Visualizer::SetDeviceProperty(char * devprop)
     {
         rkb.use_headset_custom_effect = true;
     }
+#endif
 }
 
 void Visualizer::InitAudioDeviceList()
