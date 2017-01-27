@@ -23,6 +23,7 @@ enum
     RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA,
     RAZER_FIREFLY_CHROMA,
     RAZER_MUG_HOLDER,
+    RAZER_CORE,
     RAZER_NUM_DEVICES
 };
 
@@ -40,6 +41,9 @@ int BladeProYIndex[6];
 
 //Index list for Firefly
 int FireflyIndex[15];
+
+//Index list for Razer Core
+int CoreXIndex[8];
 
 RazerChroma::RazerChroma()
 {
@@ -80,7 +84,7 @@ void RazerChroma::Initialize()
     bool done = false;
     int driver_to_read = 0;
 
-    while(driver_to_read < 4)
+    while(driver_to_read < 5)
     {
         switch(driver_to_read)
         {
@@ -98,6 +102,11 @@ void RazerChroma::Initialize()
 
         case 3:
             strcpy(driver_path, "/sys/bus/hid/drivers/razermug/");
+            break;
+
+        case 4:
+            strcpy(driver_path, "/sys/bus/hid/drivers/razercore/");
+            break;
         }
 
         done = false;
@@ -237,6 +246,13 @@ void RazerChroma::Initialize()
 
                             device_type = RAZER_MUG_HOLDER;
                         }
+                        else if(!strncmp(device_string, "Razer Core", strlen("Razer Core")))
+                        {
+                            //Device is Razer Core
+                            printf("Core Detected\r\n");
+
+                            device_type = RAZER_CORE;
+                        }
 
                         if(device_type != RAZER_NO_DEVICE)
                         {
@@ -287,6 +303,7 @@ void RazerChroma::Initialize()
                                     case RAZER_BLADE_PRO:
                                     case RAZER_FIREFLY_CHROMA:
                                     case RAZER_MUG_HOLDER:
+                                    case RAZER_CORE:
                                     case RAZER_MAMBA_TOURNAMENT_EDITION_CHROMA:
                                     case RAZER_DIAMONDBACK_CHROMA:
                                         {
@@ -418,6 +435,12 @@ void RazerChroma::Initialize()
             FireflyIndex[x] = 8 + (x * 16);
         }
     }
+
+    //Build index list for Core
+    for (int x = 0; x < 8; x++)
+    {
+        CoreXIndex[x] = (x * (256 / 8)) + (256 / 16);
+    }
 }
 
 bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
@@ -545,6 +568,30 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
                     write(razer_fd_1[i], &FireflyEffect, sizeof(FireflyEffect));
                     write(razer_fd_2[i], &FireflyEffect, 1);
+                }
+                break;
+
+            case RAZER_CORE:
+                {
+                    char CoreEffect[(3 * 9) + 3];
+
+                    CoreEffect[0] = 0;
+                    CoreEffect[1] = 0;
+                    CoreEffect[2] = 8;
+
+                    CoreEffect[3] = GetRValue(pixels[ROW_IDX_SINGLE_COLOR][0]);
+                    CoreEffect[4] = GetGValue(pixels[ROW_IDX_SINGLE_COLOR][0]);
+                    CoreEffect[5] = GetBValue(pixels[ROW_IDX_SINGLE_COLOR][0]);
+
+                    for (int x = 0; x < 8; x++)
+                    {
+                        CoreEffect[6 + (x * 3)] = GetRValue(pixels[ROW_IDX_BAR_GRAPH][CoreXIndex[x]]);
+                        CoreEffect[7 + (x * 3)] = GetGValue(pixels[ROW_IDX_BAR_GRAPH][CoreXIndex[x]]);
+                        CoreEffect[8 + (x * 3)] = GetBValue(pixels[ROW_IDX_BAR_GRAPH][CoreXIndex[x]]);
+                    }
+
+                    write(razer_fd_1[i], &CoreEffect, sizeof(CoreEffect));
+                    write(razer_fd_2[i], &CoreEffect, 1);
                 }
                 break;
 
