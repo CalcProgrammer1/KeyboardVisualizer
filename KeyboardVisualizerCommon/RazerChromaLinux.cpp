@@ -24,6 +24,8 @@ enum
     RAZER_FIREFLY_CHROMA,
     RAZER_MUG_HOLDER,
     RAZER_CORE,
+    RAZER_KRAKEN_V1,
+    RAZER_KRAKEN_V2,
     RAZER_NUM_DEVICES
 };
 
@@ -84,7 +86,7 @@ void RazerChroma::Initialize()
     bool done = false;
     int driver_to_read = 0;
 
-    while(driver_to_read < 5)
+    while(driver_to_read < 6)
     {
         switch(driver_to_read)
         {
@@ -106,6 +108,10 @@ void RazerChroma::Initialize()
 
         case 4:
             strcpy(driver_path, "/sys/bus/hid/drivers/razercore/");
+            break;
+
+        case 5:
+            strcpy(driver_path, "/sys/bus/hid/drivers/razerkraken/");
             break;
         }
 
@@ -253,6 +259,20 @@ void RazerChroma::Initialize()
 
                             device_type = RAZER_CORE;
                         }
+                        else if(!strncmp(device_string, "Razer Kraken 7.1 Chroma", strlen("Razer Kraken 7.1 Chroma")))
+                        {
+                            //Device is Razer Kraken 7.1 Chroma
+                            printf("Kraken 7.1 Chroma Detected\r\n");
+
+                            device_type = RAZER_KRAKEN_V1;
+                        }
+                        else if(!strncmp(device_string, "Razer Kraken 7.1 V2", strlen("Razer Kraken 7.1 V2")))
+                        {
+                            //Device is Razer Kraken 7.1 V2
+                            printf("Kraken 7.1 V2 Detected\r\n");
+
+                            device_type = RAZER_KRAKEN_V2;
+                        }
 
                         if(device_type != RAZER_NO_DEVICE)
                         {
@@ -360,6 +380,32 @@ void RazerChroma::Initialize()
                                         }
                                         break;
 
+                                    //Devices with only custom effect
+                                    case RAZER_KRAKEN_V1:
+                                    case RAZER_KRAKEN_V2:
+                                        {
+                                            //Device is unique, go ahead and register it
+                                            strcpy(device_string, driver_path);
+                                            strcat(device_string, ent->d_name);
+                                            strcat(device_string, "/matrix_effect_custom");
+                                            int fd_1 = open(device_string, O_WRONLY);
+
+                                            //We need placeholders for the unused update fds to keep the vectors the same length
+                                            int fd_2 = 0;
+                                            int fd_3 = 0;
+                                            int fd_4 = 0;
+
+                                            if(fd_1)
+                                            {
+                                                razer_device_serial.push_back(serial);
+                                                razer_device_type.push_back(device_type);
+                                                razer_fd_1.push_back(fd_1);
+                                                razer_fd_2.push_back(fd_2);
+                                                razer_fd_3.push_back(fd_3);
+                                                razer_fd_4.push_back(fd_4);
+                                            }
+                                        }
+                                        break;
                                     //Devices with logo LED rgb and effect parameters
                                     case RAZER_DEATHADDER_CHROMA:
                                     case RAZER_NAGA_CHROMA:
@@ -684,6 +730,8 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
                 break;
 
             case RAZER_TARTARUS_CHROMA:
+            case RAZER_KRAKEN_V1:
+            case RAZER_KRAKEN_V2:
                 {
                     char TartarusEffect[3];
 
