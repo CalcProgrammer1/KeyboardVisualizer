@@ -173,7 +173,7 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         - Firefly (bar)
     
         External Graphics Dock
-        - Razer Core (bar)
+        - Razer Core (bar and single color)
 
         Other
         - Razer Chroma Mug (bar)
@@ -233,9 +233,16 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         - Diamondback Chroma (bar and single color)
         - Mamba Tournament Edition (bar and single color)
         - DeathAdder Chroma (single color)
-        
+
+        Headsets
+        - Kraken 7.1 Chroma (single color)
+        - Kraken 7.1 Chroma V2 (single color)
+
         Mouse Mats
         - Firefly (bar)
+
+        External Graphics Dock
+        - Razer Core (bar and single color)
 
         Other
         - Razer Chroma Mug (bar)
