@@ -71,12 +71,12 @@ void CmKeyboard::Initialize()
 	if (device == 0)
     {
 		dev_column = 22;
-		col = (int)(SPECTROGRAPH_COLS / 22);
+		col = (int)(SPECTROGRAPH_END / 22);
 	}
 	else if (device == 1)
     {
 		dev_column = 18;
-		col = (int)(SPECTROGRAPH_COLS / 18);
+		col = (int)(SPECTROGRAPH_END / 18);
 	}
 
 	// finish init

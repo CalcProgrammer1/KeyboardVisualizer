@@ -1409,56 +1409,59 @@ void Visualizer::VisThread()
             brightness = (bkgd_bright / 100.0f) * brightness;
         }
 
-        //Draw brightness based visualizer for single LED devices
-        switch (single_color_mode)
+        if (single_color_timeout < 120)
         {
-        case VISUALIZER_SINGLE_COLOR_BLACK:
-            DrawSingleColorStatic(brightness, 0x00000000, pixels_render);
-            break;
+            //Draw brightness based visualizer for single LED devices
+            switch (single_color_mode)
+            {
+            case VISUALIZER_SINGLE_COLOR_BLACK:
+                DrawSingleColorStatic(brightness, 0x00000000, pixels_render);
+                break;
 
-        case VISUALIZER_SINGLE_COLOR_WHITE:
-            DrawSingleColorStatic(brightness, 0x00FFFFFF, pixels_render);
-            break;
+            case VISUALIZER_SINGLE_COLOR_WHITE:
+                DrawSingleColorStatic(brightness, 0x00FFFFFF, pixels_render);
+                break;
 
-        case VISUALIZER_SINGLE_COLOR_RED:
-            DrawSingleColorStatic(brightness, 0x000000FF, pixels_render);
-            break;
+            case VISUALIZER_SINGLE_COLOR_RED:
+                DrawSingleColorStatic(brightness, 0x000000FF, pixels_render);
+                break;
 
-        case VISUALIZER_SINGLE_COLOR_ORANGE:
-            DrawSingleColorStatic(brightness, 0x000080FF, pixels_render);
-            break;
+            case VISUALIZER_SINGLE_COLOR_ORANGE:
+                DrawSingleColorStatic(brightness, 0x000080FF, pixels_render);
+                break;
 
-        case VISUALIZER_SINGLE_COLOR_YELLOW:
-            DrawSingleColorStatic(brightness, 0x0000FFFF, pixels_render);
-            break;
+            case VISUALIZER_SINGLE_COLOR_YELLOW:
+                DrawSingleColorStatic(brightness, 0x0000FFFF, pixels_render);
+                break;
 
-        case VISUALIZER_SINGLE_COLOR_GREEN:
-            DrawSingleColorStatic(brightness, 0x0000FF00, pixels_render);
-            break;
+            case VISUALIZER_SINGLE_COLOR_GREEN:
+                DrawSingleColorStatic(brightness, 0x0000FF00, pixels_render);
+                break;
 
-        case VISUALIZER_SINGLE_COLOR_CYAN:
-            DrawSingleColorStatic(brightness, 0x00FFFF00, pixels_render);
-            break;
+            case VISUALIZER_SINGLE_COLOR_CYAN:
+                DrawSingleColorStatic(brightness, 0x00FFFF00, pixels_render);
+                break;
 
-        case VISUALIZER_SINGLE_COLOR_BLUE:
-            DrawSingleColorStatic(brightness, 0x00FF0000, pixels_render);
-            break;
+            case VISUALIZER_SINGLE_COLOR_BLUE:
+                DrawSingleColorStatic(brightness, 0x00FF0000, pixels_render);
+                break;
 
-        case VISUALIZER_SINGLE_COLOR_PURPLE:
-            DrawSingleColorStatic(brightness, 0x00FF00FF, pixels_render);
-            break;
+            case VISUALIZER_SINGLE_COLOR_PURPLE:
+                DrawSingleColorStatic(brightness, 0x00FF00FF, pixels_render);
+                break;
 
-        case VISUALIZER_SINGLE_COLOR_BACKGROUND:
-            //Intentionally do nothing, leave the background unmodified
-            break;
+            case VISUALIZER_SINGLE_COLOR_BACKGROUND:
+                //Intentionally do nothing, leave the background unmodified
+                break;
 
-        case VISUALIZER_SINGLE_COLOR_FOLLOW_BACKGROUND:
-            DrawSingleColorBackground(brightness, &pixels_bg, pixels_render);
-            break;
+            case VISUALIZER_SINGLE_COLOR_FOLLOW_BACKGROUND:
+                DrawSingleColorBackground(brightness, &pixels_bg, pixels_render);
+                break;
 
-        case VISUALIZER_SINGLE_COLOR_FOLLOW_FOREGROUND:
-            DrawSingleColorForeground(brightness, &pixels_fg, pixels_render);
-            break;
+            case VISUALIZER_SINGLE_COLOR_FOLLOW_FOREGROUND:
+                DrawSingleColorForeground(brightness, &pixels_fg, pixels_render);
+                break;
+            }
         }
 
         //Swap buffers

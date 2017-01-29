@@ -33,7 +33,8 @@ typedef bool            boolean;
 #define ROW_IDX_SINGLE_COLOR        1
 #define ROW_IDX_SPECTROGRAPH_TOP    2
 
-#define SPECTROGRAPH_COLS           (255)
+#define SPECTROGRAPH_COLS           (256)
+#define SPECTROGRAPH_END            (SPECTROGRAPH_COLS - 1)
 #define SPECTROGRAPH_ROWS           (64 - ROW_IDX_SPECTROGRAPH_TOP)
 
 typedef unsigned int VISUALIZER_PATTERN;

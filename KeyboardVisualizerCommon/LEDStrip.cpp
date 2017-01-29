@@ -111,6 +111,39 @@ char* LEDStrip::GetLEDString()
 void LEDStrip::SetNumLEDs(int numleds)
 {
     num_leds = numleds;
+
+    LEDStripXIndex = new int[num_leds];
+    LEDStripYIndex = new int[num_leds];
+
+    if ((num_leds % 2) == 0)
+    {
+        //Even number of LEDs
+        for (int i = 0; i < num_leds; i++)
+        {
+            LEDStripXIndex[i] = (int)((i * (256.0f / (num_leds - 1))));
+            LEDStripYIndex[i] = ROW_IDX_BAR_GRAPH;
+        }
+    }
+    else
+    {
+        //Odd number of LEDs
+        for (int i = 0; i < num_leds; i++)
+        {
+            LEDStripYIndex[i] = ROW_IDX_BAR_GRAPH;
+            if (i == (num_leds / 2))
+            {
+                LEDStripXIndex[i] = 128;
+            }
+            else if (i < ((num_leds / 2) + 1))
+            {
+                LEDStripXIndex[i] = (num_leds / 2) + ((i + 1) * (num_leds + 1));
+            }
+            else
+            {
+                LEDStripXIndex[i] = ((num_leds / 2) + 1) + (i * (num_leds + 1));
+            }
+        }
+    }
 }
 
 void LEDStrip::SetLEDs(COLORREF pixels[64][256])
@@ -125,10 +158,11 @@ void LEDStrip::SetLEDs(COLORREF pixels[64][256])
 
         for (int idx = 0; idx < (num_leds * 3); idx += 3)
         {
-            int col_idx = (int)((idx * (255.0f / (3.0f * num_leds))) + (128.0f / (3.0f * num_leds)));
-            serial_buf[idx + 1] = GetRValue(pixels[ROW_IDX_BAR_GRAPH][col_idx]);
-            serial_buf[idx + 2] = GetGValue(pixels[ROW_IDX_BAR_GRAPH][col_idx]);
-            serial_buf[idx + 3] = GetBValue(pixels[ROW_IDX_BAR_GRAPH][col_idx]);
+            int pixel_idx = idx / 3;
+            COLORREF color = pixels[LEDStripYIndex[pixel_idx]][LEDStripXIndex[pixel_idx]];
+            serial_buf[idx + 1] = GetRValue(color);
+            serial_buf[idx + 2] = GetGValue(color);
+            serial_buf[idx + 3] = GetBValue(color);
         }
 
         unsigned short sum = 0;

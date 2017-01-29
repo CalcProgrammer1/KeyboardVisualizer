@@ -63,7 +63,7 @@ void SteelSeriesGameSense::Initialize()
     }
     for (int x = 0; x < COLS; x++)
     {
-        x_idx_list[x] = x * (SPECTROGRAPH_COLS / COLS);
+        x_idx_list[x] = x * (SPECTROGRAPH_END / COLS);
     }
 
     SetMode(0x02);

@@ -34,6 +34,10 @@ public:
 private:
     int baud_rate;
     int num_leds;
+
+    int * LEDStripXIndex;
+    int * LEDStripYIndex;
+
     char led_string[1024];
     char port_name[128];
     char client_name[1024];
