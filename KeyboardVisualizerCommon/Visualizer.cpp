@@ -423,7 +423,7 @@ void Visualizer::Initialize()
 
     netmode              = NET_MODE_DISABLED;
     background_timer     = 0;
-    background_timeout   = 0;
+    background_timeout   = 120;
 
     amplitude            = 100;
     anim_speed           = 100.0f;
@@ -491,6 +491,12 @@ void Visualizer::SaveSettings()
     std::ofstream outfile;
     char filename[2048];
     char out_str[1024];
+
+    //Check background flags, they both should not be set
+    if ((silent_bkgd == TRUE) && (reactive_bkgd == TRUE))
+    {
+        silent_bkgd = FALSE;
+    }
 
     //Get file path in executable directory
 #ifdef WIN32
@@ -566,6 +572,10 @@ void Visualizer::SaveSettings()
 
     //Save Reactive Background Flag
     snprintf(out_str, 1024, "reactive_bkgd=%d\r\n", reactive_bkgd);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Silent Background Flag
+    snprintf(out_str, 1024, "silent_bkgd=%d\r\n", silent_bkgd);
     outfile.write(out_str, strlen(out_str));
 
     //Save Background Timeout
@@ -654,7 +664,8 @@ void Visualizer::SendSettings()
         settings.filter_constant = filter_constant;
         settings.frgd_mode = frgd_mode;
         settings.reactive_bkgd = reactive_bkgd;
-
+        settings.silent_bkgd = silent_bkgd;
+        settings.background_timeout = background_timeout;
         port->tcp_write((char *)&settings, sizeof(settings));
     }
 }
@@ -1289,7 +1300,16 @@ void Visualizer::NetUpdateThread()
                     filter_constant = ((settings_pkt_type *)buf)->filter_constant;
                     frgd_mode = ((settings_pkt_type *)buf)->frgd_mode;
                     reactive_bkgd = ((settings_pkt_type *)buf)->reactive_bkgd;
+                    silent_bkgd = ((settings_pkt_type *)buf)->silent_bkgd;
+                    background_timeout = ((settings_pkt_type *)buf)->background_timeout;
                     SetNormalization(nrml_ofst, nrml_scl);
+
+                    //Check background flags, they both should not be set
+                    if ((silent_bkgd == TRUE) && (reactive_bkgd == TRUE))
+                    {
+                        silent_bkgd = FALSE;
+                    }
+
                     update_ui = TRUE;
                 }
             }
@@ -1356,10 +1376,17 @@ void Visualizer::VisThread()
                 }
                 else
                 {
-                    if(reactive_bkgd)
+                    if(reactive_bkgd || silent_bkgd)
                     {
-                        int in_color = pixels_bg.pixels[y][x];
-                        pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                        if (!silent_bkgd || ((background_timer >= background_timeout) && (background_timeout > 0)))
+                        {
+                            int in_color = pixels_bg.pixels[y][x];
+                            pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                        }
+                        else
+                        {
+                            pixels_render->pixels[y][x] = RGB(0, 0, 0);
+                        }
                     }
                     else
                     {
@@ -1379,10 +1406,17 @@ void Visualizer::VisThread()
                         }
                         else
                         {
-                            if(reactive_bkgd)
+                            if (reactive_bkgd || silent_bkgd)
                             {
-                                int in_color = pixels_bg.pixels[y][x];
-                                pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                                if (!silent_bkgd || ((background_timer >= background_timeout) && (background_timeout > 0)))
+                                {
+                                    int in_color = pixels_bg.pixels[y][x];
+                                    pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                                }
+                                else
+                                {
+                                    pixels_render->pixels[y][x] = RGB(0, 0, 0);
+                                }
                             }
                             else
                             {
@@ -1398,10 +1432,17 @@ void Visualizer::VisThread()
                         }
                         else
                         {
-                            if(reactive_bkgd)
+                            if (reactive_bkgd || silent_bkgd)
                             {
-                                int in_color = pixels_bg.pixels[y][x];
-                                pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                                if (!silent_bkgd || (background_timer >= background_timeout))
+                                {
+                                    int in_color = pixels_bg.pixels[y][x];
+                                    pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                                }
+                                else
+                                {
+                                    pixels_render->pixels[y][x] = RGB(0, 0, 0);
+                                }
                             }
                             else
                             {

@@ -60,6 +60,7 @@ public:
     afx_msg void OnEnChangeEditFilterConstant();
     afx_msg void OnCbnDropdownComboAudioDevice();
     afx_msg void OnEnChangeEditBackgroundTimeout();
+    afx_msg void OnBnClickedCheckSilentBackground();
 };
 
 #endif

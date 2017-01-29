@@ -121,6 +121,7 @@ BOOL KeyboardVisDlg::OnInitDialog()
     audioDeviceBox->SetCurSel(vis->audio_device_idx);
 
     ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->SetCheck(vis->reactive_bkgd);
+    ((CButton*)GetDlgItem(IDC_CHECK_SILENT_BACKGROUND))->SetCheck(vis->silent_bkgd);
 
 	timer = SetTimer(1, 25, NULL);
 
@@ -216,6 +217,7 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
         avgModeBox->SetCurSel(vis->avg_mode);
 
         ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->SetCheck(vis->reactive_bkgd);
+        ((CButton*)GetDlgItem(IDC_CHECK_SILENT_BACKGROUND))->SetCheck(vis->silent_bkgd);
     }
 }
 
@@ -268,6 +270,7 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_EN_CHANGE(IDC_EDIT_FILTER_CONSTANT, &KeyboardVisDlg::OnEnChangeEditFilterConstant)
     ON_CBN_DROPDOWN(IDC_COMBO_AUDIO_DEVICE, &KeyboardVisDlg::OnCbnDropdownComboAudioDevice)
     ON_EN_CHANGE(IDC_EDIT_BACKGROUND_TIMEOUT, &KeyboardVisDlg::OnEnChangeEditBackgroundTimeout)
+    ON_BN_CLICKED(IDC_CHECK_SILENT_BACKGROUND, &KeyboardVisDlg::OnBnClickedCheckSilentBackground)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
@@ -381,6 +384,13 @@ void KeyboardVisDlg::OnEnChangeEditAnimSpeed()
 void KeyboardVisDlg::OnBnClickedCheckReactiveBackground()
 {
     vis->reactive_bkgd = ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->GetCheck();
+
+    if (vis->reactive_bkgd == TRUE)
+    {
+        vis->silent_bkgd = FALSE;
+        ((CButton*)GetDlgItem(IDC_CHECK_SILENT_BACKGROUND))->SetCheck(FALSE);
+    }
+
     vis->OnSettingsChanged();
 }
 
@@ -430,4 +440,19 @@ void KeyboardVisDlg::OnEnChangeEditBackgroundTimeout()
 {
     vis->background_timeout = (int)GetDlgItemInt(IDC_EDIT_BACKGROUND_TIMEOUT, 0, 0);
     vis->background_timer = 0;
+    vis->OnSettingsChanged();
+}
+
+
+void KeyboardVisDlg::OnBnClickedCheckSilentBackground()
+{
+    vis->silent_bkgd = ((CButton*)GetDlgItem(IDC_CHECK_SILENT_BACKGROUND))->GetCheck();
+
+    if (vis->silent_bkgd == TRUE)
+    {
+        vis->reactive_bkgd = FALSE;
+        ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->SetCheck(FALSE);
+    }
+
+    vis->OnSettingsChanged();
 }

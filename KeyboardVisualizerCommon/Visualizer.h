@@ -50,6 +50,8 @@ typedef struct
     float filter_constant;
     int frgd_mode;
     bool reactive_bkgd;
+    bool silent_bkgd;
+    unsigned int background_timeout;
 } settings_pkt_type;
 
 typedef int net_mode;
@@ -166,6 +168,7 @@ public:
     int bkgd_bright;
     int bkgd_mode;
     bool reactive_bkgd;
+    bool silent_bkgd;
     unsigned int background_timeout;
     unsigned int background_timer;
 

@@ -149,6 +149,21 @@ void parse_argument_string(char * argument, char * value)
     if (strcmp(argument, "reactive_bkgd") == 0)
     {
         vis.reactive_bkgd = atoi(value);
+
+        if ((vis.silent_bkgd == TRUE) && (vis.reactive_bkgd == TRUE))
+        {
+            vis.silent_bkgd = FALSE;
+        }
+    }
+
+    if (strcmp(argument, "silent_bkgd") == 0)
+    {
+        vis.silent_bkgd = atoi(value);
+
+        if ((vis.silent_bkgd == TRUE) && (vis.reactive_bkgd == TRUE))
+        {
+            vis.reactive_bkgd = FALSE;
+        }
     }
 
     if (strcmp(argument, "background_timeout") == 0)
