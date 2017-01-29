@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>330</height>
+    <height>360</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -317,7 +317,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>245</y>
+      <y>275</y>
       <width>256</width>
       <height>64</height>
      </rect>
@@ -354,7 +354,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>250</y>
+      <y>280</y>
       <width>140</width>
       <height>16</height>
      </rect>
@@ -367,7 +367,7 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>245</y>
+      <y>275</y>
       <width>150</width>
       <height>25</height>
      </rect>
@@ -380,7 +380,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>310</y>
+      <y>340</y>
       <width>581</width>
       <height>16</height>
      </rect>
@@ -459,6 +459,55 @@
     </property>
     <property name="text">
      <string>Filter Constant</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_Silent_Background">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>245</y>
+      <width>150</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Silent_Background">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>250</y>
+      <width>140</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Silent Background</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_Background_Timeout">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>245</y>
+      <width>130</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Background_Timeout">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>250</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Background Timeout</string>
     </property>
    </widget>
   </widget>

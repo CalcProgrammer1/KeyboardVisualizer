@@ -59,11 +59,15 @@ private slots:
 
     void on_pushButton_Save_Settings_clicked();
 
-    void on_checkBox_Reactive_Background_stateChanged(int arg1);
+    void on_checkBox_Reactive_Background_clicked(bool checked);
 
     void on_comboBox_Audio_Device_currentIndexChanged(int index);
 
     void on_lineEdit_Filter_Constant_textChanged(const QString &arg1);
+
+    void on_checkBox_Silent_Background_clicked(bool checked);
+
+    void on_lineEdit_Background_Timeout_textChanged(const QString &arg1);
 
 private:
     Ui::KeyboardVisualizerDlg *ui;

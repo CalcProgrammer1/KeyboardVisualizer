@@ -130,18 +130,18 @@ void parse_argument_string(char * argument, char * value)
         {
             vis.reactive_bkgd = atoi(value);
 
-            if ((vis.silent_bkgd == TRUE) && (vis.reactive_bkgd == TRUE))
+            if ((vis.silent_bkgd == true) && (vis.reactive_bkgd == true))
             {
-                vis.silent_bkgd = FALSE;
+                vis.silent_bkgd = false;
             }
         }
         else if (strcmp(argument, "silent_bkgd") == 0)
         {
             vis.silent_bkgd = atoi(value);
 
-            if ((vis.silent_bkgd == TRUE) && (vis.reactive_bkgd == TRUE))
+            if ((vis.silent_bkgd == true) && (vis.reactive_bkgd == true))
             {
-                vis.reactive_bkgd = FALSE;
+                vis.reactive_bkgd = false;
             }
         }
         else if (strcmp(argument, "background_timeout") == 0)

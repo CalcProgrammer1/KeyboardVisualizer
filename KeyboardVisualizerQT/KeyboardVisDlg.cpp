@@ -94,6 +94,7 @@ void KeyboardVisDlg::update()
         ui->lineEdit_Average_Size->setText(QString::number(vis_ptr->avg_size));
         ui->lineEdit_Decay->setText(QString::number(vis_ptr->decay));
         ui->lineEdit_Delay->setText(QString::number(vis_ptr->delay));
+        ui->lineEdit_Background_Timeout->setText(QString::number(vis_ptr->background_timeout));
 
         ui->comboBox_Average_Mode->blockSignals(true);
         ui->comboBox_Average_Mode->setCurrentIndex(vis_ptr->avg_mode);
@@ -116,6 +117,7 @@ void KeyboardVisDlg::update()
         ui->comboBox_Single_Color_Mode->blockSignals(false);
 
         ui->checkBox_Reactive_Background->setChecked(vis_ptr->reactive_bkgd);
+        ui->checkBox_Silent_Background->setChecked(vis_ptr->silent_bkgd);
     }
 }
 
@@ -133,6 +135,7 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
     ui->lineEdit_Average_Size->setText(QString::number(vis_ptr->avg_size));
     ui->lineEdit_Decay->setText(QString::number(vis_ptr->decay));
     ui->lineEdit_Delay->setText(QString::number(vis_ptr->delay));
+    ui->lineEdit_Background_Timeout->setText(QString::number(vis_ptr->background_timeout));
 
     ui->comboBox_FFT_Window_Mode->blockSignals(true);
     ui->comboBox_FFT_Window_Mode->addItem("None");
@@ -181,6 +184,7 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
     ui->comboBox_Audio_Device->blockSignals(false);
 
     ui->checkBox_Reactive_Background->setChecked(vis_ptr->reactive_bkgd);
+    ui->checkBox_Silent_Background->setChecked(vis_ptr->silent_bkgd);
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -281,9 +285,15 @@ void Ui::KeyboardVisDlg::on_pushButton_Save_Settings_clicked()
     vis_ptr->SaveSettings();
 }
 
-void Ui::KeyboardVisDlg::on_checkBox_Reactive_Background_stateChanged(int arg1)
+void Ui::KeyboardVisDlg::on_checkBox_Reactive_Background_clicked(bool checked)
 {
-    vis_ptr->reactive_bkgd = (bool)arg1;
+    vis_ptr->reactive_bkgd = checked;
+
+    if (vis_ptr->reactive_bkgd == true)
+    {
+        vis_ptr->silent_bkgd = false;
+        ui->checkBox_Silent_Background->setChecked(false);
+    }
     vis_ptr->OnSettingsChanged();
 }
 
@@ -307,5 +317,30 @@ void Ui::KeyboardVisDlg::on_lineEdit_Filter_Constant_textChanged(const QString &
     {
         vis_ptr->filter_constant = 0.0f;
     }
+    vis_ptr->OnSettingsChanged();
+}
+
+void Ui::KeyboardVisDlg::on_checkBox_Silent_Background_clicked(bool checked)
+{
+    vis_ptr->silent_bkgd = checked;
+
+    if (vis_ptr->silent_bkgd == true)
+    {
+        vis_ptr->reactive_bkgd = false;
+        ui->checkBox_Reactive_Background->setChecked(false);
+    }
+
+    vis_ptr->OnSettingsChanged();
+}
+
+void Ui::KeyboardVisDlg::on_lineEdit_Background_Timeout_textChanged(const QString &arg1)
+{
+    vis_ptr->background_timeout = arg1.toInt();
+
+    if (vis_ptr->update_ui == false)
+    {
+        vis_ptr->background_timer = 0;
+    }
+
     vis_ptr->OnSettingsChanged();
 }
