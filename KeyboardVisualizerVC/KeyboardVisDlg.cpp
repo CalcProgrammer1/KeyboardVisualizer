@@ -29,7 +29,7 @@ boolean firstrun;
 KeyboardVisDlg::KeyboardVisDlg(CWnd* pParent)
 	: CDialogEx(IDD_KEYBOARD_VISUALIZER_DLG, pParent)
 {
-    startminimized = FALSE;
+    startminimized = false;
 }
 
 void KeyboardVisDlg::SetVisualizer(Visualizer* v)
@@ -50,7 +50,7 @@ BOOL KeyboardVisDlg::OnInitDialog()
 {
     NOTIFYICONDATA Tray;
     Tray.cbSize = sizeof(Tray);
-    Tray.hIcon = (HICON)::LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 16, 16, LR_SHARED);//LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_ICON));
+    Tray.hIcon = (HICON)::LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 16, 16, LR_SHARED);
     Tray.hWnd = GetSafeHwnd();
     strcpy(Tray.szTip, "Keyboard Visualizer");
     Tray.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
@@ -125,9 +125,9 @@ BOOL KeyboardVisDlg::OnInitDialog()
 
 	timer = SetTimer(1, 25, NULL);
 
-    firstrun = TRUE;
+    firstrun = true;
 
-	return TRUE;
+	return true;
 }
 
 void KeyboardVisDlg::StartMinimized(boolean startmin)
@@ -154,7 +154,7 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
 {
     if (startminimized && firstrun)
     {
-        firstrun = FALSE;
+        firstrun = false;
         ShowWindow(SW_HIDE);
     }
 
@@ -182,8 +182,6 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
         char nrml_scl_str[64];
         char anim_speed_str[64];
         char fltr_const_str[64];
-
-        vis->update_ui = false;
 
         snprintf(nrml_ofst_str, 64, "%f", vis->nrml_ofst);
         snprintf(nrml_scl_str, 64, "%f", vis->nrml_scl);
@@ -218,6 +216,8 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
 
         ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->SetCheck(vis->reactive_bkgd);
         ((CButton*)GetDlgItem(IDC_CHECK_SILENT_BACKGROUND))->SetCheck(vis->silent_bkgd);
+
+        vis->update_ui = false;
     }
 }
 
@@ -385,10 +385,10 @@ void KeyboardVisDlg::OnBnClickedCheckReactiveBackground()
 {
     vis->reactive_bkgd = ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->GetCheck();
 
-    if (vis->reactive_bkgd == TRUE)
+    if (vis->reactive_bkgd == true)
     {
-        vis->silent_bkgd = FALSE;
-        ((CButton*)GetDlgItem(IDC_CHECK_SILENT_BACKGROUND))->SetCheck(FALSE);
+        vis->silent_bkgd = false;
+        ((CButton*)GetDlgItem(IDC_CHECK_SILENT_BACKGROUND))->SetCheck(false);
     }
 
     vis->OnSettingsChanged();
@@ -439,7 +439,12 @@ void KeyboardVisDlg::OnCbnDropdownComboAudioDevice()
 void KeyboardVisDlg::OnEnChangeEditBackgroundTimeout()
 {
     vis->background_timeout = (int)GetDlgItemInt(IDC_EDIT_BACKGROUND_TIMEOUT, 0, 0);
-    vis->background_timer = 0;
+
+    if (vis->update_ui == false)
+    {
+        vis->background_timer = 0;
+    }
+    
     vis->OnSettingsChanged();
 }
 
@@ -448,10 +453,10 @@ void KeyboardVisDlg::OnBnClickedCheckSilentBackground()
 {
     vis->silent_bkgd = ((CButton*)GetDlgItem(IDC_CHECK_SILENT_BACKGROUND))->GetCheck();
 
-    if (vis->silent_bkgd == TRUE)
+    if (vis->silent_bkgd == true)
     {
-        vis->reactive_bkgd = FALSE;
-        ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->SetCheck(FALSE);
+        vis->reactive_bkgd = false;
+        ((CButton*)GetDlgItem(IDC_CHECK_REACTIVE_BACKGROUND))->SetCheck(false);
     }
 
     vis->OnSettingsChanged();
