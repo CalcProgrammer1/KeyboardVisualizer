@@ -74,6 +74,7 @@ BOOL KeyboardVisDlg::OnInitDialog()
 	SetDlgItemInt(IDC_EDIT_AVERAGE_SIZE, vis->avg_size);
 	SetDlgItemInt(IDC_EDIT_DECAY, vis->decay);
 	SetDlgItemInt(IDC_EDIT_DELAY, vis->delay);
+    SetDlgItemInt(IDC_EDIT_BACKGROUND_TIMEOUT, vis->background_timeout);
     SetDlgItemText(IDC_EDIT_ANIM_SPEED, anim_speed_str);
     SetDlgItemText(IDC_EDIT_NRML_OFST, nrml_ofst_str);
     SetDlgItemText(IDC_EDIT_NRML_SCL, nrml_scl_str);
@@ -193,6 +194,7 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
         SetDlgItemInt(IDC_EDIT_AVERAGE_SIZE, vis->avg_size);
         SetDlgItemInt(IDC_EDIT_DECAY, vis->decay);
         SetDlgItemInt(IDC_EDIT_DELAY, vis->delay);
+        SetDlgItemInt(IDC_EDIT_BACKGROUND_TIMEOUT, vis->background_timeout);
         SetDlgItemText(IDC_EDIT_ANIM_SPEED, anim_speed_str);
         SetDlgItemText(IDC_EDIT_NRML_OFST, nrml_ofst_str);
         SetDlgItemText(IDC_EDIT_NRML_SCL, nrml_scl_str);
@@ -265,6 +267,7 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_CBN_SELCHANGE(IDC_COMBO_AUDIO_DEVICE, &KeyboardVisDlg::OnCbnSelchangeComboAudioDevice)
     ON_EN_CHANGE(IDC_EDIT_FILTER_CONSTANT, &KeyboardVisDlg::OnEnChangeEditFilterConstant)
     ON_CBN_DROPDOWN(IDC_COMBO_AUDIO_DEVICE, &KeyboardVisDlg::OnCbnDropdownComboAudioDevice)
+    ON_EN_CHANGE(IDC_EDIT_BACKGROUND_TIMEOUT, &KeyboardVisDlg::OnEnChangeEditBackgroundTimeout)
 END_MESSAGE_MAP()
 
 void KeyboardVisDlg::OnEnChangeEditAmplitude()
@@ -420,4 +423,11 @@ void KeyboardVisDlg::OnCbnDropdownComboAudioDevice()
         audioDeviceBox->AddString(vis->audio_devices[i]);
     }
     audioDeviceBox->SetCurSel(vis->audio_device_idx);
+}
+
+
+void KeyboardVisDlg::OnEnChangeEditBackgroundTimeout()
+{
+    vis->background_timeout = (int)GetDlgItemInt(IDC_EDIT_BACKGROUND_TIMEOUT, 0, 0);
+    vis->background_timer = 0;
 }

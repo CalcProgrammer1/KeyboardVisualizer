@@ -166,6 +166,8 @@ public:
     int bkgd_bright;
     int bkgd_mode;
     bool reactive_bkgd;
+    unsigned int background_timeout;
+    unsigned int background_timer;
 
     //Single Color Mode
     int single_color_mode;

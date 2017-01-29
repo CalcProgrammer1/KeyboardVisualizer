@@ -59,6 +59,7 @@ public:
     afx_msg void OnCbnSelchangeComboAudioDevice();
     afx_msg void OnEnChangeEditFilterConstant();
     afx_msg void OnCbnDropdownComboAudioDevice();
+    afx_msg void OnEnChangeEditBackgroundTimeout();
 };
 
 #endif

@@ -130,6 +130,11 @@ void parse_argument_string(char * argument, char * value)
         {
             vis.reactive_bkgd = atoi(value);
         }
+        else if (strcmp(argument, "background_timeout") == 0)
+        {
+            vis.background_timeout = atoi(value);
+            vis.background_timer = 0;
+        }
         else if (strcmp(argument, "audio_device_idx") == 0)
         {
             vis.audio_device_idx = atoi(value);

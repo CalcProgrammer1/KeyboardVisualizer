@@ -58,7 +58,7 @@ std::vector<LEDStrip *> xmas;
 std::vector<char *>     device_properties;
 
 char * net_string;
-int single_color_timeout;
+
 float fft_nrml[256];
 float fft_fltr[256];
 
@@ -422,7 +422,8 @@ void Visualizer::Initialize()
     mkb.Initialize();
 
     netmode              = NET_MODE_DISABLED;
-    single_color_timeout = 0;
+    background_timer     = 0;
+    background_timeout   = 0;
 
     amplitude            = 100;
     anim_speed           = 100.0f;
@@ -565,6 +566,10 @@ void Visualizer::SaveSettings()
 
     //Save Reactive Background Flag
     snprintf(out_str, 1024, "reactive_bkgd=%d\r\n", reactive_bkgd);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Background Timeout
+    snprintf(out_str, 1024, "background_timeout=%d\r\n", background_timeout);
     outfile.write(out_str, strlen(out_str));
 
     //Save Audio Device Index
@@ -1317,22 +1322,26 @@ void Visualizer::VisThread()
         DrawPattern(frgd_mode, 100, &pixels_fg);
 
         float brightness = fft_fltr[5];
-        //If music isn't playing, fade in the single color LEDs after 2 seconds
-        single_color_timeout++;
-        for (int i = 0; i < 128; i++)
+
+        if (background_timeout > 0)
         {
-            if (fft_fltr[2 * i] >= 0.0001f)
+            //If music isn't playing, fade in the single color LEDs after 2 seconds
+            background_timer++;
+            for (int i = 0; i < 128; i++)
             {
-                single_color_timeout = 0;
+                if (fft_fltr[2 * i] >= 0.0001f)
+                {
+                    background_timer = 0;
+                }
             }
-        }
-        if (single_color_timeout >= 120)
-        {
-            if (single_color_timeout >= 360)
+            if (background_timer >= background_timeout)
             {
-                single_color_timeout = 360;
+                if (background_timer >= (3 * background_timeout))
+                {
+                    background_timer = (3 * background_timeout);
+                }
+                brightness = (background_timer - background_timeout) / (2.0f * background_timeout);
             }
-            brightness = (single_color_timeout - 120) / 240.0f;
         }
 
         //Loop through all 256x64 pixels in visualization image
@@ -1409,7 +1418,7 @@ void Visualizer::VisThread()
             brightness = (bkgd_bright / 100.0f) * brightness;
         }
 
-        if (single_color_timeout < 120)
+        if ((background_timeout <= 0 ) || (background_timer < background_timeout))
         {
             //Draw brightness based visualizer for single LED devices
             switch (single_color_mode)
