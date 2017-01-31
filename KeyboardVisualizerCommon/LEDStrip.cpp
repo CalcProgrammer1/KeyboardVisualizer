@@ -121,6 +121,12 @@ void LEDStrip::SetNumLEDs(int numleds)
         for (int i = 0; i < num_leds; i++)
         {
             LEDStripXIndex[i] = (int)((i * (256.0f / (num_leds - 1))));
+
+            if (i == (num_leds - 1))
+            {
+                LEDStripXIndex[i] = LEDStripXIndex[i] - 1;
+            }
+
             LEDStripYIndex[i] = ROW_IDX_BAR_GRAPH;
         }
     }
