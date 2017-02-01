@@ -1,4 +1,4 @@
-# Keyboard Visualizer
+# Keyboard Visualizer ![Icon](https://raw.githubusercontent.com/CalcProgrammer1/KeyboardVisualizer/master/KeyboardVisualizerVC/Icon.png)
 Razer Chroma and Corsair RGB Keyboard Spectrograph Visualizer for Windows and Linux
 
 Binary Windows builds can be downloaded from the Release submodule
