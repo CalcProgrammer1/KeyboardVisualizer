@@ -220,3 +220,39 @@ void LEDStrip::SetLEDsXmas(COLORREF pixels[64][256])
     serialport->serial_write((char *)xmas_buf, 5*25);
     serialport->serial_flush_tx();
 };
+
+void LEDStrip::SetLEDsHue(COLORREF pixels[64][256])
+{
+	if (serialport != NULL)
+	{
+		unsigned char *serial_buf;
+
+		serial_buf = new unsigned char[(num_leds * 3) + 3];
+
+		serial_buf[0] = 0xAA;
+
+		for (int idx = 0; idx < (num_leds * 3); idx += 3)
+		{
+			int pixel_idx = idx / 3;
+			COLORREF color = pixels[LEDStripYIndex[pixel_idx]][LEDStripXIndex[pixel_idx]];
+			serial_buf[idx + 1] = GetRValue(color);
+			serial_buf[idx + 2] = GetGValue(color);
+			serial_buf[idx + 3] = GetBValue(color);
+		}
+
+		unsigned short sum = 0;
+
+		for (int i = 0; i < (num_leds * 3) + 1; i++)
+		{
+			sum += serial_buf[i];
+		}
+
+		serial_buf[(num_leds * 3) + 1] = sum >> 8;
+		serial_buf[(num_leds * 3) + 2] = sum & 0x00FF;
+
+		serialport->serial_write((char *)serial_buf, (num_leds * 3) + 3);
+		serialport->serial_flush_tx();
+		
+		delete[] serial_buf;
+	}
+}

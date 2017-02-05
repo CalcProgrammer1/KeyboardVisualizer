@@ -120,6 +120,7 @@ public:
     //Add LED strip
     void AddLEDStrip(char* ledstring);
     void AddLEDStripXmas(char * ledstring);
+	void AddLEDStripHue(char * ledstring);
 
     //Function to set custom properties for devices
     void SetDeviceProperty(char * devprop);

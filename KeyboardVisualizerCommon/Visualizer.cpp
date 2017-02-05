@@ -54,6 +54,7 @@ SteelSeriesGameSense    skb;
 MSIKeyboard             mkb;
 std::vector<LEDStrip *> str;
 std::vector<LEDStrip *> xmas;
+std::vector<LEDStrip *>	hue;
 
 std::vector<char *>     device_properties;
 
@@ -187,6 +188,30 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
     LEDStrip *newstr = new LEDStrip();
     newstr->Initialize(ledstring);
     xmas.push_back(newstr);
+}
+
+void Visualizer::AddLEDStripHue(char* ledstring)
+{
+	//Scan through already registered LED strips and
+	//verify that the port name is not already in use
+	for (unsigned int i = 0; i < str.size(); i++)
+	{
+		if (strcmp(str[i]->GetLEDString(), ledstring) == 0)
+		{
+			return;
+		}
+	}
+	for (unsigned int i = 0; i < xmas.size(); i++)
+	{
+		if (strcmp(xmas[i]->GetLEDString(), ledstring) == 0)
+		{
+			return;
+		}
+	}
+
+	LEDStrip *newstr = new LEDStrip();
+	newstr->Initialize(ledstring);
+	hue.push_back(newstr);
 }
 
 void Visualizer::SetDeviceProperty(char * devprop)
@@ -1598,6 +1623,11 @@ void Visualizer::LEDStripUpdateThread()
             {
                 xmas[i]->SetLEDsXmas(pixels_out->pixels);
             }
+
+			for (unsigned int i = 0; i < hue.size(); i++)
+			{
+				hue[i]->SetLEDsHue(pixels_out->pixels);
+			}
 
             if (delay < 15)
             {

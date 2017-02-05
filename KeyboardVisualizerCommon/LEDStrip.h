@@ -30,6 +30,7 @@ public:
     void SetNumLEDs(int numleds);
     void SetLEDs(COLORREF pixels[64][256]);
     void SetLEDsXmas(COLORREF pixels[64][256]);
+	void SetLEDsHue(COLORREF pixels[64][256]);
 
 private:
     int baud_rate;
