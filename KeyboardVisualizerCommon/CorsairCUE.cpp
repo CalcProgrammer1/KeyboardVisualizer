@@ -9,7 +9,7 @@
 
 #define CORSAIR_CUE_ENABLED
 
-boolean failed;
+static boolean failed;
 
 #ifdef CORSAIR_CUE_ENABLED
 #include <algorithm>

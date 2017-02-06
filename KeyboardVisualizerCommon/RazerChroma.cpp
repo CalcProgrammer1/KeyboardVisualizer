@@ -56,7 +56,7 @@ RazerChroma::~RazerChroma()
 }
 
 
-void SetupKeyboardGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list)
+static void SetupKeyboardGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list)
 {
     for (int x = 0; x < x_count; x++)
     {

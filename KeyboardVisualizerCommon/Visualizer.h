@@ -86,6 +86,7 @@ public:
 #ifdef WIN32
     //Update threads for devices supported only under Windows
     void CmKeyboardUpdateThread();
+    void LogitechSDKUpdateThread();
 #else
 
 #endif

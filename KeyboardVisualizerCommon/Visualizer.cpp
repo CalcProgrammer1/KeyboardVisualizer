@@ -26,6 +26,7 @@
 #include "RazerChroma.h"
 #include "CorsairCUE.h"
 #include "CmKeyboard.h"
+#include "LogitechSDK.h"
 
 //Includes for devices supported only under Linux
 #else
@@ -42,6 +43,7 @@
 #ifdef WIN32
 CorsairCUE              ckb;
 CmKeyboard              cmkb;
+LogitechSDK             lkb;
 
 //Devices supported only under Linux
 #else
@@ -90,6 +92,13 @@ THREAD cmkbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->CmKeyboardUpdateThread();
+    THREADRETURN
+}
+
+THREAD lkbthread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->LogitechSDKUpdateThread();
     THREADRETURN
 }
 
@@ -409,6 +418,7 @@ void Visualizer::Initialize()
     //Initialize devices supported only under Windows
 #ifdef WIN32
     cmkb.Initialize();
+    lkb.Initialize();
 
     //Initialize devices supported only under Linux
 #else
@@ -892,6 +902,7 @@ void Visualizer::StartThread()
     _beginthread(rkbthread, 0, this);
     _beginthread(ckbthread, 0, this);
     _beginthread(cmkbthread, 0, this);
+    _beginthread(lkbthread, 0, this);
     _beginthread(skbthread, 0, this);
     _beginthread(mkbthread, 0, this);
     _beginthread(lsthread, 0, this);
@@ -1539,6 +1550,14 @@ void Visualizer::VisThread()
 void Visualizer::CmKeyboardUpdateThread()
 {
     while (cmkb.SetLEDs(pixels_out->pixels))
+    {
+        Sleep(delay);
+    }
+}
+
+void Visualizer::LogitechSDKUpdateThread()
+{
+    while (lkb.SetLEDs(pixels_out->pixels))
     {
         Sleep(delay);
     }

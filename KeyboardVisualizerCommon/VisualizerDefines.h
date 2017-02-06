@@ -28,6 +28,8 @@ typedef bool            boolean;
 #define strtok_s        strtok_r
 #endif
 
+#define RGB2BGR(a_ulColor) (a_ulColor & 0xFF000000) | ((a_ulColor & 0xFF0000) >> 16) | (a_ulColor & 0x00FF00) | ((a_ulColor & 0x0000FF) << 16)
+
 //Special purpose row indices
 #define ROW_IDX_BAR_GRAPH           0
 #define ROW_IDX_SINGLE_COLOR        1

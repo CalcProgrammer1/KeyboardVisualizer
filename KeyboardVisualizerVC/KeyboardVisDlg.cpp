@@ -18,8 +18,6 @@
 // custom message ID
 #define WM_TRAYICON_EVENT (WM_APP + 1)
 
-#define RGB2BGR(a_ulColor) (a_ulColor & 0xFF000000) | ((a_ulColor & 0xFF0000) >> 16) | (a_ulColor & 0x00FF00) | ((a_ulColor & 0x0000FF) << 16)
-
 IMPLEMENT_DYNAMIC(KeyboardVisDlg, CDialogEx)
 
 Visualizer* vis;
