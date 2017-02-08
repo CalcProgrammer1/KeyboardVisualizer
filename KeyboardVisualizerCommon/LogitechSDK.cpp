@@ -52,7 +52,6 @@ void LogitechSDK::Initialize()
 
     if (!failed)
     {
-        LogiLedSetTargetDevice(LOGI_DEVICETYPE_ALL);
         SetupKeyboardGrid(21, 6, LogitechXIndex, LogitechYIndex);
     }
 }
@@ -75,7 +74,21 @@ bool LogitechSDK::SetLEDs(COLORREF pixels[64][256])
             }
         }
 
-        LogiLedSetLightingFromBitmap(LogitechBitmap);
+        LogiLedSetTargetDevice(LOGI_DEVICETYPE_PERKEY_RGB);
+        if (!LogiLedSetLightingFromBitmap(LogitechBitmap))
+        {
+            failed = TRUE;
+            return FALSE;
+        }
+
+        COLORREF single_color = pixels[ROW_IDX_SINGLE_COLOR][0];
+
+        LogiLedSetTargetDevice(LOGI_DEVICETYPE_RGB | LOGI_DEVICETYPE_MONOCHROME);
+        if (!LogiLedSetLighting(GetRValue(single_color) / 2.55f, GetGValue(single_color) / 2.55f, GetBValue(single_color) / 2.55f))
+        {
+            failed = TRUE;
+            return FALSE;
+        }
 
         return TRUE;
     }
