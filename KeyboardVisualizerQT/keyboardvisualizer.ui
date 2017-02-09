@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Keyboard Visualizer 3.02</string>
+   <string>Keyboard Visualizer 3.03</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QLabel" name="label_Amplitude">
