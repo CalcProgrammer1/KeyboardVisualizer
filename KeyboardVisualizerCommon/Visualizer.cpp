@@ -54,7 +54,7 @@ SteelSeriesGameSense    skb;
 MSIKeyboard             mkb;
 std::vector<LEDStrip *> str;
 std::vector<LEDStrip *> xmas;
-std::vector<LEDStrip *>	hue;
+std::vector<LEDStrip *>	huePlus;
 
 std::vector<char *>     device_properties;
 
@@ -160,6 +160,13 @@ void Visualizer::AddLEDStrip(char* ledstring)
             return;
         }
     }
+	for (unsigned int i = 0; i < huePlus.size(); i++)
+	{
+		if (strcmp(huePlus[i]->GetLEDString(), ledstring) == 0)
+		{
+			return;
+		}
+	}
 
     LEDStrip *newstr = new LEDStrip();
     newstr->Initialize(ledstring);
@@ -184,13 +191,20 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
             return;
         }
     }
+	for (unsigned int i = 0; i < huePlus.size(); i++)
+	{
+		if (strcmp(huePlus[i]->GetLEDString(), ledstring) == 0)
+		{
+			return;
+		}
+	}
 
     LEDStrip *newstr = new LEDStrip();
     newstr->Initialize(ledstring);
     xmas.push_back(newstr);
 }
 
-void Visualizer::AddLEDStripHue(char* ledstring)
+void Visualizer::AddLEDStripHuePlus(char* ledstring)
 {
 	//Scan through already registered LED strips and
 	//verify that the port name is not already in use
@@ -208,10 +222,17 @@ void Visualizer::AddLEDStripHue(char* ledstring)
 			return;
 		}
 	}
+	for (unsigned int i = 0; i < huePlus.size(); i++)
+	{
+		if (strcmp(huePlus[i]->GetLEDString(), ledstring) == 0)
+		{
+			return;
+		}
+	}
 
 	LEDStrip *newstr = new LEDStrip();
-	newstr->Initialize(ledstring);
-	hue.push_back(newstr);
+	newstr->InitializeHuePlus(ledstring);
+	huePlus.push_back(newstr);
 }
 
 void Visualizer::SetDeviceProperty(char * devprop)
@@ -626,6 +647,14 @@ void Visualizer::SaveSettings()
         snprintf(out_str, 1024, "xmas=%s\r\n", xmas[i]->GetLEDString());
         outfile.write(out_str, strlen(out_str));
     }
+
+	//Save HuePlus Configurations
+	for (unsigned int i = 0; i < huePlus.size(); i++)
+	{
+		//Save HuePlus Configuration
+		snprintf(out_str, 1024, "hueplus=%s\r\n", huePlus[i]->GetLEDString());
+		outfile.write(out_str, strlen(out_str));
+	}
 
     //Save Network Mode
     switch (netmode)
@@ -1610,7 +1639,7 @@ void Visualizer::MSIKeyboardUpdateThread()
 
 void Visualizer::LEDStripUpdateThread()
 {
-    if (str.size() > 0 || xmas.size() > 0)
+    if (str.size() > 0 || xmas.size() > 0 || huePlus.size() > 0)
     {
         while (TRUE)
         {
@@ -1624,9 +1653,9 @@ void Visualizer::LEDStripUpdateThread()
                 xmas[i]->SetLEDsXmas(pixels_out->pixels);
             }
 
-			for (unsigned int i = 0; i < hue.size(); i++)
+			for (unsigned int i = 0; i < huePlus.size(); i++)
 			{
-				hue[i]->SetLEDsHue(pixels_out->pixels);
+				huePlus[i]->SetLEDsHuePlus(pixels_out->pixels);
 			}
 
             if (delay < 15)
