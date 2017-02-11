@@ -24,16 +24,19 @@ public:
     ~LEDStrip();
 
     void Initialize(char* ledstring);
+    void InitializeHuePlus(char * ledstring);
     void InitializeSerial(char* portname, int baud);
     void InitializeUDP(char* clientname, char* port);
     char* GetLEDString();
     void SetNumLEDs(int numleds);
     void SetLEDs(COLORREF pixels[64][256]);
     void SetLEDsXmas(COLORREF pixels[64][256]);
+    void SetLEDsHuePlus(COLORREF pixels[64][256]);
 
 private:
     int baud_rate;
     int num_leds;
+    int fans;
 
     int * LEDStripXIndex;
     int * LEDStripYIndex;
