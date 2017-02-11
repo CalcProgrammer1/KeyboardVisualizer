@@ -305,9 +305,9 @@ void LEDStrip::SetLEDsHuePlus(COLORREF pixels[64][256])
 
 		serial_buf[0] = 0x4b; 
 		serial_buf[1] = channel;
-		serial_buf[2] = 0x00;
+		serial_buf[2] = 0x0e;					
 		serial_buf[3] = fans; 
-		serial_buf[4] = 0x02;
+		serial_buf[4] = 0x00;
 
 		for (int i = 5; i < 250; i++) {		//clearing the buf otherwise sometimes strange things are written to the COM Port
 			serial_buf[i] = 0x00;

@@ -286,6 +286,7 @@ boolean parse_command_line(char * command_line)
 			printf("					  - num_leds: Fans * 8 ex. 3 Fans -> 24\r\n");
 			printf("					  - Important for Fans: If you have connected fans on both channels only count the fans on the channel with the most fans\r\n");
 			printf("											ex. 3 Fans on Ch. 1 4 Fans on CH. 2: num_leds 32 for the 4 Fans and channel 0 for both channels\r\n");
+			printf("											For best Visualizer results don`t connect one one channel 3 fans more than one the other channel\r\n");
 			printf("					  - (ex. hueplus=COM4,0,24\r\n");
             return FALSE;
         }
