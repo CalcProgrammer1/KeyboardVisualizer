@@ -36,7 +36,6 @@ public:
 private:
     int baud_rate;
     int num_leds;
-	int channel;
 	int fans;
 
     int * LEDStripXIndex;

@@ -90,35 +90,10 @@ void LEDStrip::InitializeHuePlus(char* ledstring)
 	strcpy(led_string, ledstring);
 
 	LPSTR   source = NULL;
-	LPSTR	channels = NULL;
 	LPSTR   numleds = NULL;
 	LPSTR   next = NULL;
 
 	source = strtok_s(ledstring, ",", &next);
-
-	//Check for the selected channel
-	if (strlen(next))
-	{
-		channels = strtok_s(next, ",", &next);
-		switch (atoi(channels)) {
-		case 0: {				//both channels
-			channel = 0x00; 
-			break;
-		}
-		case 1: {
-			channel = 0x01;
-			break;
-		}
-		case 2: {
-			channel = 0x02;
-			break;
-		}
-		default: {				//both channels
-			channel = 0x00;
-			break;
-		}
-		}
-	}
 
 	//Check for the number of LEDs, sets the corresponding variable with the counter for the fans
 	if (strlen(next))
@@ -304,7 +279,7 @@ void LEDStrip::SetLEDsHuePlus(COLORREF pixels[64][256])
 												//-> max of 40 LEDs per Channel (or 5 Fans a 8 LEDs) -> 125 Blocks (empty LEDs are written, too)
 
 		serial_buf[0] = 0x4b; 
-		serial_buf[1] = channel;
+		serial_buf[1] = 0x00;
 		serial_buf[2] = 0x0e;					
 		serial_buf[3] = fans; 
 		serial_buf[4] = 0x00;
