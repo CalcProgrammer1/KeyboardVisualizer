@@ -1,11 +1,12 @@
 /*---------------------------------------------------------*\
-|  Definitions for MSI SteelSeries Keyboard Interface       |
+|  Definitions for Thermaltake Poseidon Z RGB Keyboard      |
+|  Interface                                                |
 |                                                           |
-|  Adam Honse (calcprogrammer1@gmail.com), 12/11/2016       |
+|  Adam Honse (calcprogrammer1@gmail.com), 2/12/2017        |
 \*---------------------------------------------------------*/
 
-#ifndef MSI_KEYBOARD_H
-#define MSI_KEYBOARD_H
+#ifndef POSEIDON_ZRGB_KEYBOARD_H
+#define POSEIDON_ZRGB_KEYBOARD_H
 
 #include <sstream>
 #include <wchar.h>
@@ -13,11 +14,11 @@
 
 #include "VisualizerDefines.h"
 
-class MSIKeyboard
+class PoseidonZRGBKeyboard
 {
 public:
-    MSIKeyboard();
-    ~MSIKeyboard();
+    PoseidonZRGBKeyboard();
+    ~PoseidonZRGBKeyboard();
 
     void Initialize();
     bool SetLEDs(COLORREF pixels[64][256]);

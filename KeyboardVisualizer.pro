@@ -37,8 +37,8 @@ HEADERS += \
     KeyboardVisualizerCommon/RazerChromaLinux.h \
     KeyboardVisualizerQT/KeyboardVisDlg.h \
     KeyboardVisualizerCommon/UsbDevice.h \
-    KeyboardVisualizerCommon/MSIKeyboard.h \
-    KeyboardVisualizerCommon/SteelSeriesGameSense.h
+    KeyboardVisualizerCommon/SteelSeriesGameSense.h \
+    KeyboardVisualizerCommon/PoseidonZRGBKeyboard.h
 
 SOURCES += \
     KeyboardVisualizerCommon/hsv.cpp \
@@ -52,8 +52,8 @@ SOURCES += \
     KeyboardVisualizerQT/KeyboardVisDlg.cpp \
     KeyboardVisualizerQT/main.cpp \
     KeyboardVisualizerCommon/UsbDevice.cpp \
-    KeyboardVisualizerCommon/MSIKeyboard.cpp \
-    KeyboardVisualizerCommon/SteelSeriesGameSense.cpp
+    KeyboardVisualizerCommon/SteelSeriesGameSense.cpp \
+    KeyboardVisualizerCommon/PoseidonZRGBKeyboard.cpp
 
 RESOURCES += \
     KeyboardVisualizerQT/resources.qrc

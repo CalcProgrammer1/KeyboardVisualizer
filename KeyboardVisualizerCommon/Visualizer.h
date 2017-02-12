@@ -95,6 +95,7 @@ public:
     void CorsairKeyboardUpdateThread();
     void SteelSeriesKeyboardUpdateThread();
     void MSIKeyboardUpdateThread();
+    void PoseidonZRGBKeyboardUpdateThread();
     void LEDStripUpdateThread();
 
     //Called when settings changed
