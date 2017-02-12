@@ -38,7 +38,8 @@ HEADERS += \
     KeyboardVisualizerQT/KeyboardVisDlg.h \
     KeyboardVisualizerCommon/UsbDevice.h \
     KeyboardVisualizerCommon/SteelSeriesGameSense.h \
-    KeyboardVisualizerCommon/PoseidonZRGBKeyboard.h
+    KeyboardVisualizerCommon/PoseidonZRGBKeyboard.h \
+    KeyboardVisualizerCommon/MSIKeyboard.h
 
 SOURCES += \
     KeyboardVisualizerCommon/hsv.cpp \
@@ -53,7 +54,8 @@ SOURCES += \
     KeyboardVisualizerQT/main.cpp \
     KeyboardVisualizerCommon/UsbDevice.cpp \
     KeyboardVisualizerCommon/SteelSeriesGameSense.cpp \
-    KeyboardVisualizerCommon/PoseidonZRGBKeyboard.cpp
+    KeyboardVisualizerCommon/PoseidonZRGBKeyboard.cpp \
+    KeyboardVisualizerCommon/MSIKeyboard.cpp
 
 RESOURCES += \
     KeyboardVisualizerQT/resources.qrc
