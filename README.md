@@ -37,6 +37,9 @@ There are many settings you can tweak to make Keyboard Visualizer work with your
     * Animation Speed - Speed of background and foreground animated patterns, default 100, can be negative
                         to reverse the direction of the pattern, can be increased to speed up the pattern or
                         decreased to slow it down.
+    * Filter Constant - A low pass filter constant between 0 and 1.  A value less than 1 slows the response of the
+                        visualization, which makes for a less jumpy, smoother effect the lower the value is.
+    * Background Timeout - How long to wait (in multiples of 10 milliseconds) before fading the background in.
 
 # Command Line Options and Settings File
 
@@ -151,6 +154,12 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         - Razer Blade (spectrograph)
         - Razer Ornata Chroma (spectrograph)
         
+        - Unsupported keyboards may be used in "generic" mode by adding the razer_use_keyboard_generic_effect settings parameter
+        - This uses a single effect for all keyboards supported by the SDK core, even those that don't have a device ID
+        - Use this setting for support of these otherwise unsupported keyboards:
+            - Razer Blade Stealth (late 2016, Kaby Lake) (spectrograph)
+            - Razer BlackWidow Chroma V2 (spectrograph)
+
         Keypads
         - Razer Orbweaver Chroma (spectrograph)
         - Razer Tartarus Chroma (single color)
@@ -168,6 +177,10 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         - Kraken 7.1 Chroma (single color)
         - Kraken 7.1 Chroma V2 (single color)
         - ManO'War (single color)
+
+        - The Kraken 7.1 Chroma V1 does not support custom effects, so a flickery workaround is used.  If you only have a V2 you
+        - can add the settings parameter razer_use_headset_custom_effect to make the V2 output a smooth, non-flickery output but
+        - if you also have a V1 or ManO'War connected it will go black.
         
         Mouse Mats
         - Firefly (bar)
@@ -187,8 +200,24 @@ Keyboard Visualizer allows you to save your custom settings in two different way
     * Cooler Master RGB
 
     	Keyboards
-    	- Masterkeys Pro L
-    	- Masterkeys Pro S
+    	- Masterkeys Pro L (spectrograph)
+    	- Masterkeys Pro S (spectrograph)
+
+    * Logitech G Gaming SDK
+
+        Keyboards
+        - G910 Orion Spark (spectrograph)
+        - G810 Orion Spectrum (spectrograph)
+        - Other single-zone RGB and Monochrome keyboards (single color)
+
+        Headsets
+        - G633 (single color)
+        - G933 (single color)
+
+        Mice
+        - G600 (single color)
+        - G900 Chaos Spectrum (single color)
+        - G303 Daedalus Apex (single color)
 
     * SteelSeries
 
@@ -199,6 +228,10 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         
         Keyboards
         - MSI 3-zone laptop keyboards and additional LED zones (MSI GS63VR, etc) (bar, single color)
+
+    * NZXT Hue+
+
+        - Configured using the hueplus=port,num_leds option in the settings file (bar)
 
     * WS28XX Pixel LED Strips
     
@@ -256,6 +289,10 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         
         Keyboards
         - MSI 3-zone laptop keyboards and additional LED zones (MSI GS63VR, etc) (bar, single color)
+
+    * NZXT Hue+
+
+        - Configured using the hueplus=port,num_leds option in the settings file (bar)
 
     * WS28XX Pixel LED Strips
     
