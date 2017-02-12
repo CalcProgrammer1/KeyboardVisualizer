@@ -37,6 +37,7 @@
 //Includes for devices supported on both Windows and Linux
 #include "SteelSeriesGameSense.h"
 #include "MSIKeyboard.h"
+#include "PoseidonZRGBKeyboard.h"
 #include "LEDStrip.h"
 
 //Devices supported only under Windows
@@ -54,6 +55,7 @@ CorsairCKB              ckb;
 RazerChroma             rkb;
 SteelSeriesGameSense    skb;
 MSIKeyboard             mkb;
+PoseidonZRGBKeyboard    pkb;
 std::vector<LEDStrip *> str;
 std::vector<LEDStrip *> xmas;
 std::vector<LEDStrip *> huePlus;
@@ -134,6 +136,13 @@ THREAD mkbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
     vis->MSIKeyboardUpdateThread();
+    THREADRETURN
+}
+
+THREAD pkbthread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->PoseidonZRGBKeyboardUpdateThread();
     THREADRETURN
 }
 
@@ -476,6 +485,7 @@ void Visualizer::Initialize()
     ckb.Initialize();
     skb.Initialize();
     mkb.Initialize();
+    pkb.Initialize();
 
     netmode              = NET_MODE_DISABLED;
     background_timer     = 0;
@@ -959,6 +969,7 @@ void Visualizer::StartThread()
     _beginthread(lkbthread, 0, this);
     _beginthread(skbthread, 0, this);
     _beginthread(mkbthread, 0, this);
+    _beginthread(pkbthread, 0, this);
     _beginthread(lsthread, 0, this);
 
 #else
@@ -971,7 +982,8 @@ void Visualizer::StartThread()
     pthread_create(&threads[4], NULL, &ckbthread, this);
     pthread_create(&threads[5], NULL, &skbthread, this);
     pthread_create(&threads[6], NULL, &mkbthread, this);
-    pthread_create(&threads[7], NULL, &lsthread, this);
+    pthread_create(&threads[7], NULL, &pkbthread, this);
+    pthread_create(&threads[8], NULL, &lsthread, this);
 #endif
 }
 
@@ -1651,6 +1663,14 @@ void Visualizer::SteelSeriesKeyboardUpdateThread()
 void Visualizer::MSIKeyboardUpdateThread()
 {
     while (mkb.SetLEDs(pixels_out->pixels))
+    {
+        Sleep(delay);
+    }
+}
+
+void Visualizer::PoseidonZRGBKeyboardUpdateThread()
+{
+    while (pkb.SetLEDs(pixels_out->pixels))
     {
         Sleep(delay);
     }
