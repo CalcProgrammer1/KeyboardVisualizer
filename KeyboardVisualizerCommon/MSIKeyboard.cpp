@@ -83,6 +83,12 @@ void MSIKeyboard::Initialize()
 
 bool MSIKeyboard::SetLEDs(COLORREF pixels[64][256])
 {
+#define POSEIDONZ_START       0x07
+#define POSEIDONZ_PROFILE     0x01
+#define POSEIDONZ_LED_CMD     0x0E
+#define POSEIDONZ_RED_GRN_CH  0x01
+#define POSEIDONZ_BLU_CH      0x02
+
     //Shout out to bparker06 for reverse engineering the MSI keyboard USB protocol!
     // https://github.com/bparker06/msi-keyboard/blob/master/keyboard.cpp for original implementation
 
@@ -138,31 +144,32 @@ bool MSIKeyboard::SetLEDs(COLORREF pixels[64][256])
     usb.SendToDevice(buf, 8);
 #endif
 
-    unsigned char red_buf[264];
-    unsigned char grn_buf[264];
+    unsigned char red_grn_buf[264];
     unsigned char blu_buf[264];
 
     for(int i = 0; i < 264; i++)
     {
-        red_buf[i] = 0xFF;
-        grn_buf[i] = 0x00;
-        blu_buf[i] = 0x11;
+        red_grn_buf[i] = 0x00;
+        blu_buf[i]     = 0x00;
     }
 
-    red_buf[0] = 0x07;
-    red_buf[1] = 0x09;
-    red_buf[2] = 0x01;
-    red_buf[3] = 0x01;
+    red_grn_buf[0] = POSEIDONZ_START;
+    red_grn_buf[1] = POSEIDONZ_LED_CMD;
+    red_grn_buf[2] = POSEIDONZ_PROFILE;
+    red_grn_buf[3] = POSEIDONZ_RED_GRN_CH;
+    red_grn_buf[4] = 0x00;
+    red_grn_buf[5] = 0x00;
+    red_grn_buf[6] = 0x00;
+    red_grn_buf[7] = 0x00;
 
-    grn_buf[0] = 0x07;
-    grn_buf[1] = 0x09;
-    grn_buf[2] = 0x01;
-    grn_buf[3] = 0x02;
-
-    blu_buf[0] = 0x07;
-    blu_buf[1] = 0x09;
-    blu_buf[2] = 0x01;
-    blu_buf[3] = 0x03;
+    blu_buf[0] = POSEIDONZ_START;
+    blu_buf[1] = POSEIDONZ_LED_CMD;
+    blu_buf[2] = POSEIDONZ_PROFILE;
+    blu_buf[3] = POSEIDONZ_BLU_CH;
+    blu_buf[4] = 0x00;
+    blu_buf[5] = 0x00;
+    blu_buf[6] = 0x00;
+    blu_buf[7] = 0x00;
 
     for(int x = 0; x < 23; x++)
     {
@@ -173,19 +180,16 @@ bool MSIKeyboard::SetLEDs(COLORREF pixels[64][256])
 
             if(idx != 0)
             {
-                red_buf[idx] = GetRValue(color);
-                grn_buf[idx] = GetGValue(color);
+                red_grn_buf[idx] = GetRValue(color);
+                red_grn_buf[idx + 128 ] = GetGValue(color);
                 blu_buf[idx] = GetBValue(color);
             }
         }
     }
 
-    usb.SendToDevice(red_buf, 264);
-    Sleep(10);
-    usb.SendToDevice(grn_buf, 264);
-    Sleep(10);
+    usb.SendToDevice(red_grn_buf, 264);
+    Sleep(5);
     usb.SendToDevice(blu_buf, 264);
-    Sleep(300);
 
     return init_ok;
 }
