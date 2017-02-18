@@ -119,6 +119,9 @@ public:
     //Draw Pattern
     void DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels *pixels);
 
+	//Draw LED Out
+	void DrawRGBOut();
+
     //Add LED strip
     void AddLEDStrip(char* ledstring);
     void AddLEDStripXmas(char * ledstring);

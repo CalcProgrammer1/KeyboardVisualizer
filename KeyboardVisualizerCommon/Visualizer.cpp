@@ -987,6 +987,18 @@ void Visualizer::StartThread()
 #endif
 }
 
+void Visualizer::DrawRGBOut()
+{
+	COLORREF color = 0x00000000;
+	for (int x = 0; x < 256; x++)
+	{
+		for (int y = 0; y < 64; y++)
+		{
+			pixels_render->pixels[y][x] = RGB((GetRValue(color) / 256), (GetGValue(color) / 256), (GetBValue(color) / 256));
+		}
+	}
+}
+
 void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)
 {
     bright = (int)(bright * (255.0f / 100.0f));
