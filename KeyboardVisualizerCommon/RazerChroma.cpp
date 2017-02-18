@@ -8,6 +8,9 @@
 
 #include <iostream>
 
+#include <lusb0_usb.h>
+#pragma comment(lib, "libusb32.lib")
+
 //Index lists for BlackWidow
 int BlackWidowXIndex[22];
 int BlackWidowYIndex[6];
@@ -19,6 +22,10 @@ int BlackWidowTEYIndex[6];
 //Index lists for Blade Stealth
 int BladeStealthXIndex[16];
 int BladeStealthYIndex[6];
+
+//Index lists for Blade Pro
+int BladeProXIndex[25];
+int BladeProYIndex[6];
 
 //Index list for Firefly
 int FireflyIndex[15];
@@ -38,8 +45,41 @@ int DeathStalkerXIndex[6];
 int OrbweaverXIndex[5];
 int OrbweaverYIndex[4];
 
+struct usb_dev_handle* udev;
+
+struct usb_dev_handle* open(unsigned int uiVID, unsigned int uiPID, unsigned int uiMI) {
+	for (struct usb_bus* bus = usb_get_busses(); bus; bus = bus->next) {
+		for (struct usb_device* dev = bus->devices; dev; dev = dev->next) {
+			if (dev->descriptor.idVendor == uiVID && dev->descriptor.idProduct == uiPID) {
+				struct usb_dev_handle* udev;
+				if (udev = usb_open(dev)) {
+					struct usb_config_descriptor* config_descriptor;
+					if (dev->descriptor.bNumConfigurations && (config_descriptor = &dev->config[0])) {
+						for (int intfIndex = 0; intfIndex < config_descriptor->bNumInterfaces; intfIndex++) {
+							if (config_descriptor->interface[intfIndex].num_altsetting) {
+								struct usb_interface_descriptor* intf = &config_descriptor->interface[intfIndex].altsetting[0];
+								if (intf->bInterfaceNumber == 0 && intf->bAlternateSetting == 0) {
+									//printf("Device %04X:%04X opened!\n", uiVID, uiPID);
+									return udev;
+								} else
+									usb_close(udev);
+							} else
+								usb_close(udev);
+						}
+					} else
+						usb_close(udev);
+				}
+			}
+		}
+	}
+}
+
 RazerChroma::RazerChroma()
 {
+	usb_init();
+	usb_find_busses();
+	usb_find_devices();
+	udev = open(0x1532, 0x0210, 0);
 }
 
 
@@ -53,6 +93,7 @@ RazerChroma::~RazerChroma()
             UnInit();
         }
     }
+	usb_close(udev);
 }
 
 
@@ -110,6 +151,7 @@ void RazerChroma::Initialize()
     // Initialize variables
     use_keyboard_generic_effect = false;
     use_headset_custom_effect = false;
+    use_alternate_effect = false;
 
 	// Dynamically loads the Chroma SDK library.
 	hModule = LoadLibrary(CHROMASDKDLL);
@@ -129,6 +171,9 @@ void RazerChroma::Initialize()
 
             //Build index list for Blade Stealth
             SetupKeyboardGrid(16, 6, BladeStealthXIndex, BladeStealthYIndex);
+
+            //Build index list for Blade Pro 2016
+            SetupKeyboardGrid(25, 6, BladeProXIndex, BladeProYIndex);
 
             //Build index list for OrbWeaver
             SetupKeyboardGrid(5, 4, OrbweaverXIndex, OrbweaverYIndex);
@@ -216,9 +261,71 @@ void RazerChroma::Initialize()
 	}
 }
 
+#define DELAY 0
+#define REPORT_SIZE 0x5A
+
+void command(struct usb_dev_handle* udev, char* request) {
+	request[88] = 0; // crc
+	for(unsigned char i = 2; i < 88; i++)
+		request[88] ^= request[i]; // crc
+	int len = usb_control_msg(udev
+			, USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_ENDPOINT_OUT
+			,0x09  // request - HID_REQ_SET_REPORT
+			,0x300 // value
+			,0x00  // index
+			,request   // data
+			,REPORT_SIZE
+			,5000); // USB timeout
+	Sleep(DELAY);
+	if(len == REPORT_SIZE) {
+		char* response = (char*)malloc(REPORT_SIZE);
+		len = usb_control_msg(udev
+				, USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_ENDPOINT_IN
+				,0x01  // request HID_REQ_GET_REPORT
+				,0x300 // value
+				,0x00  // response_index
+				,response   // data
+				,REPORT_SIZE
+				,5000); // USB timeout
+		Sleep(DELAY);
+		free(response);
+	}
+}
+
+void command_frame_kbd(struct usb_dev_handle* udev, COLORREF colour[6][25]) {
+	char* request = (char*)malloc(REPORT_SIZE);
+	for (unsigned char row = 0; row < 6; row++) {
+		memset(request, 0, REPORT_SIZE);
+		memcpy(&request[0],"\x00\xFF\x00\x00\x00\x46\x03\x0B\xFF\x00\x01\x18",12);
+		request[9] = row;
+		for (unsigned char col = 0; col < 25; col++)
+			memcpy(&request[12+col*3], &colour[row][col], 3);
+		command(udev, request);
+	}
+	free(request);
+}
+
+void command_custom(struct usb_dev_handle* udev) {
+	char * request = (char*)malloc(REPORT_SIZE);
+	memset(request, 0, REPORT_SIZE);
+	memcpy(&request[0],"\x00\xFF\x00\x00\x00\x02\x03\x0A\x05\x01",9);
+	command(udev, request);
+	free(request);
+}
+
 
 bool RazerChroma::SetLEDs(COLORREF pixels[64][256]) 
 {
+	if (use_alternate_effect) {
+		COLORREF colour[6][25];
+		for (int x = 0; x < 25; x++)
+			for (int y = 0; y < 6; y++)
+				colour[y][x] = (pixels[BladeProYIndex[y]][BladeProXIndex[x]] & 0x00FFFFFF);
+		command_frame_kbd(udev,colour);
+		command_custom(udev);
+		//TODO add other devices besides RBP2016
+		return TRUE;
+	} else {
     CreateEffect = (CREATEEFFECT)GetProcAddress(hModule, "CreateEffect");
     CreateKeyboardEffect = (CREATEKEYBOARDEFFECT)GetProcAddress(hModule, "CreateKeyboardEffect");
     CreateMouseEffect = (CREATEMOUSEEFFECT)GetProcAddress(hModule, "CreateMouseEffect");
@@ -371,4 +478,5 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
         return TRUE;
     }
+	}
 };

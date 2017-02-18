@@ -270,6 +270,10 @@ void Visualizer::SetDeviceProperty(char * devprop)
     {
         rkb.use_headset_custom_effect = true;
     }
+    else if (strcmp(devprop, "razer_use_alternate_effect") == 0)
+    {
+        rkb.use_alternate_effect = true;
+    }
 #endif
 }
 

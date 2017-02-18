@@ -42,6 +42,7 @@ public:
 
     bool use_keyboard_generic_effect;
     bool use_headset_custom_effect;
+	bool use_alternate_effect;
 
 private:
 	HMODULE hModule = NULL;

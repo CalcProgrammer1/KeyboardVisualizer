@@ -94,7 +94,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-1.8.3\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\dependencies\lib-usb;..\dependencies\razer-chroma-1.8.3\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -106,7 +106,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\dependencies\corsair-cue-1.15.28\lib\i386;..\dependencies\corsair-cue-1.15.28\lib\x64;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Lib\x86;..\dependencies\logitech-gaming-led-sdk\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\dependencies\lib-usb;..\dependencies\corsair-cue-1.15.28\lib\i386;..\dependencies\corsair-cue-1.15.28\lib\x64;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Lib\x86;..\dependencies\logitech-gaming-led-sdk\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -138,7 +138,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-1.8.3\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\dependencies\lib-usb;..\dependencies\razer-chroma-1.8.3\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -148,7 +148,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\dependencies\corsair-cue-1.15.28\lib\i386;..\dependencies\corsair-cue-1.15.28\lib\x64;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Lib\x86;..\dependencies\logitech-gaming-led-sdk\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\dependencies\lib-usb;..\dependencies\corsair-cue-1.15.28\lib\i386;..\dependencies\corsair-cue-1.15.28\lib\x64;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Lib\x86;..\dependencies\logitech-gaming-led-sdk\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -182,6 +182,7 @@
     <ClCompile Include="..\KeyboardVisualizerCommon\LogitechSDK.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\MSIKeyboard.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\net_port.cpp" />
+    <ClCompile Include="..\KeyboardVisualizerCommon\PoseidonZRGBKeyboard.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\RazerChroma.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\serial_port.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\SteelSeriesGameSense.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="..\KeyboardVisualizerCommon\LogitechSDK.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\MSIKeyboard.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\net_port.h" />
+    <ClInclude Include="..\KeyboardVisualizerCommon\PoseidonZRGBKeyboard.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\RazerChroma.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\serial_port.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\SteelSeriesGameSense.h" />
