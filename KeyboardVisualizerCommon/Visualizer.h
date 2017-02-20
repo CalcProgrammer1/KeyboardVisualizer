@@ -151,6 +151,9 @@ public:
     //Flag to update UI
     bool update_ui;
 
+	//Flag if program is running
+	bool appRunning;
+
     //Visualizer Background
     vis_pixels pixels_bg;
 

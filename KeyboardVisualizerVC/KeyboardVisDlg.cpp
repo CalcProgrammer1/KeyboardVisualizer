@@ -135,6 +135,8 @@ void KeyboardVisDlg::StartMinimized(boolean startmin)
 
 void KeyboardVisDlg::OnDestroy()
 {
+	vis->DrawRGBOut();
+
     NOTIFYICONDATA Tray;
 
     Tray.cbSize = sizeof(Tray);
@@ -144,8 +146,7 @@ void KeyboardVisDlg::OnDestroy()
     Tray.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
     Tray.uID = ID_SYSTEMTRAY;
     Tray.uCallbackMessage = WM_TRAYICON_EVENT;
-	vis->DrawRGBOut();
-
+	
     Shell_NotifyIcon(NIM_DELETE, &Tray);
 }
 
