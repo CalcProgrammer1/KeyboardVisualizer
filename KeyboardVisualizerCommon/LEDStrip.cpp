@@ -87,13 +87,31 @@ void LEDStrip::Initialize(char* ledstring)
 
 void LEDStrip::InitializeHuePlus(char* ledstring)
 {
-    strcpy(led_string, ledstring);
+	strcpy(led_string, ledstring);
 
-    LPSTR   source = NULL;
-    LPSTR   numleds = NULL;
-    LPSTR   next = NULL;
+	LPSTR   source = NULL;
+	LPSTR channels = NULL;
+	LPSTR   numleds = NULL;
+	LPSTR   next = NULL;
 
-    source = strtok_s(ledstring, ",", &next);
+	source = strtok_s(ledstring, ",", &next);
+
+	//Check for selected channel 0=both, 1= Ch.1, 2= Ch.2
+	if (strlen(next))
+	{
+		channels = strtok_s(next, ",", &next);
+	}
+	switch (atoi(channels)) {
+	case 0:
+		channel = 0x00;
+		break;
+	case 1:
+		channel = 0x01;
+		break;
+	case 2:
+		channel = 0x02;
+		break;
+	}
 
     //Check for the number of LEDs, sets the corresponding variable with the counter for the fans
     if (strlen(next))
@@ -275,16 +293,16 @@ void LEDStrip::SetLEDsHuePlus(COLORREF pixels[64][256])
     {
         unsigned char *serial_buf;
 
-        serial_buf = new unsigned char[250];    //Size of Message always 5 XX Blocks (Mode Selection) +  3 XX for each LED (1 color) 
+        serial_buf = new unsigned char[125];    //Size of Message always 5 XX Blocks (Mode Selection) +  3 XX for each LED (1 color) 
                                                 //-> max of 40 LEDs per Channel (or 5 Fans a 8 LEDs) -> 125 Blocks (empty LEDs are written, too)
 
         serial_buf[0] = 0x4b;
-        serial_buf[1] = 0x00;
-        serial_buf[2] = 0x0e;					
+        serial_buf[1] = channel;
+        serial_buf[2] = 0x0e;				
         serial_buf[3] = fans; 
         serial_buf[4] = 0x00;
 
-        for (int i = 5; i < 250; i++)
+        for (int i = 5; i < 125; i++)
         {
             //clearing the buf otherwise sometimes strange things are written to the COM Port
             serial_buf[i] = 0x00;
@@ -299,7 +317,7 @@ void LEDStrip::SetLEDsHuePlus(COLORREF pixels[64][256])
             serial_buf[idx + 7] = GetBValue(color);
         }
 
-        serialport->serial_write((char *)serial_buf,250);
+        serialport->serial_write((char *)serial_buf,125);
         serialport->serial_flush_tx();
 
         delete[] serial_buf;
