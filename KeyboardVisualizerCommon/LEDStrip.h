@@ -38,6 +38,7 @@ private:
     int num_leds;
     int fans;
 	int channel;
+	const int hueSize = 125;
 
     int * LEDStripXIndex;
     int * LEDStripYIndex;

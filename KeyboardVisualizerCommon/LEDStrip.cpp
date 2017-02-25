@@ -292,7 +292,7 @@ void LEDStrip::SetLEDsHuePlus(COLORREF pixels[64][256])
     if (serialport != NULL)
     {
         unsigned char *serial_buf;
-		const int hueSize = 125;
+		
         serial_buf = new unsigned char[hueSize];    //Size of Message always 5 XX Blocks (Mode Selection) +  3 XX for each LED (1 color) 
                                                 //-> max of 40 LEDs per Channel (or 5 Fans a 8 LEDs) -> 125 Blocks (empty LEDs are written, too)
 
