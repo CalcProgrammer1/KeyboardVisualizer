@@ -281,7 +281,7 @@ boolean parse_command_line(char * command_line)
             printf("                      - (ex.ledstrip=udp:192.168.1.5,1234,30)\r\n");
             printf("    xmas              - COM port, ex. xmas=COM2\r\n");
             printf("	hueplus			  - HUE+ config:\r\n");
-            printf("					  - hueplus=port,channel,num_leds\r\n");
+			printf("					  - hueplus=port,channel,num_leds\r\n");
 			printf("					  - channel: 0 -> both channels, 1 -> channel 1, 2 -> channel 2\r\n");
             printf("					  - num_leds: Fans * 8 ex. 3 Fans -> 24\r\n");
             printf("					  - Important for Fans: If you have connected fans on both channels only count the fans on the channel with the most fans\r\n");

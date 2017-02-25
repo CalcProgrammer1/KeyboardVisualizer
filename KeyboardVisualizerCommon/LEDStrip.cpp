@@ -91,8 +91,8 @@ void LEDStrip::InitializeHuePlus(char* ledstring)
 
 	LPSTR   source = NULL;
 	LPSTR channels = NULL;
-	LPSTR   numleds = NULL;
-	LPSTR   next = NULL;
+	LPSTR  numleds = NULL;
+	LPSTR     next = NULL;
 
 	source = strtok_s(ledstring, ",", &next);
 
@@ -292,8 +292,8 @@ void LEDStrip::SetLEDsHuePlus(COLORREF pixels[64][256])
     if (serialport != NULL)
     {
         unsigned char *serial_buf;
-
-        serial_buf = new unsigned char[125];    //Size of Message always 5 XX Blocks (Mode Selection) +  3 XX for each LED (1 color) 
+		const int hueSize = 125;
+        serial_buf = new unsigned char[hueSize];    //Size of Message always 5 XX Blocks (Mode Selection) +  3 XX for each LED (1 color) 
                                                 //-> max of 40 LEDs per Channel (or 5 Fans a 8 LEDs) -> 125 Blocks (empty LEDs are written, too)
 
         serial_buf[0] = 0x4b;
@@ -302,7 +302,7 @@ void LEDStrip::SetLEDsHuePlus(COLORREF pixels[64][256])
         serial_buf[3] = fans; 
         serial_buf[4] = 0x00;
 
-        for (int i = 5; i < 125; i++)
+        for (int i = 5; i < hueSize; i++)
         {
             //clearing the buf otherwise sometimes strange things are written to the COM Port
             serial_buf[i] = 0x00;
@@ -317,7 +317,7 @@ void LEDStrip::SetLEDsHuePlus(COLORREF pixels[64][256])
             serial_buf[idx + 7] = GetBValue(color);
         }
 
-        serialport->serial_write((char *)serial_buf,125);
+        serialport->serial_write((char *)serial_buf,hueSize);
         serialport->serial_flush_tx();
 
         delete[] serial_buf;
