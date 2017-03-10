@@ -88,6 +88,8 @@ public:
     void CmKeyboardUpdateThread();
     void LogitechSDKUpdateThread();
 #else
+    //Update threads for devices supported only under Linux
+    void AsusAuraUpdateThread();
 
 #endif
     //Update threads for devices supported on both Windows and Linux
