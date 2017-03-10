@@ -31,6 +31,7 @@
 
 //Includes for devices supported only under Linux
 #else
+#include "AsusAuraLinux.h"
 #include "RazerChromaLinux.h"
 #include "CorsairCKBLinux.h"
 #endif
@@ -50,6 +51,7 @@ AsusAuraSDK             asa;
 
 //Devices supported only under Linux
 #else
+AsusAura                aura;
 CorsairCKB              ckb;
 #endif
 
@@ -120,6 +122,12 @@ THREAD asathread(void *param)
 
 //Threads for devices supported only under Linux
 #else
+THREAD aurathread(void *param)
+{
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->AsusAuraUpdateThread();
+    THREADRETURN
+}
 
 #endif
 
@@ -474,6 +482,7 @@ void Visualizer::Initialize()
 
     //Initialize devices supported only under Linux
 #else
+    aura.Initialize();
 
 #endif
 
@@ -987,6 +996,7 @@ void Visualizer::StartThread()
     pthread_create(&threads[6], NULL, &mkbthread, this);
     pthread_create(&threads[7], NULL, &pkbthread, this);
     pthread_create(&threads[8], NULL, &lsthread, this);
+    pthread_create(&threads[10], NULL, &aurathread, this);
 #endif
 }
 
@@ -1692,6 +1702,13 @@ void Visualizer::AuraSDKUpdateThread()
 
 //Thread update functions for devices supported only under Linux
 #else
+void Visualizer::AsusAuraUpdateThread()
+{
+    while(aura.SetLEDs(pixels_out->pixels))
+    {
+        Sleep(delay);
+    }
+}
 
 #endif
 

@@ -39,7 +39,9 @@ HEADERS += \
     KeyboardVisualizerCommon/UsbDevice.h \
     KeyboardVisualizerCommon/SteelSeriesGameSense.h \
     KeyboardVisualizerCommon/PoseidonZRGBKeyboard.h \
-    KeyboardVisualizerCommon/MSIKeyboard.h
+    KeyboardVisualizerCommon/MSIKeyboard.h \
+    KeyboardVisualizerCommon/AsusAuraLinux.h \
+    KeyboardVisualizerCommon/i2c-dev.h
 
 SOURCES += \
     KeyboardVisualizerCommon/hsv.cpp \
@@ -55,7 +57,8 @@ SOURCES += \
     KeyboardVisualizerCommon/UsbDevice.cpp \
     KeyboardVisualizerCommon/SteelSeriesGameSense.cpp \
     KeyboardVisualizerCommon/PoseidonZRGBKeyboard.cpp \
-    KeyboardVisualizerCommon/MSIKeyboard.cpp
+    KeyboardVisualizerCommon/MSIKeyboard.cpp \
+    KeyboardVisualizerCommon/AsusAuraLinux.cpp
 
 RESOURCES += \
     KeyboardVisualizerQT/resources.qrc
