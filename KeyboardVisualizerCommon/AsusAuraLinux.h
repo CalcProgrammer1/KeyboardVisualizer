@@ -13,6 +13,7 @@ public:
 
 private:
     int smbus_fd;
+    int smbus_fd2;
 };
 
 #endif // ASUSAURALINUX_H
