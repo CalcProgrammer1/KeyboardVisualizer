@@ -15,11 +15,18 @@ AsusAura::AsusAura()
 
 void AsusAura::Initialize()
 {
-    char *smbus_adapter_dev = "/dev/i2c-19";
+    char *smbus_adapter_dev = "/dev/i2c-0";
+    char *smbus_adapter_dev2 = "/dev/i2c-4";
 
     smbus_fd = open(smbus_adapter_dev, O_RDWR);
+    smbus_fd2 = open(smbus_adapter_dev2, O_RDWR);
 
     if(smbus_fd < 0)
+    {
+        return;
+    }
+
+    if(smbus_fd2 < 0)
     {
         return;
     }
@@ -31,6 +38,12 @@ void AsusAura::Initialize()
         return;
     }
 
+    addr = 0x4E;
+
+    if(ioctl(smbus_fd2, I2C_SLAVE, addr) < 0)
+    {
+        return;
+    }
 
 }
 
@@ -57,5 +70,10 @@ bool AsusAura::SetLEDs(COLORREF pixels[64][256])
     i2c_smbus_write_block_data(smbus_fd, 0x03, 15, (__u8*)&smbus_led_data);
     i2c_smbus_write_word_data(smbus_fd, 0x00, 0xA080);
     i2c_smbus_write_byte_data(smbus_fd, 0x01, 0x01);
+
+    i2c_smbus_write_word_data(smbus_fd2, 0x00, 0x0080);
+    i2c_smbus_write_block_data(smbus_fd2, 0x03, 15, (__u8*)&smbus_led_data);
+    i2c_smbus_write_word_data(smbus_fd2, 0x00, 0xA080);
+    i2c_smbus_write_byte_data(smbus_fd2, 0x01, 0x01);
     return true;
 }
