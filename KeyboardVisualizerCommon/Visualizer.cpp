@@ -23,11 +23,11 @@
 
 //Includes for devices supported only under Windows
 #ifdef WIN32
+#include "AsusAuraWindows.h"
 #include "RazerChroma.h"
 #include "CorsairCUE.h"
 #include "CmKeyboard.h"
 #include "LogitechSDK.h"
-#include "AsusAuraSDK.h"
 
 //Includes for devices supported only under Linux
 #else
@@ -47,7 +47,6 @@
 CorsairCUE              ckb;
 CmKeyboard              cmkb;
 LogitechSDK             lkb;
-AsusAuraSDK             asa;
 
 //Devices supported only under Linux
 #else
@@ -56,6 +55,7 @@ CorsairCKB              ckb;
 #endif
 
 //Devices supported on both Windows and Linux
+AsusAura                aura;
 RazerChroma             rkb;
 SteelSeriesGameSense    skb;
 MSIKeyboard             mkb;
@@ -113,25 +113,19 @@ THREAD lkbthread(void *param)
     THREADRETURN
 }
 
-THREAD asathread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->AuraSDKUpdateThread();
-    THREADRETURN
-}
-
 //Threads for devices supported only under Linux
 #else
-THREAD aurathread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->AsusAuraUpdateThread();
-    THREADRETURN
-}
 
 #endif
 
 //Threads for devices supported on both Windows and Linux
+THREAD aurathread(void *param)
+{
+	Visualizer* vis = static_cast<Visualizer*>(param);
+	vis->AsusAuraUpdateThread();
+	THREADRETURN
+}
+
 THREAD rkbthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
@@ -478,15 +472,14 @@ void Visualizer::Initialize()
 #ifdef WIN32
     cmkb.Initialize();
     lkb.Initialize();
-    asa.Initialize();
 
     //Initialize devices supported only under Linux
 #else
-    aura.Initialize();
 
 #endif
 
     //Initialize devices supported by both Windows and Linux
+    aura.Initialize();
     rkb.Initialize();
     ckb.Initialize();
     skb.Initialize();
@@ -982,7 +975,7 @@ void Visualizer::StartThread()
     _beginthread(mkbthread, 0, this);
     _beginthread(pkbthread, 0, this);
     _beginthread(lsthread, 0, this);
-    _beginthread(asathread, 0, this);
+    _beginthread(aurathread, 0, this);
 
 #else
     pthread_t threads[10];
@@ -1692,16 +1685,12 @@ void Visualizer::LogitechSDKUpdateThread()
     }
 }
 
-void Visualizer::AuraSDKUpdateThread()
-{
-    while (asa.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
 //Thread update functions for devices supported only under Linux
 #else
+
+#endif
+
+//Thread update functions for devices supported on both Windows and Linux
 void Visualizer::AsusAuraUpdateThread()
 {
     while(aura.SetLEDs(pixels_out->pixels))
@@ -1710,9 +1699,6 @@ void Visualizer::AsusAuraUpdateThread()
     }
 }
 
-#endif
-
-//Thread update functions for devices supported on both Windows and Linux
 void Visualizer::RazerChromaUpdateThread()
 {
     while (rkb.SetLEDs(pixels_out->pixels))

@@ -90,10 +90,10 @@ public:
 	void AuraSDKUpdateThread();
 #else
     //Update threads for devices supported only under Linux
-    void AsusAuraUpdateThread();
 
 #endif
     //Update threads for devices supported on both Windows and Linux
+	void AsusAuraUpdateThread();
     void RazerChromaUpdateThread();
     void CorsairKeyboardUpdateThread();
     void SteelSeriesKeyboardUpdateThread();
