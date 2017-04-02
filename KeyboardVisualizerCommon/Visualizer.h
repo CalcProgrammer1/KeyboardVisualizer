@@ -119,6 +119,9 @@ public:
     //Draw Pattern
     void DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels *pixels);
 
+	//Draw LED Out
+	void DrawRGBOut();
+
     //Add LED strip
     void AddLEDStrip(char* ledstring);
     void AddLEDStripXmas(char * ledstring);
@@ -147,6 +150,9 @@ public:
 
     //Flag to update UI
     bool update_ui;
+
+	//Flag if program is running
+	bool appRunning;
 
     //Visualizer Background
     vis_pixels pixels_bg;

@@ -468,6 +468,7 @@ void Visualizer::ChangeAudioDevice()
 
 void Visualizer::Initialize()
 {
+	appRunning = true;
     InitAudioDeviceList();
 
     //Initialize devices supported only under Windows
@@ -987,6 +988,36 @@ void Visualizer::StartThread()
 #endif
 }
 
+void Visualizer::DrawRGBOut()
+{
+	appRunning = false;
+	Sleep(20);
+	pixels_out = &pixels_fg;
+	int color;
+	bool black = false;
+	while (black == false) {
+		
+		for (int x = 0; x < 256; x++)
+		{
+			for (int y = 0; y < 64; y++)
+			{
+				color = pixels_out->pixels[y][x];
+				if (color == 0)
+				{
+					black = true;
+				}
+				else
+				{
+					pixels_out->pixels[y][x] = RGB((GetRValue(color) )*0.8, (GetGValue(color) )*0.8, (GetBValue(color) )*0.8);
+					
+				}
+			}
+		}
+		Sleep(delay*2);
+	}
+	Sleep(delay * 2);
+}
+
 void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)
 {
     bright = (int)(bright * (255.0f / 100.0f));
@@ -1401,7 +1432,7 @@ void Visualizer::NetUpdateThread()
 
 void Visualizer::VisThread()
 {
-    while (1)
+    while (appRunning==true)
     {
         if (!(netmode == NET_MODE_CLIENT && port->connected))
         {
