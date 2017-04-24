@@ -509,6 +509,7 @@ void Visualizer::Initialize()
 
     settings_changed     = false;
     update_ui            = false;
+    shutdown_flag        = false;
 
     hanning(win_hanning, 256);
     hamming(win_hamming, 256);
@@ -959,6 +960,9 @@ void Visualizer::Update()
 
 void Visualizer::StartThread()
 {
+    //Set application running flag to TRUE before starting threads
+    running = true;
+
 #ifdef WIN32
     _beginthread(thread, 0, this);
     _beginthread(netconthread, 0, this);
@@ -985,6 +989,19 @@ void Visualizer::StartThread()
     pthread_create(&threads[7], NULL, &pkbthread, this);
     pthread_create(&threads[8], NULL, &lsthread, this);
 #endif
+}
+
+void Visualizer::Shutdown()
+{
+    //Initialize a fade-out by setting shutdown flag to TRUE and resetting timer
+    shutdown_flag = TRUE;
+    background_timer = 0;
+
+    //Wait for fade-out to complete before returning
+    while (running == true)
+    {
+        Sleep(50);
+    }
 }
 
 void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)
@@ -1401,7 +1418,7 @@ void Visualizer::NetUpdateThread()
 
 void Visualizer::VisThread()
 {
-    while (1)
+    while (running == true)
     {
         if (!(netmode == NET_MODE_CLIENT && port->connected))
         {
@@ -1420,10 +1437,23 @@ void Visualizer::VisThread()
 
         float brightness = fft_fltr[5];
 
-        if (background_timeout > 0)
+        //If music isn't playing, fade in the single color LEDs after 2 seconds
+        background_timer++;
+
+        if (shutdown_flag == true)
         {
-            //If music isn't playing, fade in the single color LEDs after 2 seconds
-            background_timer++;
+            if (background_timer >= background_timeout)
+            {
+                brightness = 0.0f;
+                running = false;
+            }
+            else
+            {
+                brightness = ((background_timeout - background_timer) / (1.0f * background_timeout));
+            }
+        }
+        else if (background_timeout > 0)
+        {
             for (int i = 0; i < 128; i++)
             {
                 if (fft_fltr[2 * i] >= 0.0001f)

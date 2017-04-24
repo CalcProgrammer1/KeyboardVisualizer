@@ -23,6 +23,7 @@ IMPLEMENT_DYNAMIC(KeyboardVisDlg, CDialogEx)
 Visualizer* vis;
 boolean startminimized;
 boolean firstrun;
+NOTIFYICONDATA Tray;
 
 KeyboardVisDlg::KeyboardVisDlg(CWnd* pParent)
 	: CDialogEx(IDD_KEYBOARD_VISUALIZER_DLG, pParent)
@@ -46,7 +47,6 @@ void KeyboardVisDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL KeyboardVisDlg::OnInitDialog()
 {
-    NOTIFYICONDATA Tray;
     Tray.cbSize = sizeof(Tray);
     Tray.hIcon = (HICON)::LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 16, 16, LR_SHARED);
     Tray.hWnd = GetSafeHwnd();
@@ -135,16 +135,7 @@ void KeyboardVisDlg::StartMinimized(boolean startmin)
 
 void KeyboardVisDlg::OnDestroy()
 {
-    NOTIFYICONDATA Tray;
-
-    Tray.cbSize = sizeof(Tray);
-    Tray.hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_ICON));
-    Tray.hWnd = GetSafeHwnd();
-    strcpy(Tray.szTip, "Keyboard Visualizer");
-    Tray.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
-    Tray.uID = ID_SYSTEMTRAY;
-    Tray.uCallbackMessage = WM_TRAYICON_EVENT;
-
+    vis->Shutdown();
     Shell_NotifyIcon(NIM_DELETE, &Tray);
 }
 

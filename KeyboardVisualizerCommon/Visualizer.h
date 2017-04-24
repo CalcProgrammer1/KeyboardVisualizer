@@ -119,6 +119,9 @@ public:
     //Draw Pattern
     void DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels *pixels);
 
+    //Shut Down
+    void Shutdown();
+
     //Add LED strip
     void AddLEDStrip(char* ledstring);
     void AddLEDStripXmas(char * ledstring);
@@ -223,6 +226,12 @@ private:
 
     //Settings Changed Flag
     bool settings_changed;
+
+    //Application Running Flag
+    bool running;
+
+    //Shutting Down Flag
+    bool shutdown_flag;
 
     //Audio Sample Buffer
     unsigned char buffer[256];
