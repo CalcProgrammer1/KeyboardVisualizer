@@ -1479,7 +1479,15 @@ void Visualizer::VisThread()
                 //Draw Spectrograph Foreground
                 if (fft_fltr[x] >((1 / 64.0f)*(64.0f - y)))
                 {
-                    pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
+                    if (shutdown_flag == true)
+                    {
+                        int in_color = pixels_fg.pixels[y][x];
+                        pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                    }
+                    else
+                    {
+                        pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
+                    }
                 }
                 else
                 {
@@ -1509,7 +1517,15 @@ void Visualizer::VisThread()
                     {
                         if ((fft_fltr[5] - 0.05f) >((1 / 128.0f)*(127-x)))
                         {
-                            pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
+                            if (shutdown_flag == true)
+                            {
+                                int in_color = pixels_fg.pixels[y][x];
+                                pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                            }
+                            else
+                            {
+                                pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
+                            }
                         }
                         else
                         {
@@ -1535,7 +1551,15 @@ void Visualizer::VisThread()
                     {
                         if ((fft_fltr[5] - 0.05f) >((1 / 128.0f)*((x-128))))
                         {
-                            pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
+                            if (shutdown_flag == true)
+                            {
+                                int in_color = pixels_fg.pixels[y][x];
+                                pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                            }
+                            else
+                            {
+                                pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
+                            }
                         }
                         else
                         {
