@@ -60,7 +60,7 @@ bool net_port::udp_client(const char * client_name, const char * port)
 
     myAddress.sin_family = AF_INET;
     myAddress.sin_addr.s_addr = inet_addr("0.0.0.0");
-    myAddress.sin_port = htons(1337);
+    myAddress.sin_port = htons(0);
 
     if (bind(sock, (sockaddr*)&myAddress, sizeof(myAddress)) == SOCKET_ERROR)
     {
