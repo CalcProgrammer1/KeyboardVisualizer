@@ -123,6 +123,7 @@ public:
     void Shutdown();
 
     //Add LED strip
+    void BeginLEDMatrix(int size);
     void AddLEDStrip(char* ledstring);
     void AddLEDStripXmas(char * ledstring);
     void AddLEDStripHuePlus(char * ledstring);

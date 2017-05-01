@@ -126,6 +126,11 @@ void parse_argument_string(char * argument, char * value)
         }
     }
 
+    if (strcmp(argument, "ledmatrix") == 0)
+    {
+        vis.BeginLEDMatrix(atoi(value));
+    }
+
     if (strcmp(argument, "ledstrip") == 0)
     {
         vis.AddLEDStrip(value);
@@ -279,6 +284,8 @@ boolean parse_command_line(char * command_line)
             printf("                      - (ex.ledstrip=COM1,115200,30)\r\n");
             printf("                      - UDP : ledstrip=udp:client,port,num_leds\r\n");
             printf("                      - (ex.ledstrip=udp:192.168.1.5,1234,30)\r\n");
+            printf("    ledmatrix         - Add this line before ledstrip lines to create a matrix of LEDs\r\n");
+            printf("                      -  Takes the number of strips to create a matrix from, treated as rows\r\n");
             printf("    xmas              - COM port, ex. xmas=COM2\r\n");
             printf("    hueplus           - HUE+ config:\r\n");
             printf("                      - hueplus=port,channel,num_leds\r\n");

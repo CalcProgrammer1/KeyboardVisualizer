@@ -63,7 +63,8 @@ std::vector<LEDStrip *> huePlus;
 std::vector<char *>     device_properties;
 
 char * net_string;
-
+int matrix_setup_pos;
+int matrix_setup_size;
 float fft_nrml[256];
 float fft_fltr[256];
 
@@ -160,6 +161,12 @@ Visualizer::Visualizer()
 
 }
 
+void Visualizer::BeginLEDMatrix(int size)
+{
+    matrix_setup_size = size;
+    matrix_setup_pos = 1;
+}
+
 void Visualizer::AddLEDStrip(char* ledstring)
 {
     //Scan through already registered LED strips and
@@ -187,8 +194,18 @@ void Visualizer::AddLEDStrip(char* ledstring)
     }
 
     LEDStrip *newstr = new LEDStrip();
-    newstr->Initialize(ledstring);
+    newstr->Initialize(ledstring, matrix_setup_size, matrix_setup_pos);
     str.push_back(newstr);
+
+    if (matrix_setup_pos < matrix_setup_size)
+    {
+        matrix_setup_pos++;
+    }
+    else
+    {
+        matrix_setup_size = 0;
+        matrix_setup_pos = 0;
+    }
 }
 
 void Visualizer::AddLEDStripXmas(char* ledstring)
@@ -218,7 +235,7 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
     }
 
     LEDStrip *newstr = new LEDStrip();
-    newstr->Initialize(ledstring);
+    newstr->Initialize(ledstring, 0, 0);
     xmas.push_back(newstr);
 }
 

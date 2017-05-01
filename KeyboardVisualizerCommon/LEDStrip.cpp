@@ -20,7 +20,7 @@ LEDStrip::~LEDStrip()
 {
 }
 
-void LEDStrip::Initialize(char* ledstring)
+void LEDStrip::Initialize(char* ledstring, int matrix_size, int matrix_pos)
 {
     strcpy(led_string, ledstring);
 
@@ -80,7 +80,7 @@ void LEDStrip::Initialize(char* ledstring)
 
     if (numleds != NULL && strlen(numleds))
     {
-        SetNumLEDs(atoi(numleds));
+        SetNumLEDs(atoi(numleds), matrix_size, matrix_pos);
     }
 
 }
@@ -151,7 +151,7 @@ void LEDStrip::InitializeHuePlus(char* ledstring)
 
     if (numleds != NULL && strlen(numleds))
     {
-        SetNumLEDs(atoi(numleds));
+        SetNumLEDs(atoi(numleds), 0, 0);
     }
 }
 
@@ -178,12 +178,19 @@ char* LEDStrip::GetLEDString()
     return(led_string);
 }
 
-void LEDStrip::SetNumLEDs(int numleds)
+void LEDStrip::SetNumLEDs(int numleds, int matrix_size, int matrix_pos)
 {
+    int y_index = ROW_IDX_BAR_GRAPH;
+
     num_leds = numleds;
 
     LEDStripXIndex = new int[num_leds];
     LEDStripYIndex = new int[num_leds];
+
+    if (matrix_pos > 0 && matrix_size > 0)
+    {
+        y_index = (int)(ROW_IDX_SPECTROGRAPH_TOP + ((matrix_pos - 1) * (SPECTROGRAPH_ROWS / matrix_size)) + (0.5f * (SPECTROGRAPH_ROWS / matrix_size)));
+    }
 
     if ((num_leds % 2) == 0)
     {
@@ -197,7 +204,7 @@ void LEDStrip::SetNumLEDs(int numleds)
                 LEDStripXIndex[i] = LEDStripXIndex[i] - 1;
             }
 
-            LEDStripYIndex[i] = ROW_IDX_BAR_GRAPH;
+            LEDStripYIndex[i] = y_index;
         }
     }
     else
@@ -205,7 +212,7 @@ void LEDStrip::SetNumLEDs(int numleds)
         //Odd number of LEDs
         for (int i = 0; i < num_leds; i++)
         {
-            LEDStripYIndex[i] = ROW_IDX_BAR_GRAPH;
+            LEDStripYIndex[i] = y_index;
             if (i == (num_leds / 2))
             {
                 LEDStripXIndex[i] = 128;
