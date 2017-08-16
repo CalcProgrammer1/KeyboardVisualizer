@@ -297,3 +297,13 @@ Keyboard Visualizer allows you to save your custom settings in two different way
     * WS28XX Pixel LED Strips
     
         - See the information under the Windows supported devices list.
+
+# Donations
+
+   * I created this project for fun mostly, and Razer's support of sending free products for me to integrate is awesome, but several people have asked if I'd accept donations.  I've gotten back into cryptocurrency and mining recently so if you want to send some Bitcoin, Dogecoin, or Ethereum my way you can do so with the addresses below.  I don't want to bother with PayPal and its ugly fees and I detest online advertising and block all ads on my PCs so I would never put ads on my videos or programs.
+   
+   * Bitcoin:  1N83YPu7btXYadPS1neB9zX7X1QTdpyZQ
+   
+   * Dogecoin:  D7nqJZ3dyfCMRvS6J5jpoxerpteUG5z7Pm
+   
+   * Ethereum:  0xd87c50Aa111Cc23c82a501A1dFC2421eEe37Ae6A
