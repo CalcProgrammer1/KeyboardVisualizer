@@ -38,6 +38,9 @@ int DeathStalkerXIndex[6];
 int OrbweaverXIndex[5];
 int OrbweaverYIndex[4];
 
+//Index list for ChromaLink
+int ChromaLinkXIndex[ChromaSDK::ChromaLink::MAX_LEDS];
+
 RazerChroma::RazerChroma()
 {
 }
@@ -212,6 +215,12 @@ void RazerChroma::Initialize()
             {
                 DeathStalkerXIndex[x] = 128 + (x * (256 / 12) + (256 / 24));
             }
+
+            //Build index list for ChromaLink
+            for (int x = 0; x < ChromaSDK::ChromaLink::MAX_LEDS; x++)
+            {
+                ChromaLinkXIndex[x] = (x * (256 / ChromaSDK::ChromaLink::MAX_LEDS)) + (256 / (ChromaSDK::ChromaLink::MAX_LEDS * 2));
+            }
 		}
 	}
 }
@@ -224,6 +233,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
     CreateMouseEffect = (CREATEMOUSEEFFECT)GetProcAddress(hModule, "CreateMouseEffect");
     CreateMousepadEffect = (CREATEMOUSEPADEFFECT)GetProcAddress(hModule, "CreateMousepadEffect");
     CreateHeadsetEffect = (CREATEHEADSETEFFECT)GetProcAddress(hModule, "CreateHeadsetEffect");
+    CreateChromaLinkEffect = (CREATECHROMALINKEFFECT)GetProcAddress(hModule, "CreateChromaLinkEffect");
 
     if (CreateEffect == NULL || pixels == NULL)
     {
@@ -368,6 +378,24 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_NONE, &KrakenEffect, NULL);
             CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &KrakenEffect, NULL);
         }
+
+        //Chroma Link SDK
+        ChromaSDK::ChromaLink::CUSTOM_EFFECT_TYPE ChromaLinkEffect = {};
+
+        for (int x = 0; x < ChromaSDK::ChromaLink::MAX_LEDS; x++)
+        {
+            if (use_chromalink_single_color)
+            {
+                ChromaLinkEffect.Color[x] = pixels[ROW_IDX_SINGLE_COLOR][ChromaLinkXIndex[x]];
+            }
+            else
+            {
+                ChromaLinkEffect.Color[x] = pixels[ROW_IDX_BAR_GRAPH][ChromaLinkXIndex[x]];
+            }
+            
+        }
+
+        CreateChromaLinkEffect(ChromaSDK::ChromaLink::CHROMA_CUSTOM, &ChromaLinkEffect, NULL);
 
         return TRUE;
     }

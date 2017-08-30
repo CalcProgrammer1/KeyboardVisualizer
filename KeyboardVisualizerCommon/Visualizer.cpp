@@ -287,6 +287,10 @@ void Visualizer::SetDeviceProperty(char * devprop)
     {
         rkb.use_headset_custom_effect = true;
     }
+    else if (strcmp(devprop, "razer_use_chromalink_single_color") == 0)
+    {
+        rkb.use_chromalink_single_color = true;
+    }
 #endif
 }
 

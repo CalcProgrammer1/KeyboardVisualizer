@@ -94,7 +94,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-1.8.3\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-2.3.2\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -119,7 +119,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_NON_CONFORMING_WCSTOK.</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\libraries\openal-soft-1.16.0-bin\include;D:\libraries\razer-chroma-0.2.3\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\libraries\openal-soft-1.16.0-bin\include;D:\libraries\razer-chroma-2.3.2\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -138,7 +138,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-1.8.3\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-2.3.2\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include;..\dependencies\inpout32_1501\Win32</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -162,7 +162,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\libraries\openal-soft-1.16.0-bin\include;D:\libraries\razer-chroma-0.2.3\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\libraries\openal-soft-1.16.0-bin\include;D:\libraries\razer-chroma-2.3.2\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

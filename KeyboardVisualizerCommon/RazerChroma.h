@@ -24,6 +24,7 @@ typedef RZRESULT(*CREATEKEYBOARDEFFECT)(ChromaSDK::Keyboard::EFFECT_TYPE Effect,
 typedef RZRESULT(*CREATEMOUSEEFFECT)(ChromaSDK::Mouse::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
 typedef RZRESULT(*CREATEMOUSEPADEFFECT)(ChromaSDK::Mousepad::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
 typedef RZRESULT(*CREATEHEADSETEFFECT)(ChromaSDK::Headset::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
+typedef RZRESULT(*CREATECHROMALINKEFFECT)(ChromaSDK::ChromaLink::EFFECT_TYPE Effect, PRZPARAM pParam, RZEFFECTID *pEffectId);
 
 #ifdef _WIN64
 #define CHROMASDKDLL        _T("RzChromaSDK64.dll")
@@ -42,6 +43,7 @@ public:
 
     bool use_keyboard_generic_effect;
     bool use_headset_custom_effect;
+    bool use_chromalink_single_color;
 
 private:
 	HMODULE hModule = NULL;
@@ -50,6 +52,7 @@ private:
     CREATEMOUSEEFFECT CreateMouseEffect;
     CREATEMOUSEPADEFFECT CreateMousepadEffect;
     CREATEHEADSETEFFECT CreateHeadsetEffect;
+    CREATECHROMALINKEFFECT CreateChromaLinkEffect;
 
     RZEFFECTID effect;
 };

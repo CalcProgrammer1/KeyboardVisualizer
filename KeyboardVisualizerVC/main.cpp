@@ -197,6 +197,11 @@ void parse_argument_string(char * argument, char * value)
     {
         vis.SetDeviceProperty(argument);
     }
+
+    if (strcmp(argument, "razer_use_chromalink_single_color") == 0)
+    {
+        vis.SetDeviceProperty(argument);
+    }
 }
 
 boolean parse_command_line(char * command_line)
