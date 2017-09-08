@@ -41,6 +41,10 @@ int OrbweaverYIndex[4];
 //Index list for ChromaLink
 int ChromaLinkXIndex[ChromaSDK::ChromaLink::MAX_LEDS];
 
+//Index list for Chroma HDK (Chroma Box)
+int ChromaBoxXIndex[16];
+int ChromaBoxYIndex[4];
+
 RazerChroma::RazerChroma()
 {
 }
@@ -83,6 +87,16 @@ static void SetupKeyboardGrid(int x_count, int y_count, int * x_idx_list, int * 
     }
 }
 
+void FillCustomGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list, ChromaSDK::CUSTOM_EFFECT_TYPE * effect, COLORREF pixels[64][256])
+{
+    for (int x = 0; x < x_count; x++)
+    {
+        for (int y = 0; y < y_count; y++)
+        {
+            effect->Color[y][x] = (pixels[y_idx_list[y]][x_idx_list[x]] & 0x00FFFFFF);
+        }
+    }
+}
 
 void FillKeyboardGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list, ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE * effect, COLORREF pixels[64][256])
 {
@@ -132,6 +146,9 @@ void RazerChroma::Initialize()
 
             //Build index list for Blade Stealth
             SetupKeyboardGrid(16, 6, BladeStealthXIndex, BladeStealthYIndex);
+
+            //Build index list for Chroma Box
+            SetupKeyboardGrid(16, 4, ChromaBoxXIndex, ChromaBoxYIndex);
 
             //Build index list for OrbWeaver
             SetupKeyboardGrid(5, 4, OrbweaverXIndex, OrbweaverYIndex);
@@ -267,7 +284,6 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             BlackWidowEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
 
             CreateEffect(ChromaSDK::BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
-
             CreateEffect(ChromaSDK::BLACKWIDOW_X_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
             CreateEffect(ChromaSDK::BLACKWIDOW_X_TE_CHROMA, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
             CreateEffect(ChromaSDK::OVERWATCH_KEYBOARD, ChromaSDK::CHROMA_CUSTOM, &BlackWidowEffect, NULL);
@@ -304,9 +320,9 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
         //Orbweaver Chroma
         ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE OrbweaverEffect;
-
+        
         FillKeypadGrid(5, 4, OrbweaverXIndex, OrbweaverYIndex, &OrbweaverEffect, pixels);
-
+        
         CreateEffect(ChromaSDK::ORBWEAVER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &OrbweaverEffect, NULL);
         
         //Tartarus Chroma
@@ -395,8 +411,11 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             
         }
 
-        CreateChromaLinkEffect(ChromaSDK::ChromaLink::CHROMA_CUSTOM, &ChromaLinkEffect, NULL);
+        //CreateChromaLinkEffect(ChromaSDK::ChromaLink::CHROMA_CUSTOM, &ChromaLinkEffect, NULL);
 
+        ChromaSDK::CUSTOM_EFFECT_TYPE ChromaBoxEffect;
+        FillCustomGrid(16, 4, ChromaBoxXIndex, ChromaBoxYIndex, &ChromaBoxEffect, pixels);        
+        CreateEffect(ChromaSDK::CHROMABOX, ChromaSDK::CHROMA_CUSTOM, &ChromaBoxEffect, NULL);
         return TRUE;
     }
 };
