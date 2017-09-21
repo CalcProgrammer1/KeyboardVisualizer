@@ -129,7 +129,7 @@ public:
     void AddLEDStripHuePlus(char * ledstring);
 
     //Function to set custom properties for devices
-    void SetDeviceProperty(char * devprop);
+    void SetDeviceProperty(char * devprop, char * argument);
 
     //Save Settings File
     void SaveSettings();

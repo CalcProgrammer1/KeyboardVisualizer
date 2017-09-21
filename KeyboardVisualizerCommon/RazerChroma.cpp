@@ -41,9 +41,18 @@ int OrbweaverYIndex[4];
 //Index list for ChromaLink
 int ChromaLinkXIndex[ChromaSDK::ChromaLink::MAX_LEDS];
 
-//Index list for Chroma HDK (Chroma Box)
+//Index list for Chroma HDK Matrix (Chroma Box)
 int ChromaBoxXIndex[16];
 int ChromaBoxYIndex[4];
+
+//Index list for individual strips bar graph Chroma HDK
+int ChromaBox1BarXIndex[4][16];
+
+//Index list for 2 strips bar graph Chroma HDK
+int ChromaBox2BarXIndex[4][16];
+
+//Index list for 4 strips bar graph Chroma HDK
+int ChromaBox4BarXIndex[4][16];
 
 RazerChroma::RazerChroma()
 {
@@ -127,6 +136,9 @@ void RazerChroma::Initialize()
     // Initialize variables
     use_keyboard_generic_effect = false;
     use_headset_custom_effect = false;
+    use_chromalink_single_color = false;
+    disable_chromalink = false;
+    chroma_box_mode = 1;
 
 	// Dynamically loads the Chroma SDK library.
 	hModule = LoadLibrary(CHROMASDKDLL);
@@ -233,10 +245,56 @@ void RazerChroma::Initialize()
                 DeathStalkerXIndex[x] = 128 + (x * (256 / 12) + (256 / 24));
             }
 
-            //Build index list for ChromaLink
+            //Build index list for ChromaLink Matrix
             for (int x = 0; x < ChromaSDK::ChromaLink::MAX_LEDS; x++)
             {
                 ChromaLinkXIndex[x] = (x * (256 / ChromaSDK::ChromaLink::MAX_LEDS)) + (256 / (ChromaSDK::ChromaLink::MAX_LEDS * 2));
+            }
+
+            //Build index list for ChromaLink 1 Strip Bar Graph
+            for (int y = 0; y < 4; y++)
+            {
+                for (int x = 0; x < 16; x++)
+                {
+                    ChromaBox1BarXIndex[y][x] = (x * (256 / 16)) + (256 / 32);
+                }
+            }
+
+            //Build index list for ChromaLink 2 Strip Bar Graph
+            for (int y = 0; y < 4; y += 2)
+            {
+                for (int x = 0; x < 32; x++)
+                {
+                    if (x < 16)
+                    {
+                        ChromaBox2BarXIndex[y][x] = (x * (256 / 32)) + (256 / 64);
+                    }
+                    else
+                    {
+                        ChromaBox2BarXIndex[y+1][x-16] = (x * (256 / 32)) + (256 / 64);
+                    }
+                }
+            }
+
+            //Build index list for ChromaLink 4 Strip Bar Graph
+            for (int x = 0; x < 64; x++)
+            {
+                if (x < 16)
+                {
+                    ChromaBox4BarXIndex[0][15-x] = (x * (256 / 64)) + (256 / 128);
+                }
+                else if (x < 32)
+                {
+                    ChromaBox4BarXIndex[1][15-(x-16)] = (x * (256 / 64)) + (256 / 128);
+                }
+                else if (x < 48)
+                {
+                    ChromaBox4BarXIndex[2][x-32] = (x * (256 / 64)) + (256 / 128);
+                }
+                else
+                {
+                    ChromaBox4BarXIndex[3][x-48] = (x * (256 / 64)) + (256 / 128);
+                }
             }
 		}
 	}
@@ -395,27 +453,65 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &KrakenEffect, NULL);
         }
 
-        //Chroma Link SDK
-        ChromaSDK::ChromaLink::CUSTOM_EFFECT_TYPE ChromaLinkEffect = {};
-
-        for (int x = 0; x < ChromaSDK::ChromaLink::MAX_LEDS; x++)
+        if (!disable_chromalink)
         {
-            if (use_chromalink_single_color)
+            //Chroma Link SDK
+            ChromaSDK::ChromaLink::CUSTOM_EFFECT_TYPE ChromaLinkEffect = {};
+
+            for (int x = 0; x < ChromaSDK::ChromaLink::MAX_LEDS; x++)
             {
-                ChromaLinkEffect.Color[x] = pixels[ROW_IDX_SINGLE_COLOR][ChromaLinkXIndex[x]];
+                if (use_chromalink_single_color)
+                {
+                    ChromaLinkEffect.Color[x] = pixels[ROW_IDX_SINGLE_COLOR][ChromaLinkXIndex[x]];
+                }
+                else
+                {
+                    ChromaLinkEffect.Color[x] = pixels[ROW_IDX_BAR_GRAPH][ChromaLinkXIndex[x]];
+                }
+
             }
-            else
-            {
-                ChromaLinkEffect.Color[x] = pixels[ROW_IDX_BAR_GRAPH][ChromaLinkXIndex[x]];
-            }
-            
+            CreateChromaLinkEffect(ChromaSDK::ChromaLink::CHROMA_CUSTOM, &ChromaLinkEffect, NULL);
         }
 
-        //CreateChromaLinkEffect(ChromaSDK::ChromaLink::CHROMA_CUSTOM, &ChromaLinkEffect, NULL);
-
         ChromaSDK::CUSTOM_EFFECT_TYPE ChromaBoxEffect;
-        FillCustomGrid(16, 4, ChromaBoxXIndex, ChromaBoxYIndex, &ChromaBoxEffect, pixels);        
+
+        switch (chroma_box_mode)
+        {
+        case 0:
+            FillCustomGrid(16, 4, ChromaBoxXIndex, ChromaBoxYIndex, &ChromaBoxEffect, pixels);
+            break;
+        default:
+        case 1:
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 4; y++)
+                {
+                    ChromaBoxEffect.Color[y][x] = pixels[ROW_IDX_BAR_GRAPH][ChromaBox1BarXIndex[y][x]];
+                }
+            }
+            break;
+        case 2:
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 4; y++)
+                {
+                    ChromaBoxEffect.Color[y][x] = pixels[ROW_IDX_BAR_GRAPH][ChromaBox2BarXIndex[y][x]];
+                }
+            }
+            break;
+        case 3:
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 4; y++)
+                {
+                    ChromaBoxEffect.Color[y][x] = pixels[ROW_IDX_BAR_GRAPH][ChromaBox4BarXIndex[y][x]];
+                }
+            }
+            break;
+        }
+        
         CreateEffect(ChromaSDK::CHROMABOX, ChromaSDK::CHROMA_CUSTOM, &ChromaBoxEffect, NULL);
+
         return TRUE;
     }
 };

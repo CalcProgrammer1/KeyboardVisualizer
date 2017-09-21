@@ -270,7 +270,7 @@ void Visualizer::AddLEDStripHuePlus(char* ledstring)
     huePlus.push_back(newstr);
 }
 
-void Visualizer::SetDeviceProperty(char * devprop)
+void Visualizer::SetDeviceProperty(char * devprop, char * argument)
 {
     //Save device property to list of device properties
     char * buf = new char[strlen(devprop) + 1];
@@ -290,6 +290,14 @@ void Visualizer::SetDeviceProperty(char * devprop)
     else if (strcmp(devprop, "razer_use_chromalink_single_color") == 0)
     {
         rkb.use_chromalink_single_color = true;
+    }
+    else if (strcmp(devprop, "razer_disable_chromalink") == 0)
+    {
+        rkb.disable_chromalink = true;
+    }
+    else if (strcmp(devprop, "razer_chroma_box_mode") == 0)
+    {
+        rkb.chroma_box_mode = atoi(argument);
     }
 #endif
 }

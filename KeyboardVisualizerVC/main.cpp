@@ -190,17 +190,27 @@ void parse_argument_string(char * argument, char * value)
 
     if (strcmp(argument, "razer_use_keyboard_generic_effect") == 0)
     {
-        vis.SetDeviceProperty(argument);
+        vis.SetDeviceProperty(argument, value);
     }
 
     if (strcmp(argument, "razer_use_headset_custom_effect") == 0)
     {
-        vis.SetDeviceProperty(argument);
+        vis.SetDeviceProperty(argument, value);
     }
 
     if (strcmp(argument, "razer_use_chromalink_single_color") == 0)
     {
-        vis.SetDeviceProperty(argument);
+        vis.SetDeviceProperty(argument, value);
+    }
+
+    if (strcmp(argument, "razer_disable_chromalink") == 0)
+    {
+        vis.SetDeviceProperty(argument, value);
+    }
+
+    if (strcmp(argument, "razer_chroma_box_mode") == 0)
+    {
+        vis.SetDeviceProperty(argument, value);
     }
 }
 
@@ -300,6 +310,20 @@ boolean parse_command_line(char * command_line)
             printf("                                            ex. 3 Fans on Ch. 1 4 Fans on CH. 2: num_leds 32 for the 4 Fans\r\n");
             printf("                                            For best Visualizer results don`t connect on one channel 3 fans more than on the other channel\r\n");
             printf("                      - (ex. hueplus=COM4,1,24\r\n");
+            printf("    razer_use_keyboard_generic_effect\r\n");
+            printf("                      - Use generic effect type in the Razer SDK, allows the use of SDK-unsupported keyboards at the expense of scaling\r\n");
+            printf("    razer_use_headset_custom_effect\r\n");
+            printf("                      - Use custom effect for headsets, allows smooth color transitions on the Kraken V2 but disables the Kraken V1\r\n");
+            printf("    razer_use_chromalink_single_color\r\n");
+            printf("                      - Use the single color option for the Chroma Link SDK outputs instead of bar graph option\r\n");
+            printf("    razer_disable_chromalink\r\n");
+            printf("                      - Disable the Chroma Link SDK, works around a bug in the current Chroma SDK where the Chroma HDK commands are overridden\r\n");
+            printf("    razer_chroma_box_mode\r\n");
+            printf("                      - razer_chroma_box_mode=mode\r\n");
+            printf("                      - 0:  Matrix (use 4 strips for best effect)\r\n");
+            printf("                      - 1:  Bar graph per single strip");
+            printf("                      - 2:  Bar graph stretched across 2 strips each\r\n");
+            printf("                      - 3:  Bar graph stretched across all 4 strips\r\n");
             return FALSE;
         }
 

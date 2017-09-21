@@ -44,6 +44,8 @@ public:
     bool use_keyboard_generic_effect;
     bool use_headset_custom_effect;
     bool use_chromalink_single_color;
+    int chroma_box_mode;
+    bool disable_chromalink;
 
 private:
 	HMODULE hModule = NULL;
