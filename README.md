@@ -133,6 +133,28 @@ Keyboard Visualizer allows you to save your custom settings in two different way
                           - UDP : ledstrip=udp:client,port,num_leds
                           - (ex.ledstrip=udp:192.168.1.5,1234,30)
         xmas              - COM port, ex. xmas=COM2
+        hueplus           - HUE+ config:
+                          - hueplus=port,channel,num_leds
+                          - channel: 0 -> both channels, 1 -> channel 1, 2 -> channel 2
+	                      - num_leds: Fans * 8 ex. 3 Fans -> 24
+	                      - Important for Fans: If you have connected fans on both channels only count the fans on the channel with the most fans
+	                                            ex. 3 Fans on Ch. 1 4 Fans on CH. 2: num_leds 32 for the 4 Fans
+	                                            For best Visualizer results don`t connect on one channel 3 fans more than on the other channel
+	                      - (ex. hueplus=COM4,1,24
+	    razer_use_keyboard_generic_effect
+	                     - Use generic effect type in the Razer SDK, allows the use of SDK-unsupported keyboards at the expense of scaling
+	    razer_use_headset_custom_effect
+	                      - Use custom effect for headsets, allows smooth color transitions on the Kraken V2 but disables the Kraken V1
+	    razer_use_chromalink_single_color
+	                      - Use the single color option for the Chroma Link SDK outputs instead of bar graph option
+	    razer_disable_chromalink
+	                      - Disable the Chroma Link SDK, works around a bug in the current Chroma SDK where the Chroma HDK commands are overridden
+	    razer_chroma_box_mode
+	                      - razer_chroma_box_mode=mode
+	                      - 0:  Matrix (use 4 strips for best effect)
+	                      - 1:  Bar graph per single strip
+	                      - 2:  Bar graph stretched across 2 strips each
+	                      - 3:  Bar graph stretched across all 4 strips
 
 # Available Visual Effects
 

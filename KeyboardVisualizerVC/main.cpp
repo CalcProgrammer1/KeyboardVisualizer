@@ -321,7 +321,7 @@ boolean parse_command_line(char * command_line)
             printf("    razer_chroma_box_mode\r\n");
             printf("                      - razer_chroma_box_mode=mode\r\n");
             printf("                      - 0:  Matrix (use 4 strips for best effect)\r\n");
-            printf("                      - 1:  Bar graph per single strip");
+            printf("                      - 1:  Bar graph per single strip\r\n");
             printf("                      - 2:  Bar graph stretched across 2 strips each\r\n");
             printf("                      - 3:  Bar graph stretched across all 4 strips\r\n");
             return FALSE;
