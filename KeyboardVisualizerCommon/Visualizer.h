@@ -179,6 +179,10 @@ public:
     unsigned int background_timeout;
     unsigned int background_timer;
 
+    void LEDStripSections(int sections);
+    void LEDMirrorX();
+    void LEDMirrorY();
+
     //Single Color Mode
     int single_color_mode;
 

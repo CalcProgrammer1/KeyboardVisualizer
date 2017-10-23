@@ -20,7 +20,7 @@ LEDStrip::~LEDStrip()
 {
 }
 
-void LEDStrip::Initialize(char* ledstring, int matrix_size, int matrix_pos)
+void LEDStrip::Initialize(char* ledstring, int matrix_size, int matrix_pos, int sections, bool mirror_x, bool mirror_y)
 {
     strcpy(led_string, ledstring);
 
@@ -80,7 +80,7 @@ void LEDStrip::Initialize(char* ledstring, int matrix_size, int matrix_pos)
 
     if (numleds != NULL && strlen(numleds))
     {
-        SetNumLEDs(atoi(numleds), matrix_size, matrix_pos);
+        SetNumLEDs(atoi(numleds), matrix_size, matrix_pos, sections, mirror_x, mirror_y);
     }
 
 }
@@ -151,7 +151,7 @@ void LEDStrip::InitializeHuePlus(char* ledstring)
 
     if (numleds != NULL && strlen(numleds))
     {
-        SetNumLEDs(atoi(numleds), 0, 0);
+        SetNumLEDs(atoi(numleds), 0, 0, 1, false, false);
     }
 }
 
@@ -178,7 +178,7 @@ char* LEDStrip::GetLEDString()
     return(led_string);
 }
 
-void LEDStrip::SetNumLEDs(int numleds, int matrix_size, int matrix_pos)
+void LEDStrip::SetNumLEDs(int numleds, int matrix_size, int matrix_pos, int sections, bool mirror_x, bool mirror_y)
 {
     int y_index = ROW_IDX_BAR_GRAPH;
 
@@ -187,24 +187,71 @@ void LEDStrip::SetNumLEDs(int numleds, int matrix_size, int matrix_pos)
     LEDStripXIndex = new int[num_leds];
     LEDStripYIndex = new int[num_leds];
 
-    if (matrix_pos > 0 && matrix_size > 0)
-    {
-        y_index = (int)(ROW_IDX_SPECTROGRAPH_TOP + ((matrix_pos - 1) * (SPECTROGRAPH_ROWS / matrix_size)) + (0.5f * (SPECTROGRAPH_ROWS / matrix_size)));
-    }
-
     if ((num_leds % 2) == 0)
     {
+        //for vertical strips
+        //for (int section = 0; section < sections; section++)
+        //{
+        //    //Even number of LEDs
+        //    for (int i = 0; i < (num_leds / sections); i++)
+        //    {
+        //        int led_idx = (section * (num_leds / sections)) + i;
+        //        int matrix_pos_adj = matrix_pos + section;
+
+        //        LEDStripXIndex[led_idx] = (int)((section * (256.0f / (sections - 1))));
+
+        //        if (sections == ((num_leds / sections) - 1))
+        //        {
+        //            LEDStripXIndex[led_idx] = LEDStripXIndex[led_idx] - 1;
+        //        }
+
+        //        if (matrix_size > 0)
+        //        {
+        //            y_index = (int)(ROW_IDX_SPECTROGRAPH_TOP + ((i)* (SPECTROGRAPH_ROWS / (num_leds / sections))) + (0.5f * (SPECTROGRAPH_ROWS / (num_leds / sections))));
+        //        }
+
+        //        LEDStripYIndex[led_idx] = y_index;
+        //    }
+        //}
         //Even number of LEDs
-        for (int i = 0; i < num_leds; i++)
+
+        //For horizontal strips
+        for (int section = 0; section < sections; section++)
         {
-            LEDStripXIndex[i] = (int)((i * (256.0f / (num_leds - 1))));
-
-            if (i == (num_leds - 1))
+            //Even number of LEDs
+            for (int i = 0; i < (num_leds / sections); i++)
             {
-                LEDStripXIndex[i] = LEDStripXIndex[i] - 1;
-            }
+                int led_idx        = (section * (num_leds / sections)) + i;
+                int matrix_pos_adj = matrix_pos + section;
 
-            LEDStripYIndex[i] = y_index;
+                if (mirror_x)
+                {
+                    LEDStripXIndex[led_idx] = (int)(num_leds / sections) - ((i * (256.0f / ((num_leds / sections) - 1))));
+                }
+                else
+                {
+                    LEDStripXIndex[led_idx] = (int)((i * (256.0f / ((num_leds / sections) - 1))));
+                }
+                
+                if (i == ((num_leds / sections) - 1))
+                {
+                    LEDStripXIndex[led_idx] = LEDStripXIndex[led_idx] - 1;
+                }
+
+                if (matrix_size > 0)
+                {
+                    if (mirror_y)
+                    {
+                        y_index = (int)(ROW_IDX_SPECTROGRAPH_TOP + (((matrix_pos + sections - 1) - (matrix_pos + section - 1)) * (SPECTROGRAPH_ROWS / matrix_size)) + (0.5f * (SPECTROGRAPH_ROWS / matrix_size)));
+                    }
+                    else
+                    {
+                        y_index = (int)(ROW_IDX_SPECTROGRAPH_TOP + ((matrix_pos + section - 1) * (SPECTROGRAPH_ROWS / matrix_size)) + (0.5f * (SPECTROGRAPH_ROWS / matrix_size)));
+                    }
+                }
+
+                LEDStripYIndex[led_idx] = y_index;
+            }
         }
     }
     else

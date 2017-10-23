@@ -131,6 +131,21 @@ void parse_argument_string(char * argument, char * value)
         vis.BeginLEDMatrix(atoi(value));
     }
 
+    if (strcmp(argument, "ledsections") == 0)
+    {
+        vis.LEDStripSections(atoi(value));
+    }
+
+    if (strcmp(argument, "ledmirrorx") == 0)
+    {
+        vis.LEDMirrorX();
+    }
+
+    if (strcmp(argument, "ledmirrory") == 0)
+    {
+        vis.LEDMirrorY();
+    }
+
     if (strcmp(argument, "ledstrip") == 0)
     {
         vis.AddLEDStrip(value);

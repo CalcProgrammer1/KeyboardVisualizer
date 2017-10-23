@@ -63,10 +63,13 @@ std::vector<LEDStrip *> huePlus;
 std::vector<char *>     device_properties;
 
 char * net_string;
+int ledstrip_sections_size = 1;
 int matrix_setup_pos;
 int matrix_setup_size;
 float fft_nrml[256];
 float fft_fltr[256];
+bool ledstrip_mirror_x = false;
+bool ledstrip_mirror_y = false;
 
 //Threads for Visualizer.cpp
 THREAD thread(void *param)
@@ -167,6 +170,21 @@ void Visualizer::BeginLEDMatrix(int size)
     matrix_setup_pos = 1;
 }
 
+void Visualizer::LEDStripSections(int size)
+{
+    ledstrip_sections_size = size;
+}
+
+void Visualizer::LEDMirrorX()
+{
+    ledstrip_mirror_x = true;
+}
+
+void Visualizer::LEDMirrorY()
+{
+    ledstrip_mirror_y = true;
+}
+
 void Visualizer::AddLEDStrip(char* ledstring)
 {
     //Scan through already registered LED strips and
@@ -194,12 +212,16 @@ void Visualizer::AddLEDStrip(char* ledstring)
     }
 
     LEDStrip *newstr = new LEDStrip();
-    newstr->Initialize(ledstring, matrix_setup_size, matrix_setup_pos);
+    newstr->Initialize(ledstring, matrix_setup_size, matrix_setup_pos, ledstrip_sections_size, ledstrip_mirror_x, ledstrip_mirror_y);
     str.push_back(newstr);
+
+    ledstrip_sections_size = 1;
+    ledstrip_mirror_x = false;
+    ledstrip_mirror_y = false;
 
     if (matrix_setup_pos < matrix_setup_size)
     {
-        matrix_setup_pos++;
+        matrix_setup_pos += ledstrip_sections_size;
     }
     else
     {
@@ -235,7 +257,7 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
     }
 
     LEDStrip *newstr = new LEDStrip();
-    newstr->Initialize(ledstring, 0, 0);
+    newstr->Initialize(ledstring, 0, 0, 1, false, false);
     xmas.push_back(newstr);
 }
 
@@ -1246,7 +1268,7 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
         break;
 
     case VISUALIZER_PATTERN_SOLID_ORANGE:
-        DrawSolidColor(bright, 0x000080FF, pixels);
+        DrawSolidColor(bright, 0x000060FF, pixels);
         break;
 
     case VISUALIZER_PATTERN_SOLID_YELLOW:
@@ -1266,7 +1288,7 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
         break;
 
     case VISUALIZER_PATTERN_SOLID_PURPLE:
-        DrawSolidColor(bright, 0x00FF00FF, pixels);
+        DrawSolidColor(bright, 0x00FF0060, pixels);
         break;
 
     case VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED:

@@ -23,12 +23,12 @@ public:
     LEDStrip();
     ~LEDStrip();
 
-    void Initialize(char* ledstring, int matrix_size, int matrix_pos);
+    void Initialize(char* ledstring, int matrix_size, int matrix_pos, int sections, bool mirror_x, bool mirror_y);
     void InitializeHuePlus(char * ledstring);
     void InitializeSerial(char* portname, int baud);
     void InitializeUDP(char* clientname, char* port);
     char* GetLEDString();
-    void SetNumLEDs(int numleds, int matrix_size, int matrix_pos);
+    void SetNumLEDs(int numleds, int matrix_size, int matrix_pos, int sections, bool mirror_x, bool mirror_y);
     void SetLEDs(COLORREF pixels[64][256]);
     void SetLEDsXmas(COLORREF pixels[64][256]);
     void SetLEDsHuePlus(COLORREF pixels[64][256]);
