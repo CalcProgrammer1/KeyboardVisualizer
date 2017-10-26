@@ -20,7 +20,7 @@ LEDStrip::~LEDStrip()
 {
 }
 
-void LEDStrip::Initialize(char* ledstring, int matrix_size, int matrix_pos, int sections, bool mirror_x, bool mirror_y)
+void LEDStrip::Initialize(char* ledstring, int matrix_size, int matrix_pos, int sections, int rotate_x, bool mirror_x, bool mirror_y, bool single_color)
 {
     strcpy(led_string, ledstring);
 
@@ -80,7 +80,7 @@ void LEDStrip::Initialize(char* ledstring, int matrix_size, int matrix_pos, int 
 
     if (numleds != NULL && strlen(numleds))
     {
-        SetNumLEDs(atoi(numleds), matrix_size, matrix_pos, sections, mirror_x, mirror_y);
+        SetNumLEDs(atoi(numleds), matrix_size, matrix_pos, sections, rotate_x, mirror_x, mirror_y, single_color);
     }
 
 }
@@ -151,7 +151,7 @@ void LEDStrip::InitializeHuePlus(char* ledstring)
 
     if (numleds != NULL && strlen(numleds))
     {
-        SetNumLEDs(atoi(numleds), 0, 0, 1, false, false);
+        SetNumLEDs(atoi(numleds), 0, 0, 1, 0, false, false, false);
     }
 }
 
@@ -178,7 +178,7 @@ char* LEDStrip::GetLEDString()
     return(led_string);
 }
 
-void LEDStrip::SetNumLEDs(int numleds, int matrix_size, int matrix_pos, int sections, bool mirror_x, bool mirror_y)
+void LEDStrip::SetNumLEDs(int numleds, int matrix_size, int matrix_pos, int sections, int rotate_x, bool mirror_x, bool mirror_y, bool single_color)
 {
     int y_index = ROW_IDX_BAR_GRAPH;
 
@@ -221,32 +221,50 @@ void LEDStrip::SetNumLEDs(int numleds, int matrix_size, int matrix_pos, int sect
             //Even number of LEDs
             for (int i = 0; i < (num_leds / sections); i++)
             {
+                int x_index        = i + rotate_x;
                 int led_idx        = (section * (num_leds / sections)) + i;
                 int matrix_pos_adj = matrix_pos + section;
 
+                if (x_index >= (num_leds / sections))
+                {
+                    x_index = (num_leds / sections) - x_index;
+                }
+
+                if (x_index < 0)
+                {
+                    x_index = (num_leds / sections) + x_index;
+                }
+
                 if (mirror_x)
                 {
-                    LEDStripXIndex[led_idx] = (int)(num_leds / sections) - ((i * (256.0f / ((num_leds / sections) - 1))));
+                    LEDStripXIndex[led_idx] = (int)(num_leds / sections) - ((x_index * (256.0f / ((num_leds / sections) - 1))));
                 }
                 else
                 {
-                    LEDStripXIndex[led_idx] = (int)((i * (256.0f / ((num_leds / sections) - 1))));
+                    LEDStripXIndex[led_idx] = (int)((x_index * (256.0f / ((num_leds / sections) - 1))));
                 }
                 
-                if (i == ((num_leds / sections) - 1))
+                if (x_index == ((num_leds / sections) - 1))
                 {
                     LEDStripXIndex[led_idx] = LEDStripXIndex[led_idx] - 1;
                 }
 
                 if (matrix_size > 0)
                 {
-                    if (mirror_y)
+                    if (single_color)
                     {
-                        y_index = (int)(ROW_IDX_SPECTROGRAPH_TOP + (((matrix_pos + sections - 1) - (matrix_pos + section - 1)) * (SPECTROGRAPH_ROWS / matrix_size)) + (0.5f * (SPECTROGRAPH_ROWS / matrix_size)));
+                        y_index = ROW_IDX_SINGLE_COLOR;
                     }
                     else
                     {
-                        y_index = (int)(ROW_IDX_SPECTROGRAPH_TOP + ((matrix_pos + section - 1) * (SPECTROGRAPH_ROWS / matrix_size)) + (0.5f * (SPECTROGRAPH_ROWS / matrix_size)));
+                        if (mirror_y)
+                        {
+                            y_index = (int)(ROW_IDX_SPECTROGRAPH_TOP + (((matrix_pos + sections - 1) - (matrix_pos + section - 1)) * (SPECTROGRAPH_ROWS / matrix_size)) + (0.5f * (SPECTROGRAPH_ROWS / matrix_size)));
+                        }
+                        else
+                        {
+                            y_index = (int)(ROW_IDX_SPECTROGRAPH_TOP + ((matrix_pos + section - 1) * (SPECTROGRAPH_ROWS / matrix_size)) + (0.5f * (SPECTROGRAPH_ROWS / matrix_size)));
+                        }
                     }
                 }
 
@@ -259,18 +277,39 @@ void LEDStrip::SetNumLEDs(int numleds, int matrix_size, int matrix_pos, int sect
         //Odd number of LEDs
         for (int i = 0; i < num_leds; i++)
         {
-            LEDStripYIndex[i] = y_index;
-            if (i == (num_leds / 2))
+            sections = 1;
+            int x_index = i + rotate_x;
+
+            if (x_index >= (num_leds / sections))
             {
-                LEDStripXIndex[i] = 128;
+                x_index = (num_leds / sections) - x_index;
             }
-            else if (i < ((num_leds / 2) + 1))
+
+            if (x_index < 0)
             {
-                LEDStripXIndex[i] = (num_leds / 2) + ((i + 1) * (num_leds + 1));
+                x_index = (num_leds / sections) + x_index;
+            }
+
+            if (single_color)
+            {
+                LEDStripYIndex[i] = ROW_IDX_SINGLE_COLOR;
             }
             else
             {
-                LEDStripXIndex[i] = ((num_leds / 2) + 1) + (i * (num_leds + 1));
+                LEDStripYIndex[i] = y_index;
+            }
+
+            if (x_index == (num_leds / 2))
+            {
+                LEDStripXIndex[i] = 128;
+            }
+            else if (x_index < ((num_leds / 2) + 1))
+            {
+                LEDStripXIndex[i] = (num_leds / 2) + ((x_index + 1) * (256 / (num_leds + 1)));
+            }
+            else
+            {
+                LEDStripXIndex[i] = ((num_leds / 2) + 1) + (x_index * (256 / (num_leds + 1)));
             }
         }
     }
@@ -325,9 +364,10 @@ void LEDStrip::SetLEDsXmas(COLORREF pixels[64][256])
 
     for (int idx = 0; idx < 25; idx++)
     {
-        unsigned int xmas_color = ((GetBValue(pixels[ROW_IDX_BAR_GRAPH][(int)(idx * 5.12f)])/16)<<8)
-                                | ((GetGValue(pixels[ROW_IDX_BAR_GRAPH][(int)(idx * 5.12f)])/16)<<4)
-                                | ((GetRValue(pixels[ROW_IDX_BAR_GRAPH][(int)(idx * 5.12f)])/16));
+        COLORREF color = pixels[LEDStripYIndex[idx]][LEDStripXIndex[idx]];
+        unsigned int xmas_color = ((GetBValue(color)/16)<<8)
+                                | ((GetGValue(color)/16)<<4)
+                                | ((GetRValue(color)/16));
 
         xmas_buf[(idx * 5)] = 0x00;
         xmas_buf[(idx * 5) + 1] = idx + 1;

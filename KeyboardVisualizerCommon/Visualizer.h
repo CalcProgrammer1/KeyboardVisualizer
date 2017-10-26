@@ -182,6 +182,8 @@ public:
     void LEDStripSections(int sections);
     void LEDMirrorX();
     void LEDMirrorY();
+    void LEDSingleColor();
+    void LEDRotateX(int rotate);
 
     //Single Color Mode
     int single_color_mode;

@@ -70,6 +70,8 @@ float fft_nrml[256];
 float fft_fltr[256];
 bool ledstrip_mirror_x = false;
 bool ledstrip_mirror_y = false;
+bool ledstrip_single_color = false;
+int ledstrip_rotate_x = 0;
 
 //Threads for Visualizer.cpp
 THREAD thread(void *param)
@@ -185,6 +187,16 @@ void Visualizer::LEDMirrorY()
     ledstrip_mirror_y = true;
 }
 
+void Visualizer::LEDSingleColor()
+{
+    ledstrip_single_color = true;
+}
+
+void Visualizer::LEDRotateX(int rotate)
+{
+    ledstrip_rotate_x = rotate;
+}
+
 void Visualizer::AddLEDStrip(char* ledstring)
 {
     //Scan through already registered LED strips and
@@ -212,12 +224,14 @@ void Visualizer::AddLEDStrip(char* ledstring)
     }
 
     LEDStrip *newstr = new LEDStrip();
-    newstr->Initialize(ledstring, matrix_setup_size, matrix_setup_pos, ledstrip_sections_size, ledstrip_mirror_x, ledstrip_mirror_y);
+    newstr->Initialize(ledstring, matrix_setup_size, matrix_setup_pos, ledstrip_sections_size, ledstrip_rotate_x, ledstrip_mirror_x, ledstrip_mirror_y, ledstrip_single_color);
     str.push_back(newstr);
 
     ledstrip_sections_size = 1;
     ledstrip_mirror_x = false;
     ledstrip_mirror_y = false;
+    ledstrip_single_color = false;
+    ledstrip_rotate_x = 0;
 
     if (matrix_setup_pos < matrix_setup_size)
     {
@@ -257,7 +271,13 @@ void Visualizer::AddLEDStripXmas(char* ledstring)
     }
 
     LEDStrip *newstr = new LEDStrip();
-    newstr->Initialize(ledstring, 0, 0, 1, false, false);
+    newstr->Initialize(ledstring, 0, 0, 1, ledstrip_rotate_x, ledstrip_mirror_x, ledstrip_mirror_y, ledstrip_single_color);
+
+    ledstrip_mirror_x = false;
+    ledstrip_mirror_y = false;
+    ledstrip_single_color = false;
+    ledstrip_rotate_x = 0;
+
     xmas.push_back(newstr);
 }
 
