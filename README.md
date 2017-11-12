@@ -328,4 +328,6 @@ Keyboard Visualizer allows you to save your custom settings in two different way
    
    * Dogecoin:  D7nqJZ3dyfCMRvS6J5jpoxerpteUG5z7Pm
    
-   * Ethereum:  0xd87c50Aa111Cc23c82a501A1dFC2421eEe37Ae6A
+   * Ethereum:  0xb5023019E6789af4887aED2056E471DF0f4c8e93
+   
+   * Monero:  44p8QfKTHxA65PeY1HabFsaZnayVu36h2eNHsTVcHzg5EeUDszmK91aTaAc4otCRdL4644gMzatb85bWyZB7vfK78siS962
