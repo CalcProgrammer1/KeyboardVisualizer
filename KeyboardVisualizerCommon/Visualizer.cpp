@@ -333,6 +333,10 @@ void Visualizer::SetDeviceProperty(char * devprop, char * argument)
     {
         rkb.use_chromalink_single_color = true;
     }
+    else if (strcmp(devprop, "razer_use_keyboard_nearest_filter") == 0)
+    {
+        rkb.use_keyboard_nearest_filter = true;
+    }
     else if (strcmp(devprop, "razer_disable_chromalink") == 0)
     {
         rkb.disable_chromalink = true;
