@@ -1,0 +1,17 @@
+ver 02.03 release note:
+
+VGA :
+	DWORD mode;
+	SetGPUMode(GpuLightCtrl[0], mode);
+
+Now "mode" value can be 1.
+SetGPUMode(GpuLightCtrl[0], 1) will set VGA to Static mode.
+
+//=========
+
+ver 02.04 release note:
+
+device dll update.
+
+
+
