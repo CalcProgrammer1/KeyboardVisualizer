@@ -87,6 +87,7 @@ public:
     //Update threads for devices supported only under Windows
     void CmKeyboardUpdateThread();
     void LogitechSDKUpdateThread();
+	void AuraSDKUpdateThread();
 #else
 
 #endif
