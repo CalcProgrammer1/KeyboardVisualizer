@@ -94,7 +94,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-2.3.2\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-2.3.2\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include;D:\git\KeyboardVisualizerAuraSDK\dependencies\AURA SDK_02_04\sdk</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -138,7 +138,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-2.3.2\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include;..\dependencies\inpout32_1501\Win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-2.3.2\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include;D:\git\KeyboardVisualizerAuraSDK\dependencies\AURA SDK_02_04\sdk</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>

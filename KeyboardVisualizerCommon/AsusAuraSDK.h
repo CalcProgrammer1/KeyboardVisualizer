@@ -1,5 +1,11 @@
+/*---------------------------------------------------------*\
+|  Definitions for ASUS AURA SDK Interface                  |
+|                                                           |
+|  Avinash Raja (avinashraja98@gmail.com), 1/4/2018	        |
+|  Adam Honse (calcprogrammer1@gmail.com)	                |
+\*---------------------------------------------------------*/
 
-#include "..\dependencies\AURA SDK_02_04\sdk\AURALightingSDK.h"
+#include "AURALightingSDK.h"
 #include "VisualizerDefines.h"
 
 #define ASUSAURASDKDLL "AURA_SDK.dll"
@@ -7,23 +13,28 @@
 class AsusAuraSDK
 {
 public:
-	AsusAuraSDK();
-	~AsusAuraSDK();
+    AsusAuraSDK();
+    ~AsusAuraSDK();
 
-	void Initialize();
-	bool SetLEDs(COLORREF pixels[64][256]);
+    void Initialize();
+    bool SetLEDs(COLORREF pixels[64][256]);
 
 private:
-	
-	HMODULE hModule = NULL;
+    
+    HMODULE hModule = NULL;
 
-	bool dllLoaded = FALSE;
+    bool dllLoaded = FALSE;
 
-	EnumerateMbControllerFunc EnumerateMbController;
-	SetMbModeFunc SetMbMode;
-	SetMbColorFunc SetMbColor;
-	GetMbColorFunc GetMbColor;
-	GetMbLedCountFunc GetMbLedCount;
+    EnumerateMbControllerFunc EnumerateMbController;
+    SetMbModeFunc SetMbMode;
+    SetMbColorFunc SetMbColor;
+    GetMbColorFunc GetMbColor;
+    GetMbLedCountFunc GetMbLedCount;
 
+    EnumerateDramFunc EnumerateDram;
+    SetDramModeFunc SetDramMode;
+    SetDramColorFunc SetDramColor;
+    GetDramColorFunc GetDramColor;
+    GetDramLedCountFunc GetDramLedCount;
 };
 
