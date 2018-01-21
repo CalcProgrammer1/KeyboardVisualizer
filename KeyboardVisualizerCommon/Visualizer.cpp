@@ -46,7 +46,7 @@
 CorsairCUE              ckb;
 CmKeyboard              cmkb;
 LogitechSDK             lkb;
-AsusAuraSDK				asa;
+AsusAuraSDK             asa;
 
 //Devices supported only under Linux
 #else
@@ -115,9 +115,9 @@ THREAD lkbthread(void *param)
 
 THREAD asathread(void *param)
 {
-	Visualizer* vis = static_cast<Visualizer*>(param);
-	vis->AuraSDKUpdateThread();
-	THREADRETURN
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->AuraSDKUpdateThread();
+    THREADRETURN
 }
 
 //Threads for devices supported only under Linux
@@ -554,7 +554,7 @@ void Visualizer::Initialize()
 #ifdef WIN32
     cmkb.Initialize();
     lkb.Initialize();
-	asa.Initialize();
+    asa.Initialize();
 
     //Initialize devices supported only under Linux
 #else
@@ -1056,10 +1056,10 @@ void Visualizer::StartThread()
     _beginthread(mkbthread, 0, this);
     _beginthread(pkbthread, 0, this);
     _beginthread(lsthread, 0, this);
-	_beginthread(asathread, 0, this);
+    _beginthread(asathread, 0, this);
 
 #else
-    pthread_t threads[11];
+    pthread_t threads[10];
 
     pthread_create(&threads[0], NULL, &thread, this);
     pthread_create(&threads[1], NULL, &netconthread, this);
@@ -1070,7 +1070,6 @@ void Visualizer::StartThread()
     pthread_create(&threads[6], NULL, &mkbthread, this);
     pthread_create(&threads[7], NULL, &pkbthread, this);
     pthread_create(&threads[8], NULL, &lsthread, this);
-	pthread_create(&threads[9], NULL, &asathread, this);
 #endif
 }
 
@@ -1768,10 +1767,10 @@ void Visualizer::LogitechSDKUpdateThread()
 
 void Visualizer::AuraSDKUpdateThread()
 {
-	while (asa.SetLEDs(pixels_out->pixels))
-	{
-		Sleep(delay);
-	}
+    while (asa.SetLEDs(pixels_out->pixels))
+    {
+        Sleep(delay);
+    }
 }
 
 //Thread update functions for devices supported only under Linux

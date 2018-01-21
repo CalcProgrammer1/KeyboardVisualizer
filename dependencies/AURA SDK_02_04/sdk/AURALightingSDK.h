@@ -7,6 +7,7 @@ typedef void* MbLightControl;
 typedef void* GPULightControl;
 typedef void* ClaymoreKeyboardLightControl;
 typedef void* RogMouseLightControl;
+typedef void* DramLightControl;
 
 
 typedef DWORD(WINAPI* EnumerateMbControllerFunc)(MbLightControl handles[], DWORD size);
@@ -29,3 +30,9 @@ typedef DWORD(WINAPI* CreateRogMouseFunc)(RogMouseLightControl* handle);
 typedef DWORD(WINAPI* SetRogMouseModeFunc) (RogMouseLightControl handle, DWORD mode);
 typedef DWORD(WINAPI* SetRogMouseColorFunc) (RogMouseLightControl handle, BYTE* color, DWORD size);
 typedef DWORD(WINAPI* RogMouseLedCountFunc)(RogMouseLightControl handle);
+
+typedef DWORD(WINAPI* EnumerateDramFunc)(DramLightControl handles[], DWORD size);
+typedef DWORD(WINAPI* SetDramModeFunc) (DramLightControl handle, DWORD mode);
+typedef DWORD(WINAPI* SetDramColorFunc) (DramLightControl handle, BYTE* color, DWORD size);
+typedef DWORD(WINAPI* GetDramColorFunc) (DramLightControl handle, BYTE* color, DWORD size);
+typedef DWORD(WINAPI* GetDramLedCountFunc)(DramLightControl handle);
