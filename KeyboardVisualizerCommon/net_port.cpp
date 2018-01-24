@@ -85,6 +85,16 @@ bool net_port::udp_client(const char * client_name, const char * port)
     }
 }
 
+int net_port::udp_listen(char * recv_data, int length)
+{
+    return(recvfrom(sock, recv_data, length, 0, NULL, NULL));
+}
+
+int net_port::udp_write(char * buffer, int length)
+{
+    return(sendto(sock, buffer, length, 0, (sockaddr *)&addrDest, sizeof(addrDest)));
+}
+
 bool net_port::tcp_client(const char * client_name, const char * port)
 {
     addrinfo    hints = {};
@@ -220,9 +230,10 @@ void net_port::tcp_server_listen()
     clients.push_back(client);
 }
 
-int net_port::udp_listen(char * recv_data, int length)
+void net_port::tcp_close()
 {
-    return(recvfrom(sock, recv_data, length, 0, NULL, NULL));
+    closesocket(sock);
+    connected = FALSE;
 }
 
 int net_port::tcp_listen(char * recv_data, int length)
@@ -293,9 +304,9 @@ int net_port::tcp_listen(char * recv_data, int length)
     return(ret);
 }
 
-int net_port::udp_write(char * buffer, int length)
+int net_port::tcp_client_write(char * buffer, int length)
 {
-    return(sendto(sock, buffer, length, 0, (sockaddr *)&addrDest, sizeof(addrDest)));
+    return(send(sock, buffer, length, 0));
 }
 
 int net_port::tcp_write(char * buffer, int length)

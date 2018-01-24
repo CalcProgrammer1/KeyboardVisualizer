@@ -64,6 +64,9 @@ public:
     //Function to write data to the serial port
     int udp_write(char * buffer, int length);
     int tcp_write(char * buffer, int length);
+    int tcp_client_write(char * buffer, int length);
+
+    void tcp_close();
 
     bool connected;
 

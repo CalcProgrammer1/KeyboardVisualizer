@@ -27,9 +27,11 @@ public:
     void InitializeHuePlus(char * ledstring);
     void InitializeSerial(char* portname, int baud);
     void InitializeUDP(char* clientname, char* port);
+    void InitializeEspurna(char* clientname, char* port, char * apikey);
     char* GetLEDString();
     void SetNumLEDs(int numleds, int matrix_size, int matrix_pos, int sections, int rotate_x, bool mirror_x, bool mirror_y, bool single_color);
     void SetLEDs(COLORREF pixels[64][256]);
+    void SetLEDsEspurna(COLORREF pixels[64][256]);
     void SetLEDsXmas(COLORREF pixels[64][256]);
     void SetLEDsHuePlus(COLORREF pixels[64][256]);
 
@@ -46,8 +48,10 @@ private:
     char led_string[1024];
     char port_name[128];
     char client_name[1024];
+    char espurna_apikey[128];
     serial_port *serialport;
     net_port *udpport;
+    net_port *tcpport;
 };
 
 #endif

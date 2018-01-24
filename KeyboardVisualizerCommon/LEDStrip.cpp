@@ -24,20 +24,34 @@ void LEDStrip::Initialize(char* ledstring, int matrix_size, int matrix_pos, int 
 {
     strcpy(led_string, ledstring);
 
+    //Assume serial device unless a different protocol is specified
     bool    serial      = TRUE;
+    bool	udp	        = FALSE;
+    bool    espurna	    = FALSE;
     LPSTR   numleds     = NULL;
     LPSTR   source      = NULL;
     LPSTR   udpport_baud= NULL;
     LPSTR   next        = NULL;
+    LPSTR   apikey      = NULL;
 
     source = strtok_s(ledstring, ",", &next);
 
-    //Check if we are setting up a UDP or Serial interface
-    //UDP is denoted by udp:
+    //Check if we are setting up a Keyboard Visualizer UDP protocol device
     if (strncmp(source, "udp:", 4) == 0)
     {
-        source = source + 4;
-        serial = FALSE;
+        source  = source + 4;
+        serial  = FALSE;
+        udp     = TRUE;
+        espurna = FALSE;
+    }
+
+    //Check if we are setting up an Espurna protocol device
+    if (strncmp(source, "espurna:", 8) == 0)
+    {
+        source  = source + 8;
+        serial  = FALSE;
+        udp     = FALSE;
+        espurna = TRUE;
     }
 
     //Check for either the UDP port or the serial baud rate
@@ -50,6 +64,12 @@ void LEDStrip::Initialize(char* ledstring, int matrix_size, int matrix_pos, int 
     if (strlen(next))
     {
         numleds = strtok_s(next, ",", &next);
+    }
+
+    //Espurna protocol requires API key
+    if (strlen(next))
+    {
+        apikey = strtok_s(next, ",", &next);
     }
 
     if (serial)
@@ -73,8 +93,16 @@ void LEDStrip::Initialize(char* ledstring, int matrix_size, int matrix_pos, int 
         }
         else
         {
-            //Initialize UDP port
-            InitializeUDP(source, udpport_baud);
+            if (udp)
+            {
+                //Initialize UDP port
+                InitializeUDP(source, udpport_baud);
+            }
+            else if (espurna)
+            {
+                //Initialize Espurna
+                InitializeEspurna(source, udpport_baud, apikey);
+            }
         }
     }
 
@@ -162,6 +190,7 @@ void LEDStrip::InitializeSerial(char* portname, int baud)
     baud_rate = baud;
     serialport = new serial_port(port_name, baud_rate);
     udpport = NULL;
+    tcpport = NULL;
 }
 
 void LEDStrip::InitializeUDP(char * clientname, char * port)
@@ -171,6 +200,17 @@ void LEDStrip::InitializeUDP(char * clientname, char * port)
 
     udpport = new net_port(client_name, port_name);
     serialport = NULL;
+}
+
+void LEDStrip::InitializeEspurna(char * clientname, char * port, char * apikey)
+{
+    strcpy(client_name, clientname);
+    strcpy(port_name, port);
+    strcpy(espurna_apikey, apikey);
+    tcpport = new net_port;
+    serialport = NULL;
+    udpport = NULL;
+    tcpport->tcp_client(client_name, port_name);
 }
 
 char* LEDStrip::GetLEDString()
@@ -356,6 +396,23 @@ void LEDStrip::SetLEDs(COLORREF pixels[64][256])
 
         delete[] serial_buf;
     }
+    else
+    {
+        SetLEDsEspurna(pixels);
+    }
+}
+
+void LEDStrip::SetLEDsEspurna(COLORREF pixels[64][256])
+{
+    if (tcpport != NULL)
+    {
+        COLORREF color = pixels[ROW_IDX_SINGLE_COLOR][128];
+        char get_request[1024];
+        snprintf(get_request, 1024, "GET /api/color?apikey=%s&value=%%23%02X%02X%02X HTTP/1.1\r\nHost: %s\r\n\r\n", espurna_apikey, GetRValue(color), GetGValue(color), GetBValue(color), client_name);
+        tcpport->tcp_client_connect();
+        tcpport->tcp_client_write(get_request, strlen(get_request));
+        tcpport->tcp_close();
+    }
 }
 
 void LEDStrip::SetLEDsXmas(COLORREF pixels[64][256])
@@ -393,7 +450,6 @@ void LEDStrip::SetLEDsHuePlus(COLORREF pixels[64][256])
 
         serial_buf = new unsigned char[hueSize];    //Size of Message always 5 XX Blocks (Mode Selection) +  3 XX for each LED (1 color) 
                                                     //-> max of 40 LEDs per Channel (or 5 Fans a 8 LEDs) -> 125 Blocks (empty LEDs are written, too
-
         serial_buf[0] = 0x4b;
         serial_buf[1] = channel;
         serial_buf[2] = 0x0e;				
