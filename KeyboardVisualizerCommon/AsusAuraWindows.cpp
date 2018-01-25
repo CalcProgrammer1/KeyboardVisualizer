@@ -266,13 +266,13 @@ void AsusAura::Initialize()
     WriteAuraRegister(0x71, 0x8021, 0x01);
     WriteAuraRegister(0x71, 0x8025, 0xFF);
 
-    WriteAuraRegister(0x72, 0x8020, 0x01);
-    WriteAuraRegister(0x72, 0x8021, 0x01);
-    WriteAuraRegister(0x72, 0x8025, 0xFF);
-
     WriteAuraRegister(0x73, 0x8020, 0x01);
     WriteAuraRegister(0x73, 0x8021, 0x01);
     WriteAuraRegister(0x73, 0x8025, 0xFF);
+
+    WriteAuraRegister(0x74, 0x8020, 0x01);
+    WriteAuraRegister(0x74, 0x8021, 0x01);
+    WriteAuraRegister(0x74, 0x8025, 0xFF);
 
 	piix4_smba = 0x0B20;
     WriteAuraRegister(0x4E, 0x8020, 0x01);
@@ -321,12 +321,12 @@ bool AsusAura::SetLEDs(COLORREF pixels[64][256])
     WriteAuraColors(0x71, aura_led_colors[1]);
     WriteAuraRegister(0x71, 0x80A0, 0x01);
 
-    WriteAuraColors(0x72, aura_led_colors[2]);
-    WriteAuraRegister(0x72, 0x80A0, 0x01);
-
-    WriteAuraColors(0x73, aura_led_colors[0]);
+    WriteAuraColors(0x73, aura_led_colors[2]);
     WriteAuraRegister(0x73, 0x80A0, 0x01);
 
+    WriteAuraColors(0x74, aura_led_colors[0]);
+    WriteAuraRegister(0x74, 0x80A0, 0x01);
+    
 	piix4_smba = 0x0B20;
     WriteAuraColors(0x4E, aura_led_colors[4]);
     WriteAuraRegister(0x4E, 0x80A0, 0x01);
