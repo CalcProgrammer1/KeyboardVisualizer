@@ -11,14 +11,20 @@
 //Index lists for BlackWidow
 int BlackWidowXIndex[22];
 int BlackWidowYIndex[6];
+int BlackWidowAvgCnt[6];
+int BlackWidowAvgIndex[6*3];
 
 //Index lists for BlackWidow TE
 int BlackWidowTEXIndex[18];
 int BlackWidowTEYIndex[6];
+int BlackWidowTEAvgCnt[6];
+int BlackWidowTEAvgIndex[6*3];
 
 //Index lists for Blade Stealth
 int BladeStealthXIndex[16];
 int BladeStealthYIndex[6];
+int BlackStealthAvgCnt[6];
+int BlackStealthAvgIndex[6*3];
 
 //Index list for Firefly
 int FireflyIndex[15];
@@ -118,6 +124,89 @@ void FillKeyboardGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_li
     }
 }
 
+void FillKeyboardGridAvg(int x_count, int y_count, int *tmpColumnCount, int *tmpColumnColor, ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE * effect, COLORREF pixels[64][256])
+{
+    //defines how many pixels will get averaged out per row/column
+    float pxCntCol = ((float)SPECTROGRAPH_COLS / (float)x_count);
+    float pxCntRow = ((float)SPECTROGRAPH_ROWS / (float)y_count);
+    //reset added up colors for next column
+    memset(tmpColumnCount, 0, y_count * sizeof(int));
+    memset(tmpColumnColor, 0, y_count * 3 * sizeof(int));
+    //variables for current keyboard row and column
+    int cRow = 0, cColumn = 0;
+    //temporary color storage
+    int cCol[3];
+    cCol[0] = 0; cCol[1] = 0; cCol[2] = 0;
+    //used to determine if keyboard row/column is done
+    int cRowMulti = 1; int cColumnMulti = 1;
+    for (int cColumnTotal = 0; cColumnTotal < SPECTROGRAPH_COLS; cColumnTotal++)
+    {
+        if (cColumnTotal >= (cColumnMulti*pxCntCol)) //one column done
+        {
+            for (int k = 0; k < y_count; k++) //iterate through rows
+            {
+                effect->Color[k][cColumn] = 
+                    RGB((((tmpColumnColor[(k * 3) + 0]) / tmpColumnCount[k]) & 0xFF),
+                        (((tmpColumnColor[(k * 3) + 1]) / tmpColumnCount[k]) & 0xFF),
+                        (((tmpColumnColor[(k * 3) + 2]) / tmpColumnCount[k]) & 0xFF));
+            }
+            //reset added up colors for next column
+            memset(tmpColumnCount, 0, y_count * sizeof(int));
+            memset(tmpColumnColor, 0, y_count * 3 * sizeof(int));
+            //increase column count
+            cColumnMulti++;
+            cColumn++;
+            //done handling columns
+            if (cColumn >= x_count)
+                break;
+        }
+        for (int cRowsTotal = 0; cRowsTotal < SPECTROGRAPH_ROWS; cRowsTotal++) //rows
+        {
+            if (cRowsTotal >= (cRowMulti*pxCntRow)) //one row in current column done
+            {
+                tmpColumnColor[(cRow * 3)+0] += cCol[0];
+                tmpColumnColor[(cRow * 3)+1] += cCol[1];
+                tmpColumnColor[(cRow * 3)+2] += cCol[2];
+                //clear colors
+                cCol[0] = 0; cCol[1] = 0; cCol[2] = 0;
+                //increase row count
+                cRowMulti++;
+                cRow++;
+                //done handling rows
+                if (cRow >= y_count)
+                    break;
+            }
+            cCol[0] += GetRValue(pixels[ROW_IDX_SPECTROGRAPH_TOP + cRowsTotal][cColumnTotal]);
+            cCol[1] += GetGValue(pixels[ROW_IDX_SPECTROGRAPH_TOP + cRowsTotal][cColumnTotal]);
+            cCol[2] += GetBValue(pixels[ROW_IDX_SPECTROGRAPH_TOP + cRowsTotal][cColumnTotal]);
+            //increase total colors added for this row/column for division later
+            tmpColumnCount[cRow]++;
+        }
+        if (cRow < y_count) //last row was not set yet
+        {
+            //add last row
+            tmpColumnColor[(cRow * 3)+0] += cCol[0];
+            tmpColumnColor[(cRow * 3)+1] += cCol[1];
+            tmpColumnColor[(cRow * 3)+2] += cCol[2];
+        }
+        //clear colors
+        cCol[0] = 0; cCol[1] = 0; cCol[2] = 0;
+        //reset row count
+        cRowMulti = 1;
+        cRow = 0;
+    }
+    if (cColumn < x_count) //last column was not set yet
+    {
+        for (int k = 0; k < y_count; k++) //iterate through rows
+        {
+            effect->Color[k][cColumn] =
+                RGB(((tmpColumnColor[(k * 3) + 0]) / tmpColumnCount[k]),
+                    ((tmpColumnColor[(k * 3) + 1]) / tmpColumnCount[k]),
+                    ((tmpColumnColor[(k * 3) + 2]) / tmpColumnCount[k]));
+        }
+        //no color reset needed here, will be done on next call
+    }
+}
 
 void FillKeypadGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list, ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE * effect, COLORREF pixels[64][256])
 {
@@ -137,18 +226,19 @@ void RazerChroma::Initialize()
     use_keyboard_generic_effect = false;
     use_headset_custom_effect = false;
     use_chromalink_single_color = false;
+    use_keyboard_nearest_filter = false;
     disable_chromalink = false;
     chroma_box_mode = 1;
 
-	// Dynamically loads the Chroma SDK library.
-	hModule = LoadLibrary(CHROMASDKDLL);
-	if (hModule)
-	{
-		INIT Init = (INIT)GetProcAddress(hModule, "Init");
-		if (Init)
-		{
+    // Dynamically loads the Chroma SDK library.
+    hModule = LoadLibrary(CHROMASDKDLL);
+    if (hModule)
+    {
+        INIT Init = (INIT)GetProcAddress(hModule, "Init");
+        if (Init)
+        {
             //Initialize the SDK
-			Init();
+            Init();
 
             //Build index list for BlackWidow
             SetupKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex);
@@ -296,8 +386,8 @@ void RazerChroma::Initialize()
                     ChromaBox4BarXIndex[3][x-48] = (x * (256 / 64)) + (256 / 128);
                 }
             }
-		}
-	}
+        }
+    }
 }
 
 
@@ -324,8 +414,10 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         {
             //Keyboard Effect
             ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE KeyboardEffect;
-
-            FillKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex, &KeyboardEffect, pixels);
+            if(use_keyboard_nearest_filter)
+                FillKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex, &KeyboardEffect, pixels);
+            else
+                FillKeyboardGridAvg(22, 6, BlackWidowAvgCnt, BlackWidowAvgIndex, &KeyboardEffect, pixels);
             //Set Razer "Three Headed Snake" logo to the background color of the 11th column
             KeyboardEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
 
@@ -335,9 +427,10 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         {
             //Blackwidow Chroma
             ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowEffect;
-
-            FillKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex, &BlackWidowEffect, pixels);
-
+            if (use_keyboard_nearest_filter)
+                FillKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex, &BlackWidowEffect, pixels);
+            else
+                FillKeyboardGridAvg(22, 6, BlackWidowAvgCnt, BlackWidowAvgIndex, &BlackWidowEffect, pixels);
             //Set Razer "Three Headed Snake" logo to the background color of the 11th column
             BlackWidowEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
 
@@ -349,9 +442,10 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
             //Blackwidow Chroma Tournament Edition
             ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowTEEffect;
-
-            FillKeyboardGrid(18, 6, BlackWidowTEXIndex, BlackWidowTEYIndex, &BlackWidowTEEffect, pixels);
-
+            if (use_keyboard_nearest_filter)
+                FillKeyboardGrid(18, 6, BlackWidowTEXIndex, BlackWidowTEYIndex, &BlackWidowTEEffect, pixels);
+            else
+                FillKeyboardGridAvg(18, 6, BlackWidowTEAvgCnt, BlackWidowTEAvgIndex, &BlackWidowTEEffect, pixels);
             //Set Razer "Three Headed Snake" logo to the background color of the 11th column
             BlackWidowTEEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
 
@@ -359,9 +453,10 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
 
             //Blade Stealth and Blade 14
             ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BladeStealthEffect;
-
-            FillKeyboardGrid(16, 6, BladeStealthXIndex, BladeStealthYIndex, &BladeStealthEffect, pixels);
-
+            if (use_keyboard_nearest_filter)
+                FillKeyboardGrid(16, 6, BladeStealthXIndex, BladeStealthYIndex, &BladeStealthEffect, pixels);
+            else
+                FillKeyboardGridAvg(16, 6, BlackStealthAvgCnt, BlackStealthAvgIndex, &BladeStealthEffect, pixels);
             CreateEffect(ChromaSDK::BLADE_STEALTH, ChromaSDK::CHROMA_CUSTOM, &BladeStealthEffect, NULL);
             CreateEffect(ChromaSDK::BLADE, ChromaSDK::CHROMA_CUSTOM, &BladeStealthEffect, NULL);
 
