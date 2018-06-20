@@ -189,7 +189,14 @@ void RazerChroma::Initialize()
             //Build index list for Nommo Pro
             for (int x = 0; x < 8; x++)
             {
-                NommoProXIndex[x] = (x * (256 / 8)) + (256 / 16);
+                if (x >= 4)
+                {
+                    NommoProXIndex[x-4] = (x * (256 / 8)) + (256 / 16);
+                }
+                else
+                {
+                    NommoProXIndex[x+(8-4)] = (x * (256 / 8)) + (256 / 16);
+                }
             }
 
             //Build index list for Nommo Chroma
@@ -434,6 +441,17 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         }
 
         CreateEffect(ChromaSDK::NOMMO_CHROMA, ChromaSDK::CHROMA_CUSTOM, &NommoChromaEffect, NULL);
+
+        //Razer Nommo Pro
+        ChromaSDK::CUSTOM_EFFECT_TYPE NommoProEffect = {};
+
+        for (int x = 0; x < 8; x++)
+        {
+            NommoProEffect.Color[0][x] = pixels[ROW_IDX_BAR_GRAPH][NommoProXIndex[x]];
+            NommoProEffect.Color[1][x] = pixels[ROW_IDX_BAR_GRAPH][NommoProXIndex[x]];
+        }
+
+        CreateEffect(ChromaSDK::NOMMO_CHROMA_PRO, ChromaSDK::CHROMA_CUSTOM, &NommoProEffect, NULL);
 
         //Razer Core
         ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE CoreEffect = {};
