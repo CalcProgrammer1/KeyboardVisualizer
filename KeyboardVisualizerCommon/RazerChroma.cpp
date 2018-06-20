@@ -23,6 +23,10 @@ int BladeStealthYIndex[6];
 //Index list for Firefly
 int FireflyIndex[15];
 
+//Index lists for Nommo Chroma/Pro
+int NommoChromaXIndex[24];
+int NommoProXIndex[8];
+
 //Index list for mice (Mamba TE, DeathAdder)
 int MouseXIndex[9][7];
 int MouseYIndex[9][7];
@@ -180,6 +184,26 @@ void RazerChroma::Initialize()
                 {
                     FireflyIndex[x] = 8 + (x * 16);
                 }
+            }
+
+            //Build index list for Nommo Pro
+            for (int x = 0; x < 8; x++)
+            {
+                NommoProXIndex[x] = (x * (256 / 8)) + (256 / 16);
+            }
+
+            //Build index list for Nommo Chroma
+            for (int x = 0; x < 24; x++)
+            {
+                if (x >= 10)
+                {
+                    NommoChromaXIndex[x-10] = (x * (256 / 24)) + (256 / 48);
+                }
+                else
+                {
+                    NommoChromaXIndex[x+(24-10)] = (x * (256 / 24)) + (256 / 48);
+                }
+                
             }
 
             //Build index list for mice
@@ -399,6 +423,17 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         }
 
         CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_CUSTOM, &FireflyEffect, NULL);
+
+        //Razer Nommo Chroma
+        ChromaSDK::CUSTOM_EFFECT_TYPE NommoChromaEffect = {};
+
+        for (int x = 0; x < 24; x++)
+        {
+            NommoChromaEffect.Color[0][x] = pixels[ROW_IDX_BAR_GRAPH][NommoChromaXIndex[x]];
+            NommoChromaEffect.Color[1][x] = pixels[ROW_IDX_BAR_GRAPH][NommoChromaXIndex[x]];
+        }
+
+        CreateEffect(ChromaSDK::NOMMO_CHROMA, ChromaSDK::CHROMA_CUSTOM, &NommoChromaEffect, NULL);
 
         //Razer Core
         ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE CoreEffect = {};
