@@ -383,7 +383,7 @@ void parse_settings_file(char * filename)
                 value = (LPSTR)line.c_str();
 
                 argument = strtok_s(value, "=", &value);
-
+                strtok(argument, "\r");
                 parse_argument_string(argument, value);
             }
         }
