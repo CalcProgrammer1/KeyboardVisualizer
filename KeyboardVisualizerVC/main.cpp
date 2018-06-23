@@ -213,7 +213,7 @@ void parse_argument_string(char * argument, char * value)
         vis.ChangeAudioDevice();
     }
 
-    if (strcmp(argument, "razer_use_keyboard_generic_effect") == 0)
+    if (strcmp(argument, "razer_use_keyboard_custom_effect") == 0)
     {
         vis.SetDeviceProperty(argument, value);
     }
@@ -335,8 +335,8 @@ boolean parse_command_line(char * command_line)
             printf("                                            ex. 3 Fans on Ch. 1 4 Fans on CH. 2: num_leds 32 for the 4 Fans\r\n");
             printf("                                            For best Visualizer results don`t connect on one channel 3 fans more than on the other channel\r\n");
             printf("                      - (ex. hueplus=COM4,1,24\r\n");
-            printf("    razer_use_keyboard_generic_effect\r\n");
-            printf("                      - Use generic effect type in the Razer SDK, allows the use of SDK-unsupported keyboards at the expense of scaling\r\n");
+            printf("    razer_use_keyboard_custom_effect\r\n");
+            printf("                      - Use custom effect type in the Razer SDK, enables effects better scaled for specific keyboards, but does not support all models\r\n");
             printf("    razer_use_headset_custom_effect\r\n");
             printf("                      - Use custom effect for headsets, allows smooth color transitions on the Kraken V2 but disables the Kraken V1\r\n");
             printf("    razer_use_chromalink_single_color\r\n");

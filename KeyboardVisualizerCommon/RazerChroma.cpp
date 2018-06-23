@@ -58,6 +58,10 @@ int ChromaBox2BarXIndex[4][16];
 //Index list for 4 strips bar graph Chroma HDK
 int ChromaBox4BarXIndex[4][16];
 
+//Previous color for Kraken headset
+COLORREF kraken_last_color = 0;
+DWORD kraken_last_color_change = 0;
+
 RazerChroma::RazerChroma()
 {
 }
@@ -138,7 +142,7 @@ void FillKeypadGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list
 void RazerChroma::Initialize()
 {
     // Initialize variables
-    use_keyboard_generic_effect = false;
+    use_keyboard_custom_effect = false;
     use_headset_custom_effect = false;
     use_chromalink_single_color = false;
     disable_chromalink = false;
@@ -351,18 +355,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         //to all Chroma SDK supported keyboards.  This effect is a workaround for missing Blade Stealth
         //Kaby Lake support in the SDK, as the generic effect seems to be the only working way to
         //support this product
-        if (use_keyboard_generic_effect)
-        {
-            //Keyboard Effect
-            ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE KeyboardEffect;
-
-            FillKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex, &KeyboardEffect, pixels);
-            //Set Razer "Three Headed Snake" logo to the background color of the 11th column
-            KeyboardEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
-
-            CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_CUSTOM, &KeyboardEffect, NULL);
-        }
-        else
+        if (use_keyboard_custom_effect)
         {
             //Blackwidow Chroma
             ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE BlackWidowEffect;
@@ -405,6 +398,17 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             }
 
             CreateEffect(ChromaSDK::DEATHSTALKER_CHROMA, ChromaSDK::CHROMA_CUSTOM, &DeathStalkerEffect, NULL);
+        }
+        else
+        {
+            //Keyboard Effect
+            ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE KeyboardEffect;
+
+            FillKeyboardGrid(22, 6, BlackWidowXIndex, BlackWidowYIndex, &KeyboardEffect, pixels);
+            //Set Razer "Three Headed Snake" logo to the background color of the 11th column
+            KeyboardEffect.Color[0][20] = pixels[ROW_IDX_SINGLE_COLOR][11 * (256 / 22)];
+
+            CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_CUSTOM, &KeyboardEffect, NULL);
         }
 
         //Orbweaver Chroma
@@ -497,13 +501,21 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
         }
         else
         {
-            //Kraken Chroma V1
-            ChromaSDK::Headset::STATIC_EFFECT_TYPE KrakenEffect;
+            if (kraken_last_color != pixels[ROW_IDX_SINGLE_COLOR][0])
+            {
+                if ((GetTickCount() - kraken_last_color_change) > 50)
+                {
+                    //Kraken Chroma V1
+                    ChromaSDK::Headset::STATIC_EFFECT_TYPE KrakenEffect;
 
-            KrakenEffect.Color = pixels[ROW_IDX_SINGLE_COLOR][0];
+                    KrakenEffect.Color = pixels[ROW_IDX_SINGLE_COLOR][0];
 
-            CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_NONE, &KrakenEffect, NULL);
-            CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &KrakenEffect, NULL);
+                    CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_NONE, &KrakenEffect, NULL);
+                    CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &KrakenEffect, NULL);
+                    kraken_last_color_change = GetTickCount();
+                }
+                kraken_last_color = pixels[ROW_IDX_SINGLE_COLOR][0];
+            }
         }
 
         if (!disable_chromalink)

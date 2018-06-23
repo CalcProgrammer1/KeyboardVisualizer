@@ -330,9 +330,9 @@ void Visualizer::SetDeviceProperty(char * devprop, char * argument)
 
     //Parse device properties exclusive to Windows
 #ifdef WIN32
-    if (strcmp(devprop, "razer_use_keyboard_generic_effect") == 0)
+    if (strcmp(devprop, "razer_use_keyboard_custom_effect") == 0)
     {
-        rkb.use_keyboard_generic_effect = true;
+        rkb.use_keyboard_custom_effect = true;
     }
     else if (strcmp(devprop, "razer_use_headset_custom_effect") == 0)
     {

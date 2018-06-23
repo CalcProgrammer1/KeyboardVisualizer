@@ -41,7 +41,7 @@ public:
 	void Initialize();
 	bool SetLEDs(COLORREF pixels[64][256]);
 
-    bool use_keyboard_generic_effect;
+    bool use_keyboard_custom_effect;
     bool use_headset_custom_effect;
     bool use_chromalink_single_color;
     int chroma_box_mode;
