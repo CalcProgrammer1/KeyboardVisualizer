@@ -233,7 +233,7 @@ void net_port::tcp_server_listen()
 void net_port::tcp_close()
 {
     closesocket(sock);
-    connected = FALSE;
+    connected = false;
 }
 
 int net_port::tcp_listen(char * recv_data, int length)
