@@ -87,7 +87,7 @@ public:
     //Update threads for devices supported only under Windows
     void CmKeyboardUpdateThread();
     void LogitechSDKUpdateThread();
-	void AuraSDKUpdateThread();
+	void NvNDAUpdateThread();
 #else
 
 #endif
@@ -96,6 +96,7 @@ public:
     void CorsairKeyboardUpdateThread();
     void SteelSeriesKeyboardUpdateThread();
     void MSIKeyboardUpdateThread();
+	void NZXTKrakenUpdateThread();
     void PoseidonZRGBKeyboardUpdateThread();
     void LEDStripUpdateThread();
 
@@ -248,3 +249,5 @@ private:
 };
 
 #endif
+
+    void LogitechSDKUpdateThread();

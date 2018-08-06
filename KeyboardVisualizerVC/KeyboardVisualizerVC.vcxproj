@@ -185,6 +185,7 @@
     <ClCompile Include="..\KeyboardVisualizerCommon\LogitechSDK.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\MSIKeyboard.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\net_port.cpp" />
+    <ClCompile Include="..\KeyboardVisualizerCommon\NZXTKraken.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\PoseidonZRGBKeyboard.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\RazerChroma.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\serial_port.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="..\KeyboardVisualizerCommon\LogitechSDK.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\MSIKeyboard.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\net_port.h" />
+    <ClInclude Include="..\KeyboardVisualizerCommon\NZXTKraken.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\PoseidonZRGBKeyboard.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\RazerChroma.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\serial_port.h" />
@@ -221,6 +223,9 @@
   <ItemGroup>
     <Image Include="icon.ico" />
     <Image Include="Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\KeyboardVisualizerCommon\hidapi.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -127,7 +127,8 @@ bool UsbDevice::OpenDevice(unsigned short vendor, unsigned short product, unsign
 bool UsbDevice::SendToDevice(unsigned char* data, unsigned int length)
 {
 #ifdef HIDAPI
-    hid_send_feature_report(device, data, length);
+//    hid_send_feature_report(device, data, length);
+	hid_write(device, data, length);
     return true;
 #elif defined(WIN32)
     return(HidD_SetFeature(handle, data, length));
