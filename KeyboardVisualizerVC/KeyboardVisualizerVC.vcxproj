@@ -107,7 +107,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\dependencies\corsair-cue-1.15.28\lib\i386;..\dependencies\corsair-cue-1.15.28\lib\x64;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Lib\x86;..\dependencies\logitech-gaming-led-sdk\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\dependencies\hidapi\lib;..\dependencies\corsair-cue-1.15.28\lib\i386;..\dependencies\corsair-cue-1.15.28\lib\x64;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Lib\x86;..\dependencies\logitech-gaming-led-sdk\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -223,9 +223,6 @@
   <ItemGroup>
     <Image Include="icon.ico" />
     <Image Include="Icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\KeyboardVisualizerCommon\hidapi.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

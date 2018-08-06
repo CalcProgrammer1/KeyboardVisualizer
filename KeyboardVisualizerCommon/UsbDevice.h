@@ -8,7 +8,7 @@
 #include <cstdio>
 
 #include "hidapi.h"
-
+#pragma comment(lib, "hidapi.lib")
 
 
 class UsbDevice

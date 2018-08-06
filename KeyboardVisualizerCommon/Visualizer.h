@@ -87,7 +87,7 @@ public:
     //Update threads for devices supported only under Windows
     void CmKeyboardUpdateThread();
     void LogitechSDKUpdateThread();
-	void NvNDAUpdateThread();
+	void AuraSDKUpdateThread();
 #else
 
 #endif
@@ -249,5 +249,3 @@ private:
 };
 
 #endif
-
-    void LogitechSDKUpdateThread();
