@@ -408,7 +408,7 @@ void LEDStrip::SetLEDsEspurna(COLORREF pixels[64][256])
     {
         COLORREF color = pixels[ROW_IDX_SINGLE_COLOR][128];
         char get_request[1024];
-        snprintf(get_request, 1024, "GET /api/color?apikey=%s&value=%%23%02X%02X%02X HTTP/1.1\r\nHost: %s\r\n\r\n", espurna_apikey, GetRValue(color), GetGValue(color), GetBValue(color), client_name);
+        snprintf(get_request, 1024, "GET /api/rgb?apikey=%s&value=%%23%02X%02X%02X HTTP/1.1\r\nHost: %s\r\n\r\n", espurna_apikey, GetRValue(color), GetGValue(color), GetBValue(color), client_name);
         tcpport->tcp_client_connect();
         tcpport->tcp_client_write(get_request, strlen(get_request));
         tcpport->tcp_close();
