@@ -59,8 +59,6 @@ SteelSeriesGameSense    skb;
 MSIKeyboard             mkb;
 PoseidonZRGBKeyboard    pkb;
 std::vector<LEDStrip *> str;
-std::vector<LEDStrip *> xmas;
-std::vector<LEDStrip *> huePlus;
 
 std::vector<char *>     device_properties;
 
@@ -206,7 +204,7 @@ void Visualizer::LEDRotateX(int rotate)
     ledstrip_rotate_x = rotate;
 }
 
-void Visualizer::AddLEDStrip(char* ledstring)
+void Visualizer::AddLEDStrip(int led_type, char* ledstring)
 {
     //Scan through already registered LED strips and
     //verify that the port name is not already in use
@@ -217,23 +215,9 @@ void Visualizer::AddLEDStrip(char* ledstring)
             return;
         }
     }
-    for (unsigned int i = 0; i < xmas.size(); i++)
-    {
-        if (strcmp(xmas[i]->GetLEDString(), ledstring) == 0)
-        {
-            return;
-        }
-    }
-    for (unsigned int i = 0; i < huePlus.size(); i++)
-    {
-        if (strcmp(huePlus[i]->GetLEDString(), ledstring) == 0)
-        {
-            return;
-        }
-    }
 
     LEDStrip *newstr = new LEDStrip();
-    newstr->Initialize(ledstring, matrix_setup_size, matrix_setup_pos, ledstrip_sections_size, ledstrip_rotate_x, ledstrip_mirror_x, ledstrip_mirror_y, ledstrip_single_color);
+	newstr->Initialize(led_type, ledstring, matrix_setup_size, matrix_setup_pos, ledstrip_sections_size, ledstrip_rotate_x, ledstrip_mirror_x, ledstrip_mirror_y, ledstrip_single_color);
     str.push_back(newstr);
 
     ledstrip_sections_size = 1;
@@ -251,74 +235,6 @@ void Visualizer::AddLEDStrip(char* ledstring)
         matrix_setup_size = 0;
         matrix_setup_pos = 0;
     }
-}
-
-void Visualizer::AddLEDStripXmas(char* ledstring)
-{
-    //Scan through already registered LED strips and
-    //verify that the port name is not already in use
-    for (unsigned int i = 0; i < str.size(); i++)
-    {
-        if (strcmp(str[i]->GetLEDString(), ledstring) == 0)
-        {
-            return;
-        }
-    }
-    for (unsigned int i = 0; i < xmas.size(); i++)
-    {
-        if (strcmp(xmas[i]->GetLEDString(), ledstring) == 0)
-        {
-            return;
-        }
-    }
-    for (unsigned int i = 0; i < huePlus.size(); i++)
-    {
-        if (strcmp(huePlus[i]->GetLEDString(), ledstring) == 0)
-        {
-            return;
-        }
-    }
-
-    LEDStrip *newstr = new LEDStrip();
-    newstr->Initialize(ledstring, 0, 0, 1, ledstrip_rotate_x, ledstrip_mirror_x, ledstrip_mirror_y, ledstrip_single_color);
-
-    ledstrip_mirror_x = false;
-    ledstrip_mirror_y = false;
-    ledstrip_single_color = false;
-    ledstrip_rotate_x = 0;
-
-    xmas.push_back(newstr);
-}
-
-void Visualizer::AddLEDStripHuePlus(char* ledstring)
-{
-    //Scan through already registered LED strips and
-    //verify that the port name is not already in use
-    for (unsigned int i = 0; i < str.size(); i++)
-    {
-        if (strcmp(str[i]->GetLEDString(), ledstring) == 0)
-        {
-            return;
-        }
-    }
-    for (unsigned int i = 0; i < xmas.size(); i++)
-    {
-        if (strcmp(xmas[i]->GetLEDString(), ledstring) == 0)
-        {
-            return;
-        }
-    }
-    for (unsigned int i = 0; i < huePlus.size(); i++)
-    {
-        if (strcmp(huePlus[i]->GetLEDString(), ledstring) == 0)
-        {
-            return;
-        }
-    }
-
-    LEDStrip *newstr = new LEDStrip();
-    newstr->InitializeHuePlus(ledstring);
-    huePlus.push_back(newstr);
 }
 
 void Visualizer::SetDeviceProperty(char * devprop, char * argument)
@@ -737,25 +653,26 @@ void Visualizer::SaveSettings()
     //Save LED Strip Configurations
     for (unsigned int i = 0; i < str.size(); i++)
     {
-        //Save LED Strip Configuration
-        snprintf(out_str, 1024, "ledstrip=%s\r\n", str[i]->GetLEDString());
-        outfile.write(out_str, strlen(out_str));
-    }
+		switch (str[i]->led_type)
+		{
+		case LED_STRIP_NORMAL:
+			//Save LED Strip Configuration
+			snprintf(out_str, 1024, "ledstrip=%s\r\n", str[i]->GetLEDString());
+			outfile.write(out_str, strlen(out_str));
+			break;
 
-    //Save Xmas Strip Configurations
-    for (unsigned int i = 0; i < xmas.size(); i++)
-    {
-        //Save Xmas Strip Configuration
-        snprintf(out_str, 1024, "xmas=%s\r\n", xmas[i]->GetLEDString());
-        outfile.write(out_str, strlen(out_str));
-    }
+		case LED_STRIP_XMAS:
+			//Save Xmas Strip Configuration
+			snprintf(out_str, 1024, "xmas=%s\r\n", str[i]->GetLEDString());
+			outfile.write(out_str, strlen(out_str));
+			break;
 
-    //Save HuePlus Configurations
-    for (unsigned int i = 0; i < huePlus.size(); i++)
-    {
-        //Save HuePlus Configuration
-        snprintf(out_str, 1024, "hueplus=%s\r\n", huePlus[i]->GetLEDString());
-        outfile.write(out_str, strlen(out_str));
+		case LED_STRIP_HUE_PLUS:
+			//Save HuePlus Configuration
+			snprintf(out_str, 1024, "hueplus=%s\r\n", str[i]->GetLEDString());
+			outfile.write(out_str, strlen(out_str));
+			break;
+		}
     }
 
     //Save Network Mode
@@ -1822,33 +1739,17 @@ void Visualizer::PoseidonZRGBKeyboardUpdateThread()
 
 void Visualizer::LEDStripUpdateThread()
 {
-    if (str.size() > 0 || xmas.size() > 0 || huePlus.size() > 0)
+    if (str.size() > 0)
     {
         while (TRUE)
         {
             for (unsigned int i = 0; i < str.size(); i++)
             {
-                str[i]->SetLEDs(pixels_out->pixels);
+				str[i]->SetPixels(pixels_out->pixels);
+				str[i]->SetDelay(delay);
             }
 
-            for (unsigned int i = 0; i < xmas.size(); i++)
-            {
-                xmas[i]->SetLEDsXmas(pixels_out->pixels);
-            }
-
-            for (unsigned int i = 0; i < huePlus.size(); i++)
-            {
-                huePlus[i]->SetLEDsHuePlus(pixels_out->pixels);
-            }
-
-            if (delay < 15)
-            {
-                Sleep(15);
-            }
-            else
-            {
-                Sleep(delay);
-            }
+			Sleep(delay);
         }
     }
 }

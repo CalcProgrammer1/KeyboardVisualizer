@@ -7,6 +7,7 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "KeyboardVisDlg.h"
+#include "..\KeyboardVisualizerCommon\LEDStrip.h"
 #include "..\KeyboardVisualizerCommon\Visualizer.h"
 
 #include <fstream>
@@ -158,17 +159,17 @@ void parse_argument_string(char * argument, char * value)
 
     if (strcmp(argument, "ledstrip") == 0)
     {
-        vis.AddLEDStrip(value);
+        vis.AddLEDStrip(LED_STRIP_NORMAL, value);
     }
 
     if (strcmp(argument, "xmas") == 0)
     {
-        vis.AddLEDStripXmas(value);
+        vis.AddLEDStrip(LED_STRIP_XMAS, value);
     }
 
     if (strcmp(argument, "hueplus") == 0)
     {
-        vis.AddLEDStripHuePlus(value);
+        vis.AddLEDStrip(LED_STRIP_NORMAL, value);
     }
 
     if (strcmp(argument, "server") == 0)

@@ -6,9 +6,25 @@
 
 #include "LEDStrip.h"
 
+#include <process.h>
 #include <fstream>
 #include <iostream>
 #include <string>
+
+//Thread functions have different types in Windows and Linux
+#ifdef WIN32
+#define THREAD static void
+#define THREADRETURN
+#else
+#define THREAD static void*
+#define THREADRETURN return(NULL);
+#endif
+
+//Include pthread and Unix standard libraries if not building for Windows
+#ifndef WIN32
+#include "pthread.h"
+#include "unistd.h"
+#endif
 
 LEDStrip::LEDStrip()
 {
@@ -20,97 +36,120 @@ LEDStrip::~LEDStrip()
 {
 }
 
-void LEDStrip::Initialize(char* ledstring, int matrix_size, int matrix_pos, int sections, int rotate_x, bool mirror_x, bool mirror_y, bool single_color)
+THREAD lsthread(void *param)
 {
-    strcpy(led_string, ledstring);
+    LEDStrip* led = static_cast<LEDStrip*>(param);
+    led->LEDStripUpdateThread();
+    THREADRETURN
+}
 
-    //Assume serial device unless a different protocol is specified
-    bool    serial      = TRUE;
-    bool	udp	        = FALSE;
-    bool    espurna	    = FALSE;
-    LPSTR   numleds     = NULL;
-    LPSTR   source      = NULL;
-    LPSTR   udpport_baud= NULL;
-    LPSTR   next        = NULL;
-    LPSTR   apikey      = NULL;
+void LEDStrip::Initialize(int led_type, char* ledstring, int matrix_size, int matrix_pos, int sections, int rotate_x, bool mirror_x, bool mirror_y, bool single_color)
+{
+    this->led_type = led_type;
 
-    source = strtok_s(ledstring, ",", &next);
-
-    //Check if we are setting up a Keyboard Visualizer UDP protocol device
-    if (strncmp(source, "udp:", 4) == 0)
+    if (led_type == LED_STRIP_HUE_PLUS)
     {
-        source  = source + 4;
-        serial  = FALSE;
-        udp     = TRUE;
-        espurna = FALSE;
-    }
-
-    //Check if we are setting up an Espurna protocol device
-    if (strncmp(source, "espurna:", 8) == 0)
-    {
-        source  = source + 8;
-        serial  = FALSE;
-        udp     = FALSE;
-        espurna = TRUE;
-    }
-
-    //Check for either the UDP port or the serial baud rate
-    if (strlen(next))
-    {
-        udpport_baud = strtok_s(next, ",", &next);
-    }
-
-    //Check for the number of LEDs
-    if (strlen(next))
-    {
-        numleds = strtok_s(next, ",", &next);
-    }
-
-    //Espurna protocol requires API key
-    if (strlen(next))
-    {
-        apikey = strtok_s(next, ",", &next);
-    }
-
-    if (serial)
-    {
-        if (udpport_baud == NULL)
-        {
-            //Initialize with default baud rate
-            InitializeSerial(source, 115200);
-        }
-        else
-        {
-            //Initialize with custom baud rate
-            InitializeSerial(source, atoi(udpport_baud));
-        }
+        InitializeHuePlus(ledstring);
     }
     else
     {
-        if (udpport_baud == NULL)
+        strcpy(led_string, ledstring);
+
+        //Assume serial device unless a different protocol is specified
+        bool    serial = TRUE;
+        bool	udp = FALSE;
+        bool    espurna = FALSE;
+        LPSTR   numleds = NULL;
+        LPSTR   source = NULL;
+        LPSTR   udpport_baud = NULL;
+        LPSTR   next = NULL;
+        LPSTR   apikey = NULL;
+
+        source = strtok_s(ledstring, ",", &next);
+
+        //Check if we are setting up a Keyboard Visualizer UDP protocol device
+        if (strncmp(source, "udp:", 4) == 0)
         {
-            //Do something
+            source = source + 4;
+            serial = FALSE;
+            udp = TRUE;
+            espurna = FALSE;
+        }
+
+        //Check if we are setting up an Espurna protocol device
+        if (strncmp(source, "espurna:", 8) == 0)
+        {
+            source = source + 8;
+            serial = FALSE;
+            udp = FALSE;
+            espurna = TRUE;
+        }
+
+        //Check for either the UDP port or the serial baud rate
+        if (strlen(next))
+        {
+            udpport_baud = strtok_s(next, ",", &next);
+        }
+
+        //Check for the number of LEDs
+        if (strlen(next))
+        {
+            numleds = strtok_s(next, ",", &next);
+        }
+
+        //Espurna protocol requires API key
+        if (strlen(next))
+        {
+            apikey = strtok_s(next, ",", &next);
+        }
+
+        if (serial)
+        {
+            if (udpport_baud == NULL)
+            {
+                //Initialize with default baud rate
+                InitializeSerial(source, 115200);
+            }
+            else
+            {
+                //Initialize with custom baud rate
+                InitializeSerial(source, atoi(udpport_baud));
+            }
         }
         else
         {
-            if (udp)
+            if (udpport_baud == NULL)
             {
-                //Initialize UDP port
-                InitializeUDP(source, udpport_baud);
+                //Do something
             }
-            else if (espurna)
+            else
             {
-                //Initialize Espurna
-                InitializeEspurna(source, udpport_baud, apikey);
+                if (udp)
+                {
+                    //Initialize UDP port
+                    InitializeUDP(source, udpport_baud);
+                }
+                else if (espurna)
+                {
+                    //Initialize Espurna
+                    InitializeEspurna(source, udpport_baud, apikey);
+                }
             }
+        }
+
+        if (numleds != NULL && strlen(numleds))
+        {
+            SetNumLEDs(atoi(numleds), matrix_size, matrix_pos, sections, rotate_x, mirror_x, mirror_y, single_color);
         }
     }
 
-    if (numleds != NULL && strlen(numleds))
-    {
-        SetNumLEDs(atoi(numleds), matrix_size, matrix_pos, sections, rotate_x, mirror_x, mirror_y, single_color);
-    }
+#ifdef WIN32
+    _beginthread(lsthread, 0, this);
+#else
+	pthread_t threads[1];
 
+	pthread_create(&threads[0], NULL, &lsthread, this);
+#endif
 }
 
 void LEDStrip::InitializeHuePlus(char* ledstring)
@@ -475,5 +514,41 @@ void LEDStrip::SetLEDsHuePlus(COLORREF pixels[64][256])
         serialport->serial_flush_tx();
 
         delete[] serial_buf;
+    }
+}
+
+void LEDStrip::SetPixels(COLORREF pixels[64][256])
+{
+    led_pixels = pixels;
+}
+
+void LEDStrip::SetDelay(int delay)
+{
+    led_delay = delay;
+}
+
+void LEDStrip::LEDStripUpdateThread()
+{
+    while (TRUE)
+    {
+        if (led_pixels != NULL)
+        {
+            switch (led_type)
+            {
+            case LED_STRIP_NORMAL:
+                SetLEDs(led_pixels);
+                break;
+
+            case LED_STRIP_XMAS:
+                SetLEDsXmas(led_pixels);
+                break;
+
+            case LED_STRIP_HUE_PLUS:
+                SetLEDsHuePlus(led_pixels);
+                break;
+            }
+        }
+
+        Sleep(led_delay);
     }
 }

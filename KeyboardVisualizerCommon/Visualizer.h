@@ -125,9 +125,7 @@ public:
 
     //Add LED strip
     void BeginLEDMatrix(int size);
-    void AddLEDStrip(char* ledstring);
-    void AddLEDStripXmas(char * ledstring);
-    void AddLEDStripHuePlus(char * ledstring);
+	void AddLEDStrip(int led_type, char* ledstring);
 
     //Function to set custom properties for devices
     void SetDeviceProperty(char * devprop, char * argument);
