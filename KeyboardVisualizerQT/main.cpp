@@ -1,5 +1,6 @@
 #include "KeyboardVisDlg.h"
 #include <QApplication>
+#include "KeyboardVisualizerCommon/LEDStrip.h"
 #include "KeyboardVisualizerCommon/Visualizer.h"
 #include "KeyboardVisualizerCommon/VisualizerDefines.h"
 

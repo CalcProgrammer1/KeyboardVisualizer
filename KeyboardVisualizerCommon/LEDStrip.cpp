@@ -6,13 +6,13 @@
 
 #include "LEDStrip.h"
 
-#include <process.h>
 #include <fstream>
 #include <iostream>
 #include <string>
 
 //Thread functions have different types in Windows and Linux
 #ifdef WIN32
+#include <process.h>
 #define THREAD static void
 #define THREADRETURN
 #else
