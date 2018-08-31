@@ -196,6 +196,13 @@ void RazerChroma::Initialize()
 
                             device_type = RAZER_BLADE_PRO;
                         }
+                        else if(!strncmp(device_string, "Razer Blade Pro (2017)", strlen("Razer Blade Pro (2017)")))
+                        {
+                            //Device is Razer Blade Pro 2017
+                            printf("Blade Pro 2017 Detected\r\n");
+
+                            device_type = RAZER_BLADE_PRO;
+                        }
                         else if(!strncmp(device_string, "Razer Tartarus Chroma", strlen("Razer Tartarus Chroma")))
                         {
                             //Device is Razer Tartarus Chroma
