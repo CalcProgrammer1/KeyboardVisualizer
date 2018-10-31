@@ -275,6 +275,7 @@ Keyboard Visualizer allows you to save your custom settings in two different way
 
         Keyboards
         - BlackWidow Chroma (spectrograph)
+        - BlackWidow X Chroma (spectrograph)
         - BlackWidow Chroma Tournament Edition (spectrograph)
         - DeathStalker Chroma (horizontal bar)
         - Razer Ornata Chroma (spectrograph)
