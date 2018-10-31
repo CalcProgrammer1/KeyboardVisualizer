@@ -11,6 +11,7 @@ enum
 {
     RAZER_NO_DEVICE,
     RAZER_BLACKWIDOW_CHROMA,
+    RAZER_BLACKWIDOW_X_CHROMA,
     RAZER_DEATHSTALKER_CHROMA,
     RAZER_ORNATA_CHROMA,
     RAZER_BLADE_STEALTH,
@@ -168,6 +169,13 @@ void RazerChroma::Initialize()
 
                             device_type = RAZER_BLACKWIDOW_CHROMA;
                         }
+                        if(!strncmp(device_string, "Razer BlackWidow X Chroma", strlen("Razer BlackWidow X Chroma")))
+                        {
+                            //Device is Razer BlackWidow X Chroma
+                            printf("BlackWidow X Chroma Detected\r\n");
+
+                            device_type = RAZER_BLACKWIDOW_X_CHROMA;
+                        }
                         if(!strncmp(device_string, "Razer DeathStalker Chroma", strlen("Razer DeathStalker Chroma")))
                         {
                             //Device is Razer DeathStalker Chroma
@@ -324,6 +332,7 @@ void RazerChroma::Initialize()
                                     {
                                     //Devices with custom effect type and matrix
                                     case RAZER_BLACKWIDOW_CHROMA:
+                                    case RAZER_BLACKWIDOW_X_CHROMA:
                                     case RAZER_DEATHSTALKER_CHROMA:
                                     case RAZER_ORNATA_CHROMA:
                                     case RAZER_BLADE_STEALTH:
@@ -505,6 +514,7 @@ bool RazerChroma::SetLEDs(COLORREF pixels[64][256])
             {
             case RAZER_ORNATA_CHROMA:
             case RAZER_BLACKWIDOW_CHROMA:
+            case RAZER_BLACKWIDOW_X_CHROMA:
                 {
                     char BlackWidowEffect[((3 * 22)) + 3];
 
