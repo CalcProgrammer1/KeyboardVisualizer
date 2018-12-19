@@ -217,7 +217,7 @@ void Visualizer::AddLEDStrip(int led_type, char* ledstring)
     }
 
     LEDStrip *newstr = new LEDStrip();
-	newstr->Initialize(led_type, ledstring, matrix_setup_size, matrix_setup_pos, ledstrip_sections_size, ledstrip_rotate_x, ledstrip_mirror_x, ledstrip_mirror_y, ledstrip_single_color);
+    newstr->Initialize(led_type, ledstring, matrix_setup_size, matrix_setup_pos, ledstrip_sections_size, ledstrip_rotate_x, ledstrip_mirror_x, ledstrip_mirror_y, ledstrip_single_color);
     str.push_back(newstr);
 
     ledstrip_sections_size = 1;
@@ -653,26 +653,26 @@ void Visualizer::SaveSettings()
     //Save LED Strip Configurations
     for (unsigned int i = 0; i < str.size(); i++)
     {
-		switch (str[i]->led_type)
-		{
-		case LED_STRIP_NORMAL:
-			//Save LED Strip Configuration
-			snprintf(out_str, 1024, "ledstrip=%s\r\n", str[i]->GetLEDString());
-			outfile.write(out_str, strlen(out_str));
-			break;
+        switch (str[i]->led_type)
+        {
+        case LED_STRIP_NORMAL:
+            //Save LED Strip Configuration
+            snprintf(out_str, 1024, "ledstrip=%s\r\n", str[i]->GetLEDString());
+            outfile.write(out_str, strlen(out_str));
+            break;
 
-		case LED_STRIP_XMAS:
-			//Save Xmas Strip Configuration
-			snprintf(out_str, 1024, "xmas=%s\r\n", str[i]->GetLEDString());
-			outfile.write(out_str, strlen(out_str));
-			break;
+        case LED_STRIP_XMAS:
+            //Save Xmas Strip Configuration
+            snprintf(out_str, 1024, "xmas=%s\r\n", str[i]->GetLEDString());
+            outfile.write(out_str, strlen(out_str));
+            break;
 
-		case LED_STRIP_HUE_PLUS:
-			//Save HuePlus Configuration
-			snprintf(out_str, 1024, "hueplus=%s\r\n", str[i]->GetLEDString());
-			outfile.write(out_str, strlen(out_str));
-			break;
-		}
+        case LED_STRIP_HUE_PLUS:
+            //Save HuePlus Configuration
+            snprintf(out_str, 1024, "hueplus=%s\r\n", str[i]->GetLEDString());
+            outfile.write(out_str, strlen(out_str));
+            break;
+        }
     }
 
     //Save Network Mode
@@ -1253,6 +1253,13 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
         }
         break;
 
+    case VISUALIZER_PATTERN_STATIC_FLAG_BULGARIA:
+    {
+        COLORREF colors[] = { 0x000000FF, 0x0000FF00, 0x00FFFFFF };
+        DrawHorizontalBars(bright, colors, 3, pixels);
+    }
+        break;
+
     case VISUALIZER_PATTERN_STATIC_BLUE_CYAN_WHITE:
         {
         COLORREF colors[] = { 0x00FF0000, 0x00FFFF00, 0x00FFFFFF };
@@ -1745,11 +1752,11 @@ void Visualizer::LEDStripUpdateThread()
         {
             for (unsigned int i = 0; i < str.size(); i++)
             {
-				str[i]->SetPixels(pixels_out->pixels);
-				str[i]->SetDelay(delay);
+                str[i]->SetPixels(pixels_out->pixels);
+                str[i]->SetDelay(delay);
             }
 
-			Sleep(delay);
+            Sleep(delay);
         }
     }
 }

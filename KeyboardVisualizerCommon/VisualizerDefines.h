@@ -59,6 +59,7 @@ enum
     VISUALIZER_PATTERN_STATIC_RED_WHITE_BLUE,
     VISUALIZER_PATTERN_STATIC_RAINBOW,
     VISUALIZER_PATTERN_STATIC_RAINBOW_INVERSE,
+    VISUALIZER_PATTERN_STATIC_FLAG_BULGARIA,
     //Animated Patterns
     VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL,
     VISUALIZER_PATTERN_ANIM_RAINBOW_HSV,
@@ -88,6 +89,7 @@ const char * const visualizer_pattern_labels[VISUALIZER_NUM_PATTERNS] =
     "Red/White/Blue",
     "Rainbow Bars",
     "Rainbow Bars Inverse",
+    "Bulgarian flag",
     "Original",
     "Rainbow",
     "Color Wheel",
