@@ -1,3 +1,6 @@
 [submodule "Release"]
 	path = Release
 	url = https://github.com/CalcProgrammer1/KeyboardVisualizerVCUI_Release
+[submodule "OpenAuraSDK"]
+	path = OpenAuraSDK
+	url = https://gitlab.com/CalcProgrammer1/OpenAuraSDK

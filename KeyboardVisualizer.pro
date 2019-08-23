@@ -25,37 +25,76 @@ packagesExist(hidapi-libusb) {
 
 DISTFILES +=
 
-HEADERS += \
-    KeyboardVisualizerCommon/chuck_fft.h \
-    KeyboardVisualizerCommon/hsv.h \
-    KeyboardVisualizerCommon/LEDStrip.h \
-    KeyboardVisualizerCommon/net_port.h \
-    KeyboardVisualizerCommon/serial_port.h \
-    KeyboardVisualizerCommon/Visualizer.h \
-    KeyboardVisualizerCommon/VisualizerDefines.h \
-    KeyboardVisualizerCommon/CorsairCKBLinux.h \
-    KeyboardVisualizerCommon/RazerChromaLinux.h \
-    KeyboardVisualizerQT/KeyboardVisDlg.h \
-    KeyboardVisualizerCommon/UsbDevice.h \
-    KeyboardVisualizerCommon/SteelSeriesGameSense.h \
-    KeyboardVisualizerCommon/PoseidonZRGBKeyboard.h \
-    KeyboardVisualizerCommon/MSIKeyboard.h
+INCLUDEPATH +=                                                          \
+    OpenAuraSDK/                                                        \
+    OpenAuraSDK/i2c_smbus/                                              \
+    OpenAuraSDK/serial_port/                                            \
+    OpenAuraSDK/Controllers/AuraController/                             \
+    OpenAuraSDK/Controllers/CorsairController/                          \
+    OpenAuraSDK/Controllers/CorsairProController/                       \
+    OpenAuraSDK/Controllers/HyperXController/                           \
+    OpenAuraSDK/Controllers/LEDStripController/                         \
+    OpenAuraSDK/RGBController/                                          \
+    OpenAuraSDK/qt/
 
-SOURCES += \
-    KeyboardVisualizerCommon/hsv.cpp \
-    KeyboardVisualizerCommon/LEDStrip.cpp \
-    KeyboardVisualizerCommon/net_port.cpp \
-    KeyboardVisualizerCommon/serial_port.cpp \
-    KeyboardVisualizerCommon/Visualizer.cpp \
-    KeyboardVisualizerCommon/chuck_fft.c \
-    KeyboardVisualizerCommon/CorsairCKBLinux.cpp \
-    KeyboardVisualizerCommon/RazerChromaLinux.cpp \
-    KeyboardVisualizerQT/KeyboardVisDlg.cpp \
-    KeyboardVisualizerQT/main.cpp \
-    KeyboardVisualizerCommon/UsbDevice.cpp \
-    KeyboardVisualizerCommon/SteelSeriesGameSense.cpp \
-    KeyboardVisualizerCommon/PoseidonZRGBKeyboard.cpp \
-    KeyboardVisualizerCommon/MSIKeyboard.cpp
+SOURCES +=                                                              \
+    KeyboardVisualizerCommon/hsv.cpp                                    \
+    KeyboardVisualizerCommon/net_port.cpp                               \
+    KeyboardVisualizerCommon/Visualizer.cpp                             \
+    KeyboardVisualizerCommon/chuck_fft.c                                \
+    KeyboardVisualizerQT/KeyboardVisDlg.cpp                             \
+    KeyboardVisualizerQT/main.cpp                                       \
+    KeyboardVisualizerCommon/UsbDevice.cpp                              \
+
+# From OpenAuraSDK
+SOURCES +=                                                                          \
+    OpenAuraSDK/OpenAuraSDK.cpp                                                     \
+    OpenAuraSDK/i2c_smbus/i2c_smbus.cpp                                             \
+    OpenAuraSDK/i2c_smbus/i2c_smbus_linux.cpp                                       \
+    OpenAuraSDK/serial_port/serial_port.cpp                                         \
+    OpenAuraSDK/Controllers/AuraController/AuraController.cpp                       \
+    OpenAuraSDK/Controllers/AuraController/AuraControllerDetect.cpp                 \
+    OpenAuraSDK/Controllers/CorsairController/CorsairController.cpp                 \
+    OpenAuraSDK/Controllers/CorsairController/CorsairControllerDetect.cpp           \
+    OpenAuraSDK/Controllers/CorsairProController/CorsairProController.cpp           \
+    OpenAuraSDK/Controllers/CorsairProController/CorsairProControllerDetect.cpp     \
+    OpenAuraSDK/Controllers/HyperXController/HyperXController.cpp                   \
+    OpenAuraSDK/Controllers/HyperXController/HyperXControllerDetect.cpp             \
+    OpenAuraSDK/Controllers/LEDStripController/LEDStripController.cpp               \
+    OpenAuraSDK/Controllers/LEDStripController/LEDStripControllerDetect.cpp         \
+    OpenAuraSDK/RGBController/OpenRazerDetect.cpp                                   \
+    OpenAuraSDK/RGBController/RGBController_Aura.cpp                                \
+    OpenAuraSDK/RGBController/RGBController_Corsair.cpp                             \
+    OpenAuraSDK/RGBController/RGBController_CorsairPro.cpp                          \
+    OpenAuraSDK/RGBController/RGBController_HyperX.cpp                              \
+    OpenAuraSDK/RGBController/RGBController_LEDStrip.cpp                            \
+    OpenAuraSDK/RGBController/RGBController_OpenRazer.cpp
+
+HEADERS += \
+    KeyboardVisualizerCommon/chuck_fft.h                              \
+    KeyboardVisualizerCommon/hsv.h                                    \
+    KeyboardVisualizerCommon/net_port.h                               \
+    KeyboardVisualizerCommon/Visualizer.h                             \
+    KeyboardVisualizerCommon/VisualizerDefines.h                      \
+    KeyboardVisualizerQT/KeyboardVisDlg.h                             \
+    KeyboardVisualizerCommon/UsbDevice.h                              \
+
+# From OpenAuraSDK
+HEADERS += \
+    OpenAuraSDK/i2c_smbus/i2c_smbus.h                                               \
+    OpenAuraSDK/i2c_smbus/i2c_smbus_linux.h                                         \
+    OpenAuraSDK/serial_port/serial_port.h                                           \
+    OpenAuraSDK/Controllers/AuraController/AuraController.h                         \
+    OpenAuraSDK/Controllers/CorsairController/CorsairController.h                   \
+    OpenAuraSDK/Controllers/CorsairProController/CorsairProController.h             \
+    OpenAuraSDK/Controllers/HyperXController/HyperXController.h                     \
+    OpenAuraSDK/Controllers/LEDStripController/LEDStripController.h                 \
+    OpenAuraSDK/RGBController/RGBController.h                                       \
+    OpenAuraSDK/RGBController/RGBController_Aura.h                                  \
+    OpenAuraSDK/RGBController/RGBController_Corsair.h                               \
+    OpenAuraSDK/RGBController/RGBController_CorsairPro.h                            \
+    OpenAuraSDK/RGBController/RGBController_HyperX.h                                \
+    OpenAuraSDK/RGBController/RGBController_OpenRazer.h
 
 RESOURCES += \
     KeyboardVisualizerQT/resources.qrc

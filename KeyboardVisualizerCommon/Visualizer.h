@@ -83,22 +83,6 @@ public:
     void NetConnectThread();
     void NetUpdateThread();
 
-#ifdef WIN32
-    //Update threads for devices supported only under Windows
-    void CmKeyboardUpdateThread();
-    void LogitechSDKUpdateThread();
-	void AuraSDKUpdateThread();
-#else
-
-#endif
-    //Update threads for devices supported on both Windows and Linux
-    void RazerChromaUpdateThread();
-    void CorsairKeyboardUpdateThread();
-    void SteelSeriesKeyboardUpdateThread();
-    void MSIKeyboardUpdateThread();
-    void PoseidonZRGBKeyboardUpdateThread();
-    void LEDStripUpdateThread();
-
     //Called when settings changed
     void OnSettingsChanged();
 
@@ -122,10 +106,6 @@ public:
 
     //Shut Down
     void Shutdown();
-
-    //Add LED strip
-    void BeginLEDMatrix(int size);
-	void AddLEDStrip(int led_type, char* ledstring);
 
     //Function to set custom properties for devices
     void SetDeviceProperty(char * devprop, char * argument);
@@ -177,12 +157,6 @@ public:
     bool silent_bkgd;
     unsigned int background_timeout;
     unsigned int background_timer;
-
-    void LEDStripSections(int sections);
-    void LEDMirrorX();
-    void LEDMirrorY();
-    void LEDSingleColor();
-    void LEDRotateX(int rotate);
 
     //Single Color Mode
     int single_color_mode;
@@ -243,6 +217,9 @@ private:
     unsigned char buffer[256];
 
     void DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixels *out_pixels);
+
+public:
+    void LEDUpdateThread();
 };
 
 #endif

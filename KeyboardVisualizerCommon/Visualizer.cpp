@@ -21,46 +21,18 @@
 #include "unistd.h"
 #endif
 
-//Includes for devices supported only under Windows
-#ifdef WIN32
-#include "RazerChroma.h"
-#include "CorsairCUE.h"
-#include "CmKeyboard.h"
-#include "LogitechSDK.h"
-#include "AsusAuraSDK.h"
+#include "OpenAuraSDK.h"
+#include "RGBController.h"
+#include <string.h>
 
-//Includes for devices supported only under Linux
-#else
-#include "RazerChromaLinux.h"
-#include "CorsairCKBLinux.h"
+#ifndef TRUE
+#define TRUE 1
+#define FALSE 0
 #endif
-
-//Includes for devices supported on both Windows and Linux
-#include "SteelSeriesGameSense.h"
-#include "MSIKeyboard.h"
-#include "PoseidonZRGBKeyboard.h"
-#include "LEDStrip.h"
-
-//Devices supported only under Windows
-#ifdef WIN32
-CorsairCUE              ckb;
-CmKeyboard              cmkb;
-LogitechSDK             lkb;
-AsusAuraSDK             asa;
-
-//Devices supported only under Linux
-#else
-CorsairCKB              ckb;
-#endif
-
-//Devices supported on both Windows and Linux
-RazerChroma             rkb;
-SteelSeriesGameSense    skb;
-MSIKeyboard             mkb;
-PoseidonZRGBKeyboard    pkb;
-std::vector<LEDStrip *> str;
 
 std::vector<char *>     device_properties;
+
+extern std::vector<RGBController*> rgb_controllers;
 
 char * net_string;
 int ledstrip_sections_size = 1;
@@ -95,74 +67,10 @@ THREAD netupdthread(void *param)
     THREADRETURN
 }
 
-//Threads for devices supported only under Windows
-#ifdef WIN32
-THREAD cmkbthread(void *param)
+THREAD ledthread(void *param)
 {
     Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->CmKeyboardUpdateThread();
-    THREADRETURN
-}
-
-THREAD lkbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->LogitechSDKUpdateThread();
-    THREADRETURN
-}
-
-THREAD asathread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->AuraSDKUpdateThread();
-    THREADRETURN
-}
-
-//Threads for devices supported only under Linux
-#else
-
-#endif
-
-//Threads for devices supported on both Windows and Linux
-THREAD rkbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->RazerChromaUpdateThread();
-    THREADRETURN
-}
-
-THREAD ckbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->CorsairKeyboardUpdateThread();
-    THREADRETURN
-}
-
-THREAD skbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->SteelSeriesKeyboardUpdateThread();
-    THREADRETURN
-}
-
-THREAD mkbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->MSIKeyboardUpdateThread();
-    THREADRETURN
-}
-
-THREAD pkbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->PoseidonZRGBKeyboardUpdateThread();
-    THREADRETURN
-}
-
-THREAD lsthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->LEDStripUpdateThread();
+    vis->LEDUpdateThread();
     THREADRETURN
 }
 
@@ -173,100 +81,12 @@ Visualizer::Visualizer()
 
 }
 
-void Visualizer::BeginLEDMatrix(int size)
-{
-    matrix_setup_size = size;
-    matrix_setup_pos = 1;
-}
-
-void Visualizer::LEDStripSections(int size)
-{
-    ledstrip_sections_size = size;
-}
-
-void Visualizer::LEDMirrorX()
-{
-    ledstrip_mirror_x = true;
-}
-
-void Visualizer::LEDMirrorY()
-{
-    ledstrip_mirror_y = true;
-}
-
-void Visualizer::LEDSingleColor()
-{
-    ledstrip_single_color = true;
-}
-
-void Visualizer::LEDRotateX(int rotate)
-{
-    ledstrip_rotate_x = rotate;
-}
-
-void Visualizer::AddLEDStrip(int led_type, char* ledstring)
-{
-    //Scan through already registered LED strips and
-    //verify that the port name is not already in use
-    for (unsigned int i = 0; i < str.size(); i++)
-    {
-        if (strcmp(str[i]->GetLEDString(), ledstring) == 0)
-        {
-            return;
-        }
-    }
-
-    LEDStrip *newstr = new LEDStrip();
-	newstr->Initialize(led_type, ledstring, matrix_setup_size, matrix_setup_pos, ledstrip_sections_size, ledstrip_rotate_x, ledstrip_mirror_x, ledstrip_mirror_y, ledstrip_single_color);
-    str.push_back(newstr);
-
-    ledstrip_sections_size = 1;
-    ledstrip_mirror_x = false;
-    ledstrip_mirror_y = false;
-    ledstrip_single_color = false;
-    ledstrip_rotate_x = 0;
-
-    if (matrix_setup_pos < matrix_setup_size)
-    {
-        matrix_setup_pos += ledstrip_sections_size;
-    }
-    else
-    {
-        matrix_setup_size = 0;
-        matrix_setup_pos = 0;
-    }
-}
-
 void Visualizer::SetDeviceProperty(char * devprop, char * argument)
 {
     //Save device property to list of device properties
     char * buf = new char[strlen(devprop) + 1];
     strcpy(buf, devprop);
     device_properties.push_back(buf);
-
-    //Parse device properties exclusive to Windows
-#ifdef WIN32
-    if (strcmp(devprop, "razer_use_keyboard_custom_effect") == 0)
-    {
-        rkb.use_keyboard_custom_effect = true;
-    }
-    else if (strcmp(devprop, "razer_use_headset_custom_effect") == 0)
-    {
-        rkb.use_headset_custom_effect = true;
-    }
-    else if (strcmp(devprop, "razer_use_chromalink_single_color") == 0)
-    {
-        rkb.use_chromalink_single_color = true;
-    }
-    else if (strcmp(devprop, "razer_disable_chromalink") == 0)
-    {
-        rkb.disable_chromalink = true;
-    }
-    else if (strcmp(devprop, "razer_chroma_box_mode") == 0)
-    {
-        rkb.chroma_box_mode = atoi(argument);
-    }
-#endif
 }
 
 void Visualizer::InitAudioDeviceList()
@@ -466,24 +286,6 @@ void Visualizer::Initialize()
 {
     InitAudioDeviceList();
 
-    //Initialize devices supported only under Windows
-#ifdef WIN32
-    cmkb.Initialize();
-    lkb.Initialize();
-    asa.Initialize();
-
-    //Initialize devices supported only under Linux
-#else
-
-#endif
-
-    //Initialize devices supported by both Windows and Linux
-    rkb.Initialize();
-    ckb.Initialize();
-    skb.Initialize();
-    mkb.Initialize();
-    pkb.Initialize();
-
     netmode              = NET_MODE_DISABLED;
     background_timer     = 0;
     background_timeout   = 120;
@@ -520,6 +322,8 @@ void Visualizer::Initialize()
 
     ChangeAudioDevice();
     SetNormalization(nrml_ofst, nrml_scl);
+
+    DetectRGBControllers();
 }
 
 void Visualizer::InitClient(char * clientstring)
@@ -649,31 +453,6 @@ void Visualizer::SaveSettings()
     //Save Audio Device Index
     snprintf(out_str, 1024, "audio_device_idx=%d\r\n", audio_device_idx);
     outfile.write(out_str, strlen(out_str));
-
-    //Save LED Strip Configurations
-    for (unsigned int i = 0; i < str.size(); i++)
-    {
-		switch (str[i]->led_type)
-		{
-		case LED_STRIP_NORMAL:
-			//Save LED Strip Configuration
-			snprintf(out_str, 1024, "ledstrip=%s\r\n", str[i]->GetLEDString());
-			outfile.write(out_str, strlen(out_str));
-			break;
-
-		case LED_STRIP_XMAS:
-			//Save Xmas Strip Configuration
-			snprintf(out_str, 1024, "xmas=%s\r\n", str[i]->GetLEDString());
-			outfile.write(out_str, strlen(out_str));
-			break;
-
-		case LED_STRIP_HUE_PLUS:
-			//Save HuePlus Configuration
-			snprintf(out_str, 1024, "hueplus=%s\r\n", str[i]->GetLEDString());
-			outfile.write(out_str, strlen(out_str));
-			break;
-		}
-    }
 
     //Save Network Mode
     switch (netmode)
@@ -965,15 +744,6 @@ void Visualizer::StartThread()
     _beginthread(thread, 0, this);
     _beginthread(netconthread, 0, this);
     _beginthread(netupdthread, 0, this);
-    _beginthread(rkbthread, 0, this);
-    _beginthread(ckbthread, 0, this);
-    _beginthread(cmkbthread, 0, this);
-    _beginthread(lkbthread, 0, this);
-    _beginthread(skbthread, 0, this);
-    _beginthread(mkbthread, 0, this);
-    _beginthread(pkbthread, 0, this);
-    _beginthread(lsthread, 0, this);
-    _beginthread(asathread, 0, this);
 
 #else
     pthread_t threads[10];
@@ -981,12 +751,8 @@ void Visualizer::StartThread()
     pthread_create(&threads[0], NULL, &thread, this);
     pthread_create(&threads[1], NULL, &netconthread, this);
     pthread_create(&threads[2], NULL, &netupdthread, this);
-    pthread_create(&threads[3], NULL, &rkbthread, this);
-    pthread_create(&threads[4], NULL, &ckbthread, this);
-    pthread_create(&threads[5], NULL, &skbthread, this);
-    pthread_create(&threads[6], NULL, &mkbthread, this);
-    pthread_create(&threads[7], NULL, &pkbthread, this);
-    pthread_create(&threads[8], NULL, &lsthread, this);
+    pthread_create(&threads[3], NULL, &ledthread, this);
+
 #endif
 }
 
@@ -1664,92 +1430,19 @@ void Visualizer::VisThread()
     }
 }
 
-//Thread update functions for devices supported only under Windows
-#ifdef WIN32
-void Visualizer::CmKeyboardUpdateThread()
+void Visualizer::LEDUpdateThread()
 {
-    while (cmkb.SetLEDs(pixels_out->pixels))
+    while(1)
     {
-        Sleep(delay);
-    }
-}
-
-void Visualizer::LogitechSDKUpdateThread()
-{
-    while (lkb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-void Visualizer::AuraSDKUpdateThread()
-{
-    while (asa.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-//Thread update functions for devices supported only under Linux
-#else
-
-#endif
-
-//Thread update functions for devices supported on both Windows and Linux
-void Visualizer::RazerChromaUpdateThread()
-{
-    while (rkb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-void Visualizer::CorsairKeyboardUpdateThread()
-{
-    while (ckb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-
-void Visualizer::SteelSeriesKeyboardUpdateThread()
-{
-    while (skb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-void Visualizer::MSIKeyboardUpdateThread()
-{
-    while (mkb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-void Visualizer::PoseidonZRGBKeyboardUpdateThread()
-{
-    while (pkb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-void Visualizer::LEDStripUpdateThread()
-{
-    if (str.size() > 0)
-    {
-        while (TRUE)
+        for(int i = 0; i < rgb_controllers.size(); i++)
         {
-            for (unsigned int i = 0; i < str.size(); i++)
+            for(int j = 0; j < rgb_controllers[i]->leds.size(); j++)
             {
-				str[i]->SetPixels(pixels_out->pixels);
-				str[i]->SetDelay(delay);
+                rgb_controllers[i]->colors[j] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][j*(256/rgb_controllers[i]->leds.size())];
             }
-
-			Sleep(delay);
+            rgb_controllers[i]->UpdateLEDs();
         }
+
+        Sleep(15);
     }
 }
