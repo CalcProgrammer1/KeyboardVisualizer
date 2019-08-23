@@ -7,7 +7,6 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "KeyboardVisDlg.h"
-#include "..\KeyboardVisualizerCommon\LEDStrip.h"
 #include "..\KeyboardVisualizerCommon\Visualizer.h"
 
 #include <fstream>
@@ -125,51 +124,6 @@ void parse_argument_string(char * argument, char * value)
         {
             vis.avg_mode = atoi(value);
         }
-    }
-
-    if (strcmp(argument, "ledmatrix") == 0)
-    {
-        vis.BeginLEDMatrix(atoi(value));
-    }
-
-    if (strcmp(argument, "ledsections") == 0)
-    {
-        vis.LEDStripSections(atoi(value));
-    }
-
-    if (strcmp(argument, "ledmirrorx") == 0)
-    {
-        vis.LEDMirrorX();
-    }
-
-    if (strcmp(argument, "ledmirrory") == 0)
-    {
-        vis.LEDMirrorY();
-    }
-
-    if (strcmp(argument, "ledsinglecolor") == 0)
-    {
-        vis.LEDSingleColor();
-    }
-
-    if (strcmp(argument, "ledrotatex") == 0)
-    {
-        vis.LEDRotateX(atoi(value));
-    }
-
-    if (strcmp(argument, "ledstrip") == 0)
-    {
-        vis.AddLEDStrip(LED_STRIP_NORMAL, value);
-    }
-
-    if (strcmp(argument, "xmas") == 0)
-    {
-        vis.AddLEDStrip(LED_STRIP_XMAS, value);
-    }
-
-    if (strcmp(argument, "hueplus") == 0)
-    {
-        vis.AddLEDStrip(LED_STRIP_NORMAL, value);
     }
 
     if (strcmp(argument, "server") == 0)

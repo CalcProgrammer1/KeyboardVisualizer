@@ -22,21 +22,21 @@
     <ProjectGuid>{11970D07-B63F-487B-AA02-2EDCAD2F71A0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>KeyboardVisualizerVC</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>KeyboardVisualizerVC</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
@@ -44,14 +44,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
@@ -94,7 +94,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-2.9.0\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include;..\dependencies\AURA SDK_02_04\sdk</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -107,7 +107,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\dependencies\corsair-cue-1.15.28\lib\i386;..\dependencies\corsair-cue-1.15.28\lib\x64;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Lib\x86;..\dependencies\logitech-gaming-led-sdk\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -120,12 +120,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_NON_CONFORMING_WCSTOK.</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\libraries\openal-soft-1.16.0-bin\include;D:\libraries\razer-chroma-2.3.2\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\libraries\openal-soft-1.16.0-bin\libs\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalLibraryDirectories>
       <AdditionalDependencies>libOpenAL32.dll.a;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -139,7 +139,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\dependencies\razer-chroma-2.9.0\inc;..\dependencies\corsair-cue-1.15.28\include;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Include;..\dependencies\AURA SDK_02_04\sdk</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -150,7 +150,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\dependencies\corsair-cue-1.15.28\lib\i386;..\dependencies\corsair-cue-1.15.28\lib\x64;..\dependencies\coolermaster-sdk-160630;..\dependencies\logitech-gaming-led-sdk\Lib\x86;..\dependencies\logitech-gaming-led-sdk\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -164,56 +164,58 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\libraries\openal-soft-1.16.0-bin\include;D:\libraries\razer-chroma-2.3.2\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>D:\libraries\openal-soft-1.16.0-bin\libs\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalLibraryDirectories>
       <AdditionalDependencies>libOpenAL32.dll.a;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\KeyboardVisualizerCommon\AsusAuraSDK.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\chuck_fft.c" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\CmKeyboard.cpp" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\CorsairCUE.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\hsv.cpp" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\LEDStrip.cpp" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\LogitechSDK.cpp" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\MSIKeyboard.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\net_port.cpp" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\PoseidonZRGBKeyboard.cpp" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\RazerChroma.cpp" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\serial_port.cpp" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\SteelSeriesGameSense.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\UsbDevice.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\Visualizer.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\AuraController\AuraController.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\AuraController\AuraControllerDetect.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\CorsairController\CorsairController.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\CorsairController\CorsairControllerDetect.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\CorsairProController\CorsairProController.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\CorsairProController\CorsairProControllerDetect.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\HyperXController\HyperXController.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\HyperXController\HyperXControllerDetect.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\LEDStripController\LEDStripController.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\LEDStripController\LEDStripControllerDetect.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\i2c_smbus\i2c_smbus.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\i2c_smbus\i2c_smbus_i801.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\i2c_smbus\i2c_smbus_nct6775.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\i2c_smbus\i2c_smbus_piix4.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\OpenAuraSDK.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_AorusGPU.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_Aura.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_Corsair.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_CorsairPro.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_HyperX.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_LEDStrip.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\serial_port\serial_port.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\wmi\wmi.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="KeyboardVisDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\KeyboardVisualizerCommon\AsusAuraSDK.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\chuck_fft.h" />
-    <ClInclude Include="..\KeyboardVisualizerCommon\CmKeyboard.h" />
-    <ClInclude Include="..\KeyboardVisualizerCommon\CorsairCUE.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\hsv.h" />
-    <ClInclude Include="..\KeyboardVisualizerCommon\LEDStrip.h" />
-    <ClInclude Include="..\KeyboardVisualizerCommon\LogitechSDK.h" />
-    <ClInclude Include="..\KeyboardVisualizerCommon\MSIKeyboard.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\net_port.h" />
-    <ClInclude Include="..\KeyboardVisualizerCommon\PoseidonZRGBKeyboard.h" />
-    <ClInclude Include="..\KeyboardVisualizerCommon\RazerChroma.h" />
-    <ClInclude Include="..\KeyboardVisualizerCommon\serial_port.h" />
-    <ClInclude Include="..\KeyboardVisualizerCommon\SteelSeriesGameSense.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\UsbDevice.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\Visualizer.h" />
     <ClInclude Include="..\KeyboardVisualizerCommon\VisualizerDefines.h" />
     <ClInclude Include="KeyboardVisDlg.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
