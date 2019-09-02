@@ -28,10 +28,12 @@ DISTFILES +=
 INCLUDEPATH +=                                                          \
     OpenAuraSDK/                                                        \
     OpenAuraSDK/i2c_smbus/                                              \
+    OpenAuraSDK/net_port/                                               \
     OpenAuraSDK/serial_port/                                            \
     OpenAuraSDK/Controllers/AuraController/                             \
     OpenAuraSDK/Controllers/CorsairController/                          \
     OpenAuraSDK/Controllers/CorsairProController/                       \
+    OpenAuraSDK/Controllers/HuePlusController/                          \
     OpenAuraSDK/Controllers/HyperXController/                           \
     OpenAuraSDK/Controllers/LEDStripController/                         \
     OpenAuraSDK/RGBController/                                          \
@@ -39,7 +41,6 @@ INCLUDEPATH +=                                                          \
 
 SOURCES +=                                                              \
     KeyboardVisualizerCommon/hsv.cpp                                    \
-    KeyboardVisualizerCommon/net_port.cpp                               \
     KeyboardVisualizerCommon/Visualizer.cpp                             \
     KeyboardVisualizerCommon/chuck_fft.c                                \
     KeyboardVisualizerQT/KeyboardVisDlg.cpp                             \
@@ -51,6 +52,7 @@ SOURCES +=                                                                      
     OpenAuraSDK/OpenAuraSDK.cpp                                                     \
     OpenAuraSDK/i2c_smbus/i2c_smbus.cpp                                             \
     OpenAuraSDK/i2c_smbus/i2c_smbus_linux.cpp                                       \
+    OpenAuraSDK/net_port/net_port.cpp                                               \
     OpenAuraSDK/serial_port/serial_port.cpp                                         \
     OpenAuraSDK/Controllers/AuraController/AuraController.cpp                       \
     OpenAuraSDK/Controllers/AuraController/AuraControllerDetect.cpp                 \
@@ -58,6 +60,8 @@ SOURCES +=                                                                      
     OpenAuraSDK/Controllers/CorsairController/CorsairControllerDetect.cpp           \
     OpenAuraSDK/Controllers/CorsairProController/CorsairProController.cpp           \
     OpenAuraSDK/Controllers/CorsairProController/CorsairProControllerDetect.cpp     \
+    OpenAuraSDK/Controllers/HuePlusController/HuePlusController.cpp                 \
+    OpenAuraSDK/Controllers/HuePlusController/HuePlusControllerDetect.cpp           \
     OpenAuraSDK/Controllers/HyperXController/HyperXController.cpp                   \
     OpenAuraSDK/Controllers/HyperXController/HyperXControllerDetect.cpp             \
     OpenAuraSDK/Controllers/LEDStripController/LEDStripController.cpp               \
@@ -66,6 +70,7 @@ SOURCES +=                                                                      
     OpenAuraSDK/RGBController/RGBController_Aura.cpp                                \
     OpenAuraSDK/RGBController/RGBController_Corsair.cpp                             \
     OpenAuraSDK/RGBController/RGBController_CorsairPro.cpp                          \
+    OpenAuraSDK/RGBController/RGBController_HuePlus.cpp                             \
     OpenAuraSDK/RGBController/RGBController_HyperX.cpp                              \
     OpenAuraSDK/RGBController/RGBController_LEDStrip.cpp                            \
     OpenAuraSDK/RGBController/RGBController_OpenRazer.cpp
@@ -83,6 +88,7 @@ HEADERS += \
 HEADERS += \
     OpenAuraSDK/i2c_smbus/i2c_smbus.h                                               \
     OpenAuraSDK/i2c_smbus/i2c_smbus_linux.h                                         \
+    OpenAuraSDK/net_port/net_port.h                                                 \
     OpenAuraSDK/serial_port/serial_port.h                                           \
     OpenAuraSDK/Controllers/AuraController/AuraController.h                         \
     OpenAuraSDK/Controllers/CorsairController/CorsairController.h                   \
