@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="..\KeyboardVisualizerCommon\chuck_fft.c" />
     <ClCompile Include="..\KeyboardVisualizerCommon\hsv.cpp" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\net_port.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\UsbDevice.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\Visualizer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -75,6 +74,24 @@
       <Filter>OpenAuraSDK</Filter>
     </ClCompile>
     <ClCompile Include="..\OpenAuraSDK\OpenAuraSDK.cpp">
+      <Filter>OpenAuraSDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenAuraSDK\net_port\net_port.cpp">
+      <Filter>OpenAuraSDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenAuraSDK\Controllers\HuePlusController\HuePlusController.cpp">
+      <Filter>OpenAuraSDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenAuraSDK\Controllers\HuePlusController\HuePlusControllerDetect.cpp">
+      <Filter>OpenAuraSDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RazerChromaSDKDetect.cpp">
+      <Filter>OpenAuraSDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_HuePlus.cpp">
+      <Filter>OpenAuraSDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_RazerChromaSDK.cpp">
       <Filter>OpenAuraSDK</Filter>
     </ClCompile>
   </ItemGroup>

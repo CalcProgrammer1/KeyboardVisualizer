@@ -92,9 +92,9 @@
       </PrecompiledHeader>
       <WarningLevel>Level2</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_AFXDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HuePlusController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\net_port;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32;..\OpenAuraSDK\dependencies\razer-chroma-2.9.0\inc</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -120,7 +120,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_NON_CONFORMING_WCSTOK.</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HuePlusController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\net_port;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32;..\OpenAuraSDK\dependencies\razer-chroma-2.9.0\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -137,9 +137,9 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_AFXDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32_LEAN_AND_MEAN;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HuePlusController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\net_port;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32;..\OpenAuraSDK\dependencies\razer-chroma-2.9.0\inc</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -164,7 +164,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\OpenAuraSDK;..\OpenAuraSDK\Controllers\AuraController;..\OpenAuraSDK\Controllers\CorsairController;..\OpenAuraSDK\Controllers\CorsairProController;..\OpenAuraSDK\Controllers\HuePlusController;..\OpenAuraSDK\Controllers\HyperXController;..\OpenAuraSDK\Controllers\LEDStripController;..\OpenAuraSDK\i2c_smbus;..\OpenAuraSDK\net_port;..\OpenAuraSDK\serial_port;..\OpenAuraSDK\wmi;..\OpenAuraSDK\RGBController;..\OpenAuraSDK\dependencies\inpout32_1501\Win32;..\OpenAuraSDK\dependencies\razer-chroma-2.9.0\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -178,7 +178,6 @@
   <ItemGroup>
     <ClCompile Include="..\KeyboardVisualizerCommon\chuck_fft.c" />
     <ClCompile Include="..\KeyboardVisualizerCommon\hsv.cpp" />
-    <ClCompile Include="..\KeyboardVisualizerCommon\net_port.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\UsbDevice.cpp" />
     <ClCompile Include="..\KeyboardVisualizerCommon\Visualizer.cpp" />
     <ClCompile Include="..\OpenAuraSDK\Controllers\AuraController\AuraController.cpp" />
@@ -187,6 +186,8 @@
     <ClCompile Include="..\OpenAuraSDK\Controllers\CorsairController\CorsairControllerDetect.cpp" />
     <ClCompile Include="..\OpenAuraSDK\Controllers\CorsairProController\CorsairProController.cpp" />
     <ClCompile Include="..\OpenAuraSDK\Controllers\CorsairProController\CorsairProControllerDetect.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\HuePlusController\HuePlusController.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\Controllers\HuePlusController\HuePlusControllerDetect.cpp" />
     <ClCompile Include="..\OpenAuraSDK\Controllers\HyperXController\HyperXController.cpp" />
     <ClCompile Include="..\OpenAuraSDK\Controllers\HyperXController\HyperXControllerDetect.cpp" />
     <ClCompile Include="..\OpenAuraSDK\Controllers\LEDStripController\LEDStripController.cpp" />
@@ -195,13 +196,17 @@
     <ClCompile Include="..\OpenAuraSDK\i2c_smbus\i2c_smbus_i801.cpp" />
     <ClCompile Include="..\OpenAuraSDK\i2c_smbus\i2c_smbus_nct6775.cpp" />
     <ClCompile Include="..\OpenAuraSDK\i2c_smbus\i2c_smbus_piix4.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\net_port\net_port.cpp" />
     <ClCompile Include="..\OpenAuraSDK\OpenAuraSDK.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RazerChromaSDKDetect.cpp" />
     <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_AorusGPU.cpp" />
     <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_Aura.cpp" />
     <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_Corsair.cpp" />
     <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_CorsairPro.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_HuePlus.cpp" />
     <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_HyperX.cpp" />
     <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_LEDStrip.cpp" />
+    <ClCompile Include="..\OpenAuraSDK\RGBController\RGBController_RazerChromaSDK.cpp" />
     <ClCompile Include="..\OpenAuraSDK\serial_port\serial_port.cpp" />
     <ClCompile Include="..\OpenAuraSDK\wmi\wmi.cpp" />
     <ClCompile Include="main.cpp" />

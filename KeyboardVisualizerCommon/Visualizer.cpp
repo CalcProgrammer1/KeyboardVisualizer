@@ -744,6 +744,7 @@ void Visualizer::StartThread()
     _beginthread(thread, 0, this);
     _beginthread(netconthread, 0, this);
     _beginthread(netupdthread, 0, this);
+    _beginthread(ledthread, 0, this);
 
 #else
     pthread_t threads[10];
@@ -1434,13 +1435,34 @@ void Visualizer::LEDUpdateThread()
 {
     while(1)
     {
-        for(int i = 0; i < rgb_controllers.size(); i++)
+        for(int c = 0; c < rgb_controllers.size(); c++)
         {
-            for(int j = 0; j < rgb_controllers[i]->leds.size(); j++)
+            for(int z = 0; z < rgb_controllers[c]->zones.size(); z++)
             {
-                rgb_controllers[i]->colors[j] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][j*(256/rgb_controllers[i]->leds.size())];
+                switch (rgb_controllers[c]->zones[z].type)
+                {
+                case ZONE_TYPE_SINGLE:
+                    for (int r = 0; r < rgb_controllers[c]->zones[z].map.size(); r++)
+                    {
+                        for (int l = 0; l < rgb_controllers[c]->zones[z].map[r].size(); l++)
+                        {
+                            rgb_controllers[c]->colors[rgb_controllers[c]->zones[z].map[r][l]] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
+                        }
+                    }
+                    break;
+
+                case ZONE_TYPE_LINEAR:
+                    for (int r = 0; r < rgb_controllers[c]->zones[z].map.size(); r++)
+                    {
+                        for (int l = 0; l < rgb_controllers[c]->zones[z].map[r].size(); l++)
+                        {
+                            rgb_controllers[c]->colors[rgb_controllers[c]->zones[z].map[r][l]] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][l * (256 / rgb_controllers[c]->zones[z].map[r].size())];
+                        }
+                    }
+                    break;
+                }
             }
-            rgb_controllers[i]->UpdateLEDs();
+            rgb_controllers[c]->UpdateLEDs();
         }
 
         Sleep(15);
