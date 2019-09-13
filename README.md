@@ -217,11 +217,16 @@ Keyboard Visualizer allows you to save your custom settings in two different way
     
         Keyboards
         - K70 RGB (spectrograph)
+        - Strafe RGB MK.2 (spectrograph)
         - Likely other CUE SDK supported keyboards (spectrograph), untested
+
+        Mice
+        - Ironclaw RGB (logo and scroll wheel)
+        - Likely other CUE SDK supported mice (logo and scroll wheel), untested
 
     * Cooler Master RGB
 
-    	Keyboards
+        Keyboards
     	- Masterkeys Pro L (spectrograph)
     	- Masterkeys Pro S (spectrograph)
 

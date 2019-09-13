@@ -6,7 +6,7 @@
 
 /* TODO
  * Add mouse support [DONE]
- * Fix wrong rainbow/gradient position
+ * Fix incorrect rainbow/gradient position [NEEDS VALIDATION]
  * Update deprecated lines [DONE]
  * Fix iCUE 3.19 issue [DONE]
  */
@@ -81,7 +81,7 @@ void CorsairCUE::Initialize()
 	{
 		failed = FALSE;
 
-		/*		
+		/*
 		enum CorsairDeviceType
 		// contains list of available device types.
 		CDT_Unknown = 0,
@@ -107,7 +107,7 @@ void CorsairCUE::Initialize()
 			}
 		}
 
-		// _keyboard		
+		// keyboard		
 		_keyboard.model = CorsairGetDeviceInfo(_keyboard.devID)->model;
 		_keyboard.type = CorsairGetDeviceInfo(_keyboard.devID)->type;
 		_keyboard.positions = CorsairGetLedPositionsByDeviceIndex(_keyboard.devID); //keyboard
@@ -116,8 +116,8 @@ void CorsairCUE::Initialize()
 		_keyboard.x_idx = new int[_keyboard.positions->numberOfLed];
 		_keyboard.y_idx = new int[_keyboard.positions->numberOfLed];
 		_keyboard.led_idx = new CorsairLedId[_keyboard.positions->numberOfLed];
-		
-		// _mouse
+
+		// mouse
 		_mouse.model = CorsairGetDeviceInfo(_mouse.devID)->model;
 		_mouse.type = CorsairGetDeviceInfo(_mouse.devID)->type;
 		_mouse.positions = CorsairGetLedPositionsByDeviceIndex(_mouse.devID); //mouse
@@ -144,15 +144,24 @@ bool CorsairCUE::SetLEDs(COLORREF pixels[64][256])
 	{
 #ifdef CORSAIR_CUE_ENABLED
 
-		// __keyboard - keyboard
+		// keyboard
 		double _keyboard_width = getKeyboardWidth(_keyboard.positions);
 		double _keyboard_height = getKeyboardHeight(_keyboard.positions);
 
 		for (int i = 0; i < _keyboard.positions->numberOfLed; i++)
 		{
 			_keyboard.led_idx[i] = _keyboard.positions->pLedPosition[i].ledId;
-			_keyboard.x_idx[i] = (int)(SPECTROGRAPH_END * (_keyboard.positions->pLedPosition[i].left / _keyboard_width));
-			_keyboard.y_idx[i] = (int)(ROW_IDX_SPECTROGRAPH_TOP + (SPECTROGRAPH_ROWS * (_keyboard.positions->pLedPosition[i].top / _keyboard_height)) + (0.5f * (SPECTROGRAPH_ROWS / _keyboard_height)));
+			
+			if (strcmp (_keyboard.model, "STRAFE RGB MK.2") == 0) // Don't know if the incorrect position only applies to the STRAFE RGB MK.2 so I added that workaround
+			{
+				_keyboard.x_idx[i] = (int)(SPECTROGRAPH_END * (_keyboard.positions->pLedPosition[i].left / _keyboard_width)) - 10;
+			}
+			else
+			{
+				_keyboard.x_idx[i] = (int)(SPECTROGRAPH_END * (_keyboard.positions->pLedPosition[i].left / _keyboard_width));
+			}
+
+			_keyboard.y_idx[i] = (int)(ROW_IDX_SPECTROGRAPH_TOP + (SPECTROGRAPH_ROWS * (_keyboard.positions->pLedPosition[i].top / _keyboard_height)) + (1.0f * (SPECTROGRAPH_ROWS / _keyboard_height)));
 		}
 
 		for (int i = 0; i < _keyboard.positions->numberOfLed; i++)
@@ -166,8 +175,8 @@ bool CorsairCUE::SetLEDs(COLORREF pixels[64][256])
 
 		CorsairSetLedsColorsBufferByDeviceIndex(_keyboard.devID, _keyboard.positions->numberOfLed, _keyboard.colors);
 		CorsairSetLedsColorsFlushBuffer();
-		
-		// __mouse - mouse
+
+		// mouse
 		double _mouse_width = getKeyboardWidth(_mouse.positions);
 		double _mouse_height = getKeyboardHeight(_mouse.positions);
 
