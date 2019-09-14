@@ -20,6 +20,7 @@ public:
 	~CorsairCUE();
 
 	static void Initialize();
+	static void Setup();
 	static bool SetLEDs(COLORREF pixels[64][256]);
 };
 

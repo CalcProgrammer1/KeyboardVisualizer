@@ -6,7 +6,7 @@
 
 /* TODO
  * Add mouse support [DONE]
- * Fix incorrect rainbow/gradient position [NEEDS VALIDATION]
+ * Fix incorrect rainbow/gradient positioning [NEEDS VALIDATION]
  * Update deprecated lines [DONE]
  * Fix iCUE 3.19 issue [DONE]
  */
@@ -20,6 +20,7 @@ static boolean failed;
 
 #ifdef CORSAIR_CUE_ENABLED
 #include <algorithm>
+#include <vector>
 
 #pragma comment(lib, "CUESDK_2013.lib")
 #pragma comment(lib, "CUESDK.x64_2013.lib")
@@ -35,10 +36,10 @@ struct iCUEDevice
 	int devID = 0;
 	CorsairLedId* led_idx;
 };
-#endif
 
-iCUEDevice _mouse;
-iCUEDevice _keyboard;
+std::vector<iCUEDevice> _iCUEDevList;
+iCUEDevice _iCUEDev;
+#endif
 
 CorsairCUE::CorsairCUE()
 {
@@ -68,6 +69,20 @@ double getKeyboardWidth(CorsairLedPositions* ledPositions)
 	return minmaxLeds.second->left + minmaxLeds.second->width - minmaxLeds.first->left;
 }
 #endif
+
+void CorsairCUE::Setup()
+{
+	_iCUEDev.model = CorsairGetDeviceInfo(_iCUEDev.devID)->model;
+	_iCUEDev.type = CorsairGetDeviceInfo(_iCUEDev.devID)->type;
+	_iCUEDev.positions = CorsairGetLedPositionsByDeviceIndex(_iCUEDev.devID);
+
+	_iCUEDev.colors = new CorsairLedColor[_iCUEDev.positions->numberOfLed];
+	_iCUEDev.x_idx = new int[_iCUEDev.positions->numberOfLed];
+	_iCUEDev.y_idx = new int[_iCUEDev.positions->numberOfLed];
+	_iCUEDev.led_idx = new CorsairLedId[_iCUEDev.positions->numberOfLed];
+
+	_iCUEDevList.push_back(_iCUEDev);
+}
 
 void CorsairCUE::Initialize()
 {
@@ -99,33 +114,15 @@ void CorsairCUE::Initialize()
 		for (auto i = 0; i < CorsairGetDeviceCount(); i++) {
 			if (CorsairGetDeviceInfo(i)->type == 2)
 			{
-				_keyboard.devID = i;
+				_iCUEDev.devID = i;
+				Setup();
 			}
 			else if (CorsairGetDeviceInfo(i)->type == 1)
 			{
-				_mouse.devID = i;
+				_iCUEDev.devID = i;
+				Setup();
 			}
 		}
-
-		// keyboard		
-		_keyboard.model = CorsairGetDeviceInfo(_keyboard.devID)->model;
-		_keyboard.type = CorsairGetDeviceInfo(_keyboard.devID)->type;
-		_keyboard.positions = CorsairGetLedPositionsByDeviceIndex(_keyboard.devID); //keyboard
-
-		_keyboard.colors = new CorsairLedColor[_keyboard.positions->numberOfLed];
-		_keyboard.x_idx = new int[_keyboard.positions->numberOfLed];
-		_keyboard.y_idx = new int[_keyboard.positions->numberOfLed];
-		_keyboard.led_idx = new CorsairLedId[_keyboard.positions->numberOfLed];
-
-		// mouse
-		_mouse.model = CorsairGetDeviceInfo(_mouse.devID)->model;
-		_mouse.type = CorsairGetDeviceInfo(_mouse.devID)->type;
-		_mouse.positions = CorsairGetLedPositionsByDeviceIndex(_mouse.devID); //mouse
-
-		_mouse.colors = new CorsairLedColor[_mouse.positions->numberOfLed];
-		_mouse.x_idx = new int[_mouse.positions->numberOfLed];
-		_mouse.y_idx = new int[_mouse.positions->numberOfLed];
-		_mouse.led_idx = new CorsairLedId[_mouse.positions->numberOfLed];
 
 		failed = FALSE;
 	}
@@ -144,60 +141,38 @@ bool CorsairCUE::SetLEDs(COLORREF pixels[64][256])
 	{
 #ifdef CORSAIR_CUE_ENABLED
 
-		// keyboard
-		double _keyboard_width = getKeyboardWidth(_keyboard.positions);
-		double _keyboard_height = getKeyboardHeight(_keyboard.positions);
+		for (int a = 0; a < _iCUEDevList.size(); a++)  if (&_iCUEDevList[a]) {
+			double _width = getKeyboardWidth(_iCUEDevList[a].positions);
+			double _height = getKeyboardHeight(_iCUEDevList[a].positions);
 
-		for (int i = 0; i < _keyboard.positions->numberOfLed; i++)
-		{
-			_keyboard.led_idx[i] = _keyboard.positions->pLedPosition[i].ledId;
-			
-			if (strcmp (_keyboard.model, "STRAFE RGB MK.2") == 0) // Don't know if the incorrect position only applies to the STRAFE RGB MK.2 so I added that workaround
+			for (int i = 0; i < _iCUEDevList[a].positions->numberOfLed; i++)
 			{
-				_keyboard.x_idx[i] = (int)(SPECTROGRAPH_END * (_keyboard.positions->pLedPosition[i].left / _keyboard_width)) - 10;
+				_iCUEDevList[a].led_idx[i] = _iCUEDevList[a].positions->pLedPosition[i].ledId;
+
+				if (strcmp(_iCUEDevList[a].model, "STRAFE RGB MK.2") == 0) // I don't know if the incorrect positioning only applies to the STRAFE RGB MK.2 so I added that workaround
+				{
+					_iCUEDevList[a].x_idx[i] = (int)(SPECTROGRAPH_END * (_iCUEDevList[a].positions->pLedPosition[i].left / _width)) - 10;
+				}
+				else
+				{
+					_iCUEDevList[a].x_idx[i] = (int)(SPECTROGRAPH_END * (_iCUEDevList[a].positions->pLedPosition[i].left / _width));
+				}
+
+				_iCUEDevList[a].y_idx[i] = (int)(ROW_IDX_SPECTROGRAPH_TOP + (SPECTROGRAPH_ROWS * (_iCUEDevList[a].positions->pLedPosition[i].top / _height)) + (1.0f * (SPECTROGRAPH_ROWS / _height)));
 			}
-			else
+
+			for (int i = 0; i < _iCUEDevList[a].positions->numberOfLed; i++)
 			{
-				_keyboard.x_idx[i] = (int)(SPECTROGRAPH_END * (_keyboard.positions->pLedPosition[i].left / _keyboard_width));
+				COLORREF _color = pixels[_iCUEDevList[a].y_idx[i]][_iCUEDevList[a].x_idx[i]];
+				_iCUEDevList[a].colors[i].r = GetRValue(_color);
+				_iCUEDevList[a].colors[i].g = GetGValue(_color);
+				_iCUEDevList[a].colors[i].b = GetBValue(_color);
+				_iCUEDevList[a].colors[i].ledId = _iCUEDevList[a].led_idx[i];
 			}
 
-			_keyboard.y_idx[i] = (int)(ROW_IDX_SPECTROGRAPH_TOP + (SPECTROGRAPH_ROWS * (_keyboard.positions->pLedPosition[i].top / _keyboard_height)) + (1.0f * (SPECTROGRAPH_ROWS / _keyboard_height)));
+			CorsairSetLedsColorsBufferByDeviceIndex(_iCUEDevList[a].devID, _iCUEDevList[a].positions->numberOfLed, _iCUEDevList[a].colors);
+			CorsairSetLedsColorsFlushBuffer();
 		}
-
-		for (int i = 0; i < _keyboard.positions->numberOfLed; i++)
-		{
-			COLORREF _keyboard_color = pixels[_keyboard.y_idx[i]][_keyboard.x_idx[i]];
-			_keyboard.colors[i].r = GetRValue(_keyboard_color);
-			_keyboard.colors[i].g = GetGValue(_keyboard_color);
-			_keyboard.colors[i].b = GetBValue(_keyboard_color);
-			_keyboard.colors[i].ledId = _keyboard.led_idx[i];
-		}
-
-		CorsairSetLedsColorsBufferByDeviceIndex(_keyboard.devID, _keyboard.positions->numberOfLed, _keyboard.colors);
-		CorsairSetLedsColorsFlushBuffer();
-
-		// mouse
-		double _mouse_width = getKeyboardWidth(_mouse.positions);
-		double _mouse_height = getKeyboardHeight(_mouse.positions);
-
-		for (int i = 0; i < _mouse.positions->numberOfLed; i++)
-		{
-			_mouse.led_idx[i] = _mouse.positions->pLedPosition[i].ledId;
-			_mouse.x_idx[i] = (int)(SPECTROGRAPH_END * (_mouse.positions->pLedPosition[i].left / _mouse_width));
-			_mouse.y_idx[i] = (int)(ROW_IDX_SPECTROGRAPH_TOP + (SPECTROGRAPH_ROWS * (_mouse.positions->pLedPosition[i].top / _mouse_height)) + (0.5f * (SPECTROGRAPH_ROWS / _mouse_height)));
-		}
-
-		for (int i = 0; i < _mouse.positions->numberOfLed; i++)
-		{
-			COLORREF _mouse_color = pixels[_mouse.y_idx[i]][_mouse.x_idx[i]];
-			_mouse.colors[i].r = GetRValue(_mouse_color);
-			_mouse.colors[i].g = GetGValue(_mouse_color);
-			_mouse.colors[i].b = GetBValue(_mouse_color);
-			_mouse.colors[i].ledId = _mouse.led_idx[i];
-		}
-
-		CorsairSetLedsColorsBufferByDeviceIndex(_mouse.devID, _mouse.positions->numberOfLed, _mouse.colors);
-		CorsairSetLedsColorsFlushBuffer();
 
 		return TRUE;
 #endif
