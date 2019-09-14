@@ -246,6 +246,7 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         - G900 Chaos Spectrum (single color)
         - G303 Daedalus Apex (single color)
         - G502 Proteus Spectrum (single color)
+        
     * SteelSeries
 
         Keyboards
