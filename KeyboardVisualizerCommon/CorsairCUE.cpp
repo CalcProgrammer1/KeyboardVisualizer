@@ -97,8 +97,7 @@ void CorsairCUE::Initialize()
 		failed = FALSE;
 
 		/*
-		enum CorsairDeviceType
-		// contains list of available device types.
+		enum CorsairDeviceType // contains list of available device types.
 		CDT_Unknown = 0,
 		CDT_Mouse = 1,
 		CDT_Keyboard = 2,
@@ -110,14 +109,14 @@ void CorsairCUE::Initialize()
 		CDT_MemoryModule = 8,
 		CDT_Cooler = 9
 		*/
-
+		
 		for (auto i = 0; i < CorsairGetDeviceCount(); i++) {
-			if (CorsairGetDeviceInfo(i)->type == 2)
+			if (CorsairGetDeviceInfo(i)->type == CDT_Keyboard)
 			{
 				_iCUEDev.devID = i;
 				Setup();
 			}
-			else if (CorsairGetDeviceInfo(i)->type == 1)
+			else if (CorsairGetDeviceInfo(i)->type == CDT_Mouse)
 			{
 				_iCUEDev.devID = i;
 				Setup();
@@ -149,8 +148,9 @@ bool CorsairCUE::SetLEDs(COLORREF pixels[64][256])
 			{
 				_iCUEDevList[a].led_idx[i] = _iCUEDevList[a].positions->pLedPosition[i].ledId;
 
-				if (strcmp(_iCUEDevList[a].model, "STRAFE RGB MK.2") == 0) // I don't know if the incorrect positioning only applies to the STRAFE RGB MK.2 so I added that workaround
+				if (strcmp(_iCUEDevList[a].model, "STRAFE RGB MK.2") == 0)
 				{
+					// I don't know if the incorrect positioning only applies to the STRAFE RGB MK.2 so I added that workaround
 					_iCUEDevList[a].x_idx[i] = (int)(SPECTROGRAPH_END * (_iCUEDevList[a].positions->pLedPosition[i].left / _width)) - 10;
 				}
 				else
