@@ -45,6 +45,12 @@ bool ledstrip_mirror_y = false;
 bool ledstrip_single_color = false;
 int ledstrip_rotate_x = 0;
 
+typedef struct
+{
+    Visualizer* vis;
+    unsigned int controller;
+} ledthread_arg_type;
+
 //Threads for Visualizer.cpp
 THREAD thread(void *param)
 {
@@ -69,8 +75,9 @@ THREAD netupdthread(void *param)
 
 THREAD ledthread(void *param)
 {
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->LEDUpdateThread();
+    ledthread_arg_type* args = static_cast<ledthread_arg_type*>(param);
+    Visualizer* vis = static_cast<Visualizer*>(args->vis);
+    vis->LEDUpdateThread(args->controller);
     THREADRETURN
 }
 
@@ -752,7 +759,14 @@ void Visualizer::StartThread()
     pthread_create(&threads[0], NULL, &thread, this);
     pthread_create(&threads[1], NULL, &netconthread, this);
     pthread_create(&threads[2], NULL, &netupdthread, this);
-    pthread_create(&threads[3], NULL, &ledthread, this);
+
+    for(int c = 0; c < rgb_controllers.size(); c++)
+    {
+        ledthread_arg_type arg;
+        arg.vis = this;
+        arg.controller = c;
+        pthread_create(&threads[3], NULL, &ledthread, &arg);
+    }
 
 #endif
 }
@@ -1431,12 +1445,12 @@ void Visualizer::VisThread()
     }
 }
 
-void Visualizer::LEDUpdateThread()
+void Visualizer::LEDUpdateThread( unsigned int c )
 {
     while(1)
     {
-        for(int c = 0; c < rgb_controllers.size(); c++)
-        {
+        //for(int c = 0; c < rgb_controllers.size(); c++)
+        //{
             for(int z = 0; z < rgb_controllers[c]->zones.size(); z++)
             {
                 switch (rgb_controllers[c]->zones[z].type)
@@ -1463,7 +1477,7 @@ void Visualizer::LEDUpdateThread()
                 }
             }
             rgb_controllers[c]->UpdateLEDs();
-        }
+        //}
 
         Sleep(15);
     }

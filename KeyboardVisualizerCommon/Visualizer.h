@@ -219,7 +219,7 @@ private:
     void DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixels *out_pixels);
 
 public:
-    void LEDUpdateThread();
+    void LEDUpdateThread( unsigned int c );
 };
 
 #endif
