@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = KeyboardVisualizer
 TEMPLATE = app
 
-LIBS      += -lopenal
+LIBS      += -lopenal -le131
 
 packagesExist(hidapi-libusb) {
   unix:LIBS += -lhidapi-libusb
@@ -66,10 +66,12 @@ SOURCES +=                                                                      
     OpenAuraSDK/Controllers/HyperXController/HyperXControllerDetect.cpp             \
     OpenAuraSDK/Controllers/LEDStripController/LEDStripController.cpp               \
     OpenAuraSDK/Controllers/LEDStripController/LEDStripControllerDetect.cpp         \
+    OpenAuraSDK/RGBController/E131ControllerDetect.cpp                              \
     OpenAuraSDK/RGBController/OpenRazerDetect.cpp                                   \
     OpenAuraSDK/RGBController/RGBController_Aura.cpp                                \
     OpenAuraSDK/RGBController/RGBController_Corsair.cpp                             \
     OpenAuraSDK/RGBController/RGBController_CorsairPro.cpp                          \
+    OpenAuraSDK/RGBController/RGBController_E131.cpp                                \
     OpenAuraSDK/RGBController/RGBController_HuePlus.cpp                             \
     OpenAuraSDK/RGBController/RGBController_HyperX.cpp                              \
     OpenAuraSDK/RGBController/RGBController_LEDStrip.cpp                            \
@@ -99,6 +101,7 @@ HEADERS += \
     OpenAuraSDK/RGBController/RGBController_Aura.h                                  \
     OpenAuraSDK/RGBController/RGBController_Corsair.h                               \
     OpenAuraSDK/RGBController/RGBController_CorsairPro.h                            \
+    OpenAuraSDK/RGBController/RGBController_E131.h                                  \
     OpenAuraSDK/RGBController/RGBController_HyperX.h                                \
     OpenAuraSDK/RGBController/RGBController_OpenRazer.h
 
