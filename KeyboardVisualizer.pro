@@ -27,6 +27,7 @@ DISTFILES +=
 
 INCLUDEPATH +=                                                          \
     OpenAuraSDK/                                                        \
+    OpenAuraSDK/dependencies/libe131/src/                               \
     OpenAuraSDK/i2c_smbus/                                              \
     OpenAuraSDK/net_port/                                               \
     OpenAuraSDK/serial_port/                                            \
@@ -50,6 +51,7 @@ SOURCES +=                                                              \
 # From OpenAuraSDK
 SOURCES +=                                                                          \
     OpenAuraSDK/OpenAuraSDK.cpp                                                     \
+    OpenAuraSDK/dependencies/libe131/src/e131.c                                     \
     OpenAuraSDK/i2c_smbus/i2c_smbus.cpp                                             \
     OpenAuraSDK/i2c_smbus/i2c_smbus_linux.cpp                                       \
     OpenAuraSDK/net_port/net_port.cpp                                               \
@@ -66,10 +68,12 @@ SOURCES +=                                                                      
     OpenAuraSDK/Controllers/HyperXController/HyperXControllerDetect.cpp             \
     OpenAuraSDK/Controllers/LEDStripController/LEDStripController.cpp               \
     OpenAuraSDK/Controllers/LEDStripController/LEDStripControllerDetect.cpp         \
+    OpenAuraSDK/RGBController/E131ControllerDetect.cpp                              \
     OpenAuraSDK/RGBController/OpenRazerDetect.cpp                                   \
     OpenAuraSDK/RGBController/RGBController_Aura.cpp                                \
     OpenAuraSDK/RGBController/RGBController_Corsair.cpp                             \
     OpenAuraSDK/RGBController/RGBController_CorsairPro.cpp                          \
+    OpenAuraSDK/RGBController/RGBController_E131.cpp                                \
     OpenAuraSDK/RGBController/RGBController_HuePlus.cpp                             \
     OpenAuraSDK/RGBController/RGBController_HyperX.cpp                              \
     OpenAuraSDK/RGBController/RGBController_LEDStrip.cpp                            \
@@ -99,6 +103,7 @@ HEADERS += \
     OpenAuraSDK/RGBController/RGBController_Aura.h                                  \
     OpenAuraSDK/RGBController/RGBController_Corsair.h                               \
     OpenAuraSDK/RGBController/RGBController_CorsairPro.h                            \
+    OpenAuraSDK/RGBController/RGBController_E131.h                                  \
     OpenAuraSDK/RGBController/RGBController_HyperX.h                                \
     OpenAuraSDK/RGBController/RGBController_OpenRazer.h
 
