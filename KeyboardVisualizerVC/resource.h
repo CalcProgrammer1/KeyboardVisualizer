@@ -19,6 +19,7 @@
 #define IDC_EDIT_NRML_OFST              1013
 #define IDC_EDIT_NRML_SCL               1014
 #define IDC_BUTTON_SAVE                 1015
+#define IDC_BUTTON_RESTART                1022
 #define IDC_EDIT_ANIM_SPEED             1016
 #define IDC_CHECK_REACTIVE_BACKGROUND   1017
 #define IDC_COMBO_AUDIO_DEVICE          1018

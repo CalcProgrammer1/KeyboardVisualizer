@@ -462,6 +462,27 @@ void Visualizer::ChangeAudioDevice()
 #endif
 }
 
+
+void Visualizer::RestartDevices()
+{
+    //Initialize devices supported only under Windows
+#ifdef WIN32
+    cmkb.Initialize();
+    lkb.Initialize();
+    asa.Initialize();
+
+    //Initialize devices supported only under Linux
+#else
+
+#endif
+        //Initialize devices supported by both Windows and Linux
+    rkb.Initialize();
+    ckb.Initialize();
+    skb.Initialize();
+    mkb.Initialize();
+    pkb.Initialize();
+}
+
 void Visualizer::Initialize()
 {
     InitAudioDeviceList();

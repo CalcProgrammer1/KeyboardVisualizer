@@ -18,7 +18,6 @@ CWinApp app;
 Visualizer vis;
 static boolean startminimized;
 
-
 void parse_argument_string(char * argument, char * value)
 {
     if (strcmp(argument, "startminimized") == 0)
@@ -403,7 +402,7 @@ int APIENTRY _tWinMain(HINSTANCE hInst, HINSTANCE h0, LPTSTR lpCmdLine, int nCmd
 	afxCurrentResourceHandle = hInst;
 	app.m_hInstance = hInst;
 
-    startminimized = FALSE;
+    startminimized = TRUE;
 
     //Initialize Visualizer
     vis.Initialize();

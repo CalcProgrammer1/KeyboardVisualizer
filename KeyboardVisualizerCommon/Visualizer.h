@@ -83,6 +83,8 @@ public:
     void NetConnectThread();
     void NetUpdateThread();
 
+    void RestartDevices();
+
 #ifdef WIN32
     //Update threads for devices supported only under Windows
     void CmKeyboardUpdateThread();

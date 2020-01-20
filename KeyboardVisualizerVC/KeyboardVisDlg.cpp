@@ -23,6 +23,7 @@ IMPLEMENT_DYNAMIC(KeyboardVisDlg, CDialogEx)
 Visualizer* vis;
 boolean startminimized;
 boolean firstrun;
+boolean hide;
 NOTIFYICONDATA Tray;
 
 KeyboardVisDlg::KeyboardVisDlg(CWnd* pParent)
@@ -131,6 +132,7 @@ BOOL KeyboardVisDlg::OnInitDialog()
 void KeyboardVisDlg::StartMinimized(boolean startmin)
 {
     startminimized = startmin;
+    hide = true;
 }
 
 void KeyboardVisDlg::OnDestroy()
@@ -147,6 +149,11 @@ void KeyboardVisDlg::OnTimer(UINT nIDEvent)
         ShowWindow(SW_HIDE);
     }
 
+    if(hide)
+    {
+       ShowWindow(SW_HIDE);
+    }
+	
     COLORREF pixels_bgr[64][256];
 
     //CreateBitmap uses BGR color layout, convert from RGB
@@ -221,11 +228,13 @@ LRESULT KeyboardVisDlg::OnTrayIconEvent(WPARAM wParam, LPARAM lParam)
         {
             if (IsWindowVisible())
             {
+                hide = true;
                 KillTimer(timer);
                 ShowWindow(SW_HIDE);
             }
             else
             {
+                hide = false;
                 ShowWindow(SW_SHOW);
                 timer = SetTimer(1, 25, NULL);
             }
@@ -253,6 +262,7 @@ BEGIN_MESSAGE_MAP(KeyboardVisDlg, CDialogEx)
     ON_EN_CHANGE(IDC_EDIT_NRML_OFST, &KeyboardVisDlg::OnEnChangedEditNrmlOfst)
     ON_EN_CHANGE(IDC_EDIT_NRML_SCL, &KeyboardVisDlg::OnEnChangedEditNrmlScl)
     ON_BN_CLICKED(IDC_BUTTON_SAVE, &KeyboardVisDlg::OnClickedSave)
+    ON_BN_CLICKED(IDC_BUTTON_RESTART, &KeyboardVisDlg::OnClickedRestart)
     ON_EN_CHANGE(IDC_EDIT_ANIM_SPEED, &KeyboardVisDlg::OnEnChangeEditAnimSpeed)
     ON_BN_CLICKED(IDC_CHECK_REACTIVE_BACKGROUND, &KeyboardVisDlg::OnBnClickedCheckReactiveBackground)
     ON_CBN_SELCHANGE(IDC_COMBO_AUDIO_DEVICE, &KeyboardVisDlg::OnCbnSelchangeComboAudioDevice)
@@ -360,6 +370,14 @@ void KeyboardVisDlg::OnEnChangedEditNrmlScl()
 void KeyboardVisDlg::OnClickedSave()
 {
     vis->SaveSettings();
+}
+
+void KeyboardVisDlg::OnClickedRestart()
+{
+    // stub
+    //Initialize Visualizer
+    //vis->Initialize();
+    vis->RestartDevices();
 }
 
 void KeyboardVisDlg::OnEnChangeEditAnimSpeed()
