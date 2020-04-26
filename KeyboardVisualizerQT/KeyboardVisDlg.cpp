@@ -200,6 +200,11 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
     for(int dev_idx = 0; dev_idx < vis_ptr->rgb_controllers.size(); dev_idx++)
     {
         ui->list_Devices->addItem(QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->name));
+
+        for(int zone_idx = 0; zone_idx < vis_ptr->rgb_controllers[dev_idx]->zones.size(); zone_idx++)
+        {
+            ui->list_Devices->addItem(QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].name));
+        }
     }
 }
 

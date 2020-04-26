@@ -756,13 +756,13 @@ void Visualizer::StartThread()
     pthread_create(&threads[1], NULL, &netconthread, this);
     pthread_create(&threads[2], NULL, &netupdthread, this);
 
-    for(int c = 0; c < rgb_controllers.size(); c++)
-    {
+    //for(int c = 0; c < rgb_controllers.size(); c++)
+    //{
         ledthread_arg_type arg;
         arg.vis = this;
-        arg.controller = c;
+        arg.controller = 0;
         pthread_create(&threads[3], NULL, &ledthread, &arg);
-    }
+    //}
 
 #endif
 }
@@ -1441,40 +1441,43 @@ void Visualizer::VisThread()
     }
 }
 
-void Visualizer::LEDUpdateThread( unsigned int c )
+void Visualizer::LEDUpdateThread( unsigned int q )
 {
     while(1)
     {
-        for(int z = 0; z < rgb_controllers[c]->zones.size(); z++)
+        for(int c = 0; c < rgb_controllers.size(); c++)
         {
-            switch (rgb_controllers[c]->zones[z].type)
+            for(int z = 0; z < rgb_controllers[c]->zones.size(); z++)
             {
-            //case ZONE_TYPE_MATRIX:
-            //    for (int r = 0; r < rgb_controllers[c]->zones[z].map.size(); r++)
-            //    {
-            //        for (int l = 0; l < rgb_controllers[c]->zones[z].map[r].size(); l++)
-            //        {
-            //            rgb_controllers[c]->colors[rgb_controllers[c]->zones[z].map[r][l]] = pixels_out->pixels[ 2 + r * (62 / rgb_controllers[c]->zones[z].map.size())][l * (256 / rgb_controllers[c]->zones[z].map[r].size())];
-            //        }
-            //    }
-            //    break;
-
-            case ZONE_TYPE_SINGLE:
-                for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
+                switch (rgb_controllers[c]->zones[z].type)
                 {
-                    rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
-                }
-                break;
+                //case ZONE_TYPE_MATRIX:
+                //    for (int r = 0; r < rgb_controllers[c]->zones[z].map.size(); r++)
+                //    {
+                //        for (int l = 0; l < rgb_controllers[c]->zones[z].map[r].size(); l++)
+                //        {
+                //            rgb_controllers[c]->colors[rgb_controllers[c]->zones[z].map[r][l]] = pixels_out->pixels[ 2 + r * (62 / rgb_controllers[c]->zones[z].map.size())][l * (256 / rgb_controllers[c]->zones[z].map[r].size())];
+                //        }
+                //    }
+                //    break;
 
-            case ZONE_TYPE_LINEAR:
-                for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
-                {
-                    rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][r * (256 / rgb_controllers[c]->zones[z].leds_count)];
+                case ZONE_TYPE_SINGLE:
+                    for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
+                    {
+                        rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
+                    }
+                    break;
+
+                case ZONE_TYPE_LINEAR:
+                    for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
+                    {
+                        rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][r * (256 / rgb_controllers[c]->zones[z].leds_count)];
+                    }
+                    break;
                 }
-                break;
             }
+            rgb_controllers[c]->UpdateLEDs();
         }
-        rgb_controllers[c]->UpdateLEDs();
 
         Sleep(delay);
     }
