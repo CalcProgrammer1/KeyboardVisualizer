@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>360</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Keyboard Visualizer 3.06</string>
+   <string>Keyboard Visualizer - OpenRGB SDK Dev Build</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QLabel" name="label_Amplitude">
@@ -386,7 +386,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>https://github.com/CalcProgrammer1/KeyboardVisualizer</string>
+     <string>https://gitlab.com/CalcProgrammer1/KeyboardVisualizer</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="checkBox_Reactive_Background">
@@ -508,6 +508,16 @@
     </property>
     <property name="text">
      <string>Background Timeout</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="list_Devices">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>360</y>
+      <width>591</width>
+      <height>231</height>
+     </rect>
     </property>
    </widget>
   </widget>

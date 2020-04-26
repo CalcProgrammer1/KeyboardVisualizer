@@ -3,6 +3,8 @@
 #include "KeyboardVisualizerCommon/VisualizerDefines.h"
 #include "ui_keyboardvisualizer.h"
 
+#include <QListWidgetItem>
+
 Visualizer* vis_ptr;
 boolean startminimized;
 boolean firstrun;
@@ -193,6 +195,12 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
     image = new QImage(256, 64, QImage::Format_RGB32);
     scene = new QGraphicsScene(this);
     ui->graphicsView_Visualization_Preview->setScene(scene);
+
+    //OpenRGB device list
+    for(int dev_idx = 0; dev_idx < vis_ptr->rgb_controllers.size(); dev_idx++)
+    {
+        ui->list_Devices->addItem(QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->name));
+    }
 }
 
 void KeyboardVisDlg::StartMinimized(boolean startmin)

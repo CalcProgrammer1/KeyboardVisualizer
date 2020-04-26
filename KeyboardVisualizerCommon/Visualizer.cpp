@@ -21,8 +21,6 @@
 #include "unistd.h"
 #endif
 
-#include "OpenAuraSDK.h"
-#include "RGBController.h"
 #include <string.h>
 
 #ifndef TRUE
@@ -30,9 +28,7 @@
 #define FALSE 0
 #endif
 
-std::vector<char *>     device_properties;
-
-extern std::vector<RGBController*> rgb_controllers;
+std::vector<char *>         device_properties;
 
 char * net_string;
 int ledstrip_sections_size = 1;
@@ -304,7 +300,7 @@ void Visualizer::Initialize()
     bkgd_step            = 0;
     bkgd_bright          = 100;
     bkgd_mode            = VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL;
-    delay                = 50;
+    delay                = 500;
     window_mode          = 1;
     decay                = 80;
     frgd_mode            = VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED;
@@ -330,7 +326,7 @@ void Visualizer::Initialize()
     ChangeAudioDevice();
     SetNormalization(nrml_ofst, nrml_scl);
 
-    DetectRGBControllers();
+    rgb_client = new NetworkClient(rgb_controllers);
 }
 
 void Visualizer::InitClient(char * clientstring)
@@ -1453,33 +1449,27 @@ void Visualizer::LEDUpdateThread( unsigned int c )
         {
             switch (rgb_controllers[c]->zones[z].type)
             {
-            case ZONE_TYPE_MATRIX:
-                for (int r = 0; r < rgb_controllers[c]->zones[z].map.size(); r++)
-                {
-                    for (int l = 0; l < rgb_controllers[c]->zones[z].map[r].size(); l++)
-                    {
-                        rgb_controllers[c]->colors[rgb_controllers[c]->zones[z].map[r][l]] = pixels_out->pixels[ 2 + r * (62 / rgb_controllers[c]->zones[z].map.size())][l * (256 / rgb_controllers[c]->zones[z].map[r].size())];
-                    }
-                }
-                break;
+            //case ZONE_TYPE_MATRIX:
+            //    for (int r = 0; r < rgb_controllers[c]->zones[z].map.size(); r++)
+            //    {
+            //        for (int l = 0; l < rgb_controllers[c]->zones[z].map[r].size(); l++)
+            //        {
+            //            rgb_controllers[c]->colors[rgb_controllers[c]->zones[z].map[r][l]] = pixels_out->pixels[ 2 + r * (62 / rgb_controllers[c]->zones[z].map.size())][l * (256 / rgb_controllers[c]->zones[z].map[r].size())];
+            //        }
+            //    }
+            //    break;
 
             case ZONE_TYPE_SINGLE:
-                for (int r = 0; r < rgb_controllers[c]->zones[z].map.size(); r++)
+                for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
                 {
-                    for (int l = 0; l < rgb_controllers[c]->zones[z].map[r].size(); l++)
-                    {
-                        rgb_controllers[c]->colors[rgb_controllers[c]->zones[z].map[r][l]] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
-                    }
+                    rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
                 }
                 break;
 
             case ZONE_TYPE_LINEAR:
-                for (int r = 0; r < rgb_controllers[c]->zones[z].map.size(); r++)
+                for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
                 {
-                    for (int l = 0; l < rgb_controllers[c]->zones[z].map[r].size(); l++)
-                    {
-                        rgb_controllers[c]->colors[rgb_controllers[c]->zones[z].map[r][l]] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][l * (256 / rgb_controllers[c]->zones[z].map[r].size())];
-                    }
+                    rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][r * (256 / rgb_controllers[c]->zones[z].leds_count)];
                 }
                 break;
             }

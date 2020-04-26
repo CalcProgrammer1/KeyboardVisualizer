@@ -18,6 +18,11 @@
 #include "hsv.h"
 #include "net_port.h"
 
+//OpenRGB SDK
+#include "OpenRGB.h"
+#include "NetworkClient.h"
+#include "RGBController.h"
+
 //If building on Windows, use WASAPI
 #ifdef WIN32
 #include <mmsystem.h>
@@ -173,6 +178,10 @@ public:
 
     //Audio Device List
     std::vector<char *> audio_devices;
+
+    //OpenRGB SDK
+    NetworkClient*              rgb_client;
+    std::vector<RGBController*> rgb_controllers;
 
 private:
 #ifdef WIN32
