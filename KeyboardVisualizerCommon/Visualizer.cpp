@@ -1438,7 +1438,20 @@ void Visualizer::LEDUpdateThread( unsigned int q )
                 case ZONE_TYPE_MATRIX:
                     for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
                     {
-                        rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
+                        if(rgb_controllers[c]->zones[z].matrix_map != NULL)
+                        {
+                            for (int y = 0; y < rgb_controllers[c]->zones[z].matrix_map->height; y++)
+                            {
+                                for (int x = 0; x < rgb_controllers[c]->zones[z].matrix_map->width; x++)
+                                {
+                                    rgb_controllers[c]->zones[z].colors[rgb_controllers[c]->zones[z].matrix_map->map[(y * rgb_controllers[c]->zones[z].matrix_map->width) + x]] = pixels_out->pixels[ 2 + y * (62 / rgb_controllers[c]->zones[z].matrix_map->height)][x * (256 / rgb_controllers[c]->zones[z].matrix_map->width)];
+                                }
+                            }
+                        }
+                        else
+                        {
+                            rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
+                        }
                     }
                     break;
 
