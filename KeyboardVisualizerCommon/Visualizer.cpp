@@ -28,8 +28,6 @@
 #define FALSE 0
 #endif
 
-std::vector<char *>         device_properties;
-
 char * net_string;
 int ledstrip_sections_size = 1;
 int matrix_setup_pos;
@@ -82,14 +80,6 @@ THREAD ledthread(void *param)
 Visualizer::Visualizer()
 {
 
-}
-
-void Visualizer::SetDeviceProperty(char * devprop, char * argument)
-{
-    //Save device property to list of device properties
-    char * buf = new char[strlen(devprop) + 1];
-    strcpy(buf, devprop);
-    device_properties.push_back(buf);
 }
 
 void Visualizer::InitAudioDeviceList()
@@ -471,14 +461,6 @@ void Visualizer::SaveSettings()
         snprintf(out_str, 1024, "server=%s\r\n", net_string);
         outfile.write(out_str, strlen(out_str));
         break;
-    }
-
-    //Save Device Properties
-    for (int i = 0; i < device_properties.size(); i++)
-    {
-        //Save Device Property
-        snprintf(out_str, 1024, "%s\r\n", device_properties[i]);
-        outfile.write(out_str, strlen(out_str));
     }
 
     //Close Output File

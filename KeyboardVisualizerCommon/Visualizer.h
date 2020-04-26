@@ -112,9 +112,6 @@ public:
     //Shut Down
     void Shutdown();
 
-    //Function to set custom properties for devices
-    void SetDeviceProperty(char * devprop, char * argument);
-
     //Save Settings File
     void SaveSettings();
 

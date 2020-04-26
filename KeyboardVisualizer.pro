@@ -13,16 +13,6 @@ TEMPLATE = app
 
 LIBS      += -lopenal
 
-packagesExist(hidapi-libusb) {
-  unix:LIBS += -lhidapi-libusb
-} else {
-  packagesExist(hidapi) {
-    unix:LIBS += -lhidapi
-  } else {
-    unix:LIBS += -lhidapi-libusb
-  }
-}
-
 DISTFILES +=
 
 INCLUDEPATH +=                                                          \
@@ -49,7 +39,6 @@ SOURCES +=                                                              \
 HEADERS += \
     KeyboardVisualizerCommon/chuck_fft.h                                \
     KeyboardVisualizerCommon/hsv.h                                      \
-    KeyboardVisualizerCommon/net_port.h                                 \
     KeyboardVisualizerCommon/Visualizer.h                               \
     KeyboardVisualizerCommon/VisualizerDefines.h                        \
     KeyboardVisualizerQT/KeyboardVisDlg.h                               \
