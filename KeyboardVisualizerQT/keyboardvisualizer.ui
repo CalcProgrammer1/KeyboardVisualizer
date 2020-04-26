@@ -510,7 +510,7 @@
      <string>Background Timeout</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="list_Devices">
+   <widget class="QTreeWidget" name="tree_Devices">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -519,6 +519,11 @@
       <height>231</height>
      </rect>
     </property>
+    <column>
+     <property name="text">
+      <string notr="true">1</string>
+     </property>
+    </column>
    </widget>
   </widget>
  </widget>

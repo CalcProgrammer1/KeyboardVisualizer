@@ -3,7 +3,7 @@
 #include "KeyboardVisualizerCommon/VisualizerDefines.h"
 #include "ui_keyboardvisualizer.h"
 
-#include <QListWidgetItem>
+#include <QTreeWidgetItem>
 
 Visualizer* vis_ptr;
 boolean startminimized;
@@ -197,13 +197,36 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
     ui->graphicsView_Visualization_Preview->setScene(scene);
 
     //OpenRGB device list
+    ui->tree_Devices->setColumnCount(3);
+    ui->tree_Devices->setHeaderLabels(QStringList() << "Device Zones" << "LEDs" << "Type");
     for(int dev_idx = 0; dev_idx < vis_ptr->rgb_controllers.size(); dev_idx++)
     {
-        ui->list_Devices->addItem(QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->name));
+        QTreeWidgetItem* new_item = new QTreeWidgetItem(ui->tree_Devices);
+        new_item->setText(0, QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->name));
 
         for(int zone_idx = 0; zone_idx < vis_ptr->rgb_controllers[dev_idx]->zones.size(); zone_idx++)
         {
-            ui->list_Devices->addItem(QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].name) + " Size: " + QString::fromStdString(std::to_string((vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].leds_count))));
+            QTreeWidgetItem* new_child = new QTreeWidgetItem();
+
+            new_child->setText(0, QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].name));
+            new_child->setText(1, QString::fromStdString(std::to_string((vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].leds_count))));
+
+            switch(vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].type)
+            {
+                case ZONE_TYPE_SINGLE:
+                    new_child->setText(2, "Single");
+                break;
+
+                case ZONE_TYPE_LINEAR:
+                    new_child->setText(2, "Linear");
+                    break;
+
+                case ZONE_TYPE_MATRIX:
+                    new_child->setText(2, "Matrix");
+                    break;
+            }
+
+            new_item->addChild(new_child);
         }
     }
 }
