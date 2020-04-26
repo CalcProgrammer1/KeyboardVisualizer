@@ -203,7 +203,7 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
 
         for(int zone_idx = 0; zone_idx < vis_ptr->rgb_controllers[dev_idx]->zones.size(); zone_idx++)
         {
-            ui->list_Devices->addItem(QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].name));
+            ui->list_Devices->addItem(QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].name) + " Size: " + QString::fromStdString(std::to_string((vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].leds_count))));
         }
     }
 }

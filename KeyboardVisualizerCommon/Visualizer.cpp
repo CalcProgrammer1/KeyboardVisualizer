@@ -1433,15 +1433,14 @@ void Visualizer::LEDUpdateThread( unsigned int q )
             {
                 switch (rgb_controllers[c]->zones[z].type)
                 {
-                //case ZONE_TYPE_MATRIX:
-                //    for (int r = 0; r < rgb_controllers[c]->zones[z].map.size(); r++)
-                //    {
-                //        for (int l = 0; l < rgb_controllers[c]->zones[z].map[r].size(); l++)
-                //        {
-                //            rgb_controllers[c]->colors[rgb_controllers[c]->zones[z].map[r][l]] = pixels_out->pixels[ 2 + r * (62 / rgb_controllers[c]->zones[z].map.size())][l * (256 / rgb_controllers[c]->zones[z].map[r].size())];
-                //        }
-                //    }
-                //    break;
+                // OpenRGB doesn't yet have matrix mapping after reworking controller layout
+                // For now, just treat matrix devices as single zones
+                case ZONE_TYPE_MATRIX:
+                    for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
+                    {
+                        rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
+                    }
+                    break;
 
                 case ZONE_TYPE_SINGLE:
                     for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
