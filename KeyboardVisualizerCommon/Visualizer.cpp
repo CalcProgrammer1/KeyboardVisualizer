@@ -69,9 +69,8 @@ THREAD netupdthread(void *param)
 
 THREAD ledthread(void *param)
 {
-    ledthread_arg_type* args = static_cast<ledthread_arg_type*>(param);
-    Visualizer* vis = static_cast<Visualizer*>(args->vis);
-    vis->LEDUpdateThread(args->controller);
+    Visualizer* vis = static_cast<Visualizer*>(param);
+    vis->LEDUpdateThread();
     THREADRETURN
 }
 
@@ -737,14 +736,7 @@ void Visualizer::StartThread()
     pthread_create(&threads[0], NULL, &thread, this);
     pthread_create(&threads[1], NULL, &netconthread, this);
     pthread_create(&threads[2], NULL, &netupdthread, this);
-
-    //for(int c = 0; c < rgb_controllers.size(); c++)
-    //{
-        ledthread_arg_type arg;
-        arg.vis = this;
-        arg.controller = 0;
-        pthread_create(&threads[3], NULL, &ledthread, &arg);
-    //}
+    pthread_create(&threads[3], NULL, &ledthread, this);
 
 #endif
 }
@@ -1423,7 +1415,7 @@ void Visualizer::VisThread()
     }
 }
 
-void Visualizer::LEDUpdateThread( unsigned int q )
+void Visualizer::LEDUpdateThread()
 {
     while(1)
     {
@@ -1470,7 +1462,7 @@ void Visualizer::LEDUpdateThread( unsigned int q )
                     break;
                 }
             }
-            rgb_controllers[c]->UpdateLEDs();
+            rgb_controllers[c]->DeviceUpdateLEDs();
         }
 
         Sleep(delay);

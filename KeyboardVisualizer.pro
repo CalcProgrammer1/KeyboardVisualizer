@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = KeyboardVisualizer
 TEMPLATE = app
 
-#LIBS      += -lopenal
+unix:LIBS      += -lopenal
 
 DISTFILES +=
 
