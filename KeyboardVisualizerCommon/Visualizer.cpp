@@ -107,10 +107,10 @@ void Visualizer::InitAudioDeviceList()
     isCapture.clear();
 
     //Enumerate default audio output
-    pMMDeviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pEndpoint);
-    audio_devices.push_back("Default Loopback Device");
-    pMMDevices.push_back(pEndpoint);
-    isCapture.push_back(false);
+    //pMMDeviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pEndpoint);
+    //audio_devices.push_back("Default Loopback Device");
+    //pMMDevices.push_back(pEndpoint);
+    //isCapture.push_back(false);
 
     //Enumerate audio outputs
     pMMDeviceEnumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &pMMDeviceCollection);
@@ -360,17 +360,17 @@ void Visualizer::SaveSettings()
     }
 
     //Get file path in executable directory
-#ifdef WIN32
-    GetModuleFileName(NULL, filename, 2048);
-    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
-    strcat(filename, "\\settings.txt");
-#else
-    char arg1[64];
-    snprintf(arg1, 64, "/proc/%d/exe", getpid());
-    readlink(arg1, filename, 1024);
-    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
-    strcat(filename, "/settings.txt");
-#endif
+//#ifdef WIN32
+//    GetModuleFileName(NULL, filename, 2048);
+//    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
+//    strcat(filename, "\\settings.txt");
+//#else
+//    char arg1[64];
+//    snprintf(arg1, 64, "/proc/%d/exe", getpid());
+//    readlink(arg1, filename, 1024);
+//    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
+//    strcat(filename, "/settings.txt");
+//#endif
 
     //Open settings file
     outfile.open(filename);
@@ -762,7 +762,7 @@ void Visualizer::Shutdown()
     }
 }
 
-void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)
+void DrawSolidColor(int bright, RGBColor color, vis_pixels *pixels)
 {
     bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
@@ -774,7 +774,7 @@ void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)
     }
 }
 
-void DrawVerticalBars(int bright, COLORREF * colors, int num_colors, vis_pixels *pixels)
+void DrawVerticalBars(int bright, RGBColor * colors, int num_colors, vis_pixels *pixels)
 {
     bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
@@ -787,7 +787,7 @@ void DrawVerticalBars(int bright, COLORREF * colors, int num_colors, vis_pixels 
     }
 }
 
-void DrawHorizontalBars(int bright, COLORREF * colors, int num_colors, vis_pixels *pixels)
+void DrawHorizontalBars(int bright, RGBColor * colors, int num_colors, vis_pixels *pixels)
 {
     bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
@@ -867,7 +867,7 @@ void DrawSpectrumCycle(int bright, float bkgd_step, vis_pixels *pixels)
 {
     bright = (int)(bright * (255.0f / 100.0f));
     hsv_t hsv2 = { (int)bkgd_step, 255, (unsigned char)bright };
-    COLORREF color = hsv2rgb(&hsv2);
+    RGBColor color = hsv2rgb(&hsv2);
 
     for (int x = 0; x < 256; x++)
     {
@@ -880,7 +880,7 @@ void DrawSpectrumCycle(int bright, float bkgd_step, vis_pixels *pixels)
 
 void DrawSinusoidalCycle(int bright, float bkgd_step, vis_pixels *pixels)
 {
-    COLORREF color;
+    RGBColor color;
     bright = (int)(bright * (255.0f / 100.0f));
     int red = (int)(127 * (sin(((((int)(((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1));
     int grn = (int)(127 * (sin(((((int)(((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1));
@@ -940,7 +940,7 @@ void Visualizer::DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixel
     }
 }
 
-void DrawSingleColorStatic(float amplitude, COLORREF in_color, vis_pixels *out_pixels)
+void DrawSingleColorStatic(float amplitude, RGBColor in_color, vis_pixels *out_pixels)
 {
     if (amplitude >= 1.0f)
     {
@@ -1000,42 +1000,42 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
 
     case VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED:
         {
-        COLORREF colors[] = { 0x0000FF00, 0x0000FFFF, 0x000000FF };
+        RGBColor colors[] = { 0x0000FF00, 0x0000FFFF, 0x000000FF };
         DrawHorizontalBars(bright, colors, 3, pixels);
         }
         break;
 
     case VISUALIZER_PATTERN_STATIC_GREEN_WHITE_RED:
         {
-        COLORREF colors[] = { 0x0000FF00, 0x00FFFFFF, 0x000000FF };
+        RGBColor colors[] = { 0x0000FF00, 0x00FFFFFF, 0x000000FF };
         DrawHorizontalBars(bright, colors, 3, pixels);
         }
         break;
 
     case VISUALIZER_PATTERN_STATIC_BLUE_CYAN_WHITE:
         {
-        COLORREF colors[] = { 0x00FF0000, 0x00FFFF00, 0x00FFFFFF };
+        RGBColor colors[] = { 0x00FF0000, 0x00FFFF00, 0x00FFFFFF };
         DrawHorizontalBars(bright, colors, 3, pixels);
         }
         break;
 
     case VISUALIZER_PATTERN_STATIC_RED_WHITE_BLUE:
         {
-        COLORREF colors[] = { 0x000000FF, 0x00FFFFFF, 0x00FF0000 };
+        RGBColor colors[] = { 0x000000FF, 0x00FFFFFF, 0x00FF0000 };
         DrawHorizontalBars(bright, colors, 3, pixels);
         }
         break;
 
     case VISUALIZER_PATTERN_STATIC_RAINBOW:
         {
-        COLORREF colors[] = { 0x000000FF, 0x0000FFFF, 0x0000FF00, 0x00FFFF00, 0x00FF0000, 0x00FF00FF };
+        RGBColor colors[] = { 0x000000FF, 0x0000FFFF, 0x0000FF00, 0x00FFFF00, 0x00FF0000, 0x00FF00FF };
         DrawHorizontalBars(bright, colors, 6, pixels);
         }
         break;
 
     case VISUALIZER_PATTERN_STATIC_RAINBOW_INVERSE:
         {
-        COLORREF colors[] = { 0x00FF00FF, 0x00FF0000, 0x00FFFF00, 0x0000FF00, 0x0000FFFF, 0x000000FF };
+        RGBColor colors[] = { 0x00FF00FF, 0x00FF0000, 0x00FFFF00, 0x0000FF00, 0x0000FFFF, 0x000000FF };
         DrawHorizontalBars(bright, colors, 6, pixels);
         }
         break;

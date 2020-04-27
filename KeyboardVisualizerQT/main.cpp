@@ -3,7 +3,10 @@
 #include "KeyboardVisualizerCommon/Visualizer.h"
 #include "KeyboardVisualizerCommon/VisualizerDefines.h"
 
+#ifndef WIN32
 #include <unistd.h>
+#endif
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -156,7 +159,7 @@ bool parse_command_line(int argc, char *argv[])
         char* argument;
         char* value;
 
-        argument = strtok_r(argv[i], "=", &value);
+        //argument = strtok_r(argv[i], "=", &value);
 
         if (strcmp(argument, "help") == 0)
         {
@@ -271,7 +274,7 @@ void parse_settings_file(char * filename)
 
                 value = (char *)line.c_str();
 
-                argument = strtok_r(value, "=", &value);
+                //argument = strtok_r(value, "=", &value);
 
                 parse_argument_string(argument, value);
             }
@@ -289,15 +292,15 @@ int main(int argc, char *argv[])
     vis.Initialize();
 
     //Get file path in executable directory
-    char filename[2048];
+    //char filename[2048];
     //GetModuleFileName(NULL, filename, 2048);
-    char arg1[64];
-    snprintf(arg1, 64, "/proc/%d/exe", getpid());
-    readlink(arg1, filename, 1024);
-    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
+    //char arg1[64];
+    //snprintf(arg1, 64, "/proc/%d/exe", getpid());
+    //readlink(arg1, filename, 1024);
+    //strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
     //strcat(filename, "\\settings.txt");
-    strcat(filename, "/settings.txt");
-    parse_settings_file(filename);
+    //strcat(filename, "/settings.txt");
+    //parse_settings_file(filename);
 
     //Parse Command Line
     if (!parse_command_line(argc, argv))

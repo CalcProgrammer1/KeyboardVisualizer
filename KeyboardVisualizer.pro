@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = KeyboardVisualizer
 TEMPLATE = app
 
-LIBS      += -lopenal
+#LIBS      += -lopenal
 
 DISTFILES +=
 
@@ -56,3 +56,29 @@ RESOURCES += \
 
 FORMS += \
     KeyboardVisualizerQT/keyboardvisualizer.ui
+
+#-----------------------------------------------
+# Windows specific project configuration
+#-----------------------------------------------
+
+win32:contains(QMAKE_TARGET.arch, x86_64) {
+    LIBS +=                                                             \
+        -lws2_32                                                        \
+        -lole32                                                         \
+}
+
+win32:contains(QMAKE_TARGET.arch, x86) {
+    LIBS +=                                                             \
+        -lws2_32                                                        \
+        -lole32                                                         \
+}
+
+win32:DEFINES -=                                                        \
+    UNICODE
+
+win32:DEFINES +=                                                        \
+    _MBCS                                                               \
+    WIN32                                                               \
+    _CRT_SECURE_NO_WARNINGS                                             \
+    _WINSOCK_DEPRECATED_NO_WARNINGS                                     \
+    WIN32_LEAN_AND_MEAN

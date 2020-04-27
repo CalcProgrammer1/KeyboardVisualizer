@@ -30,12 +30,17 @@
 #define MIN3(a,b,c)   MIN((a), MIN((b), (c)))
 #define MAX3(a,b,c)   MAX((a), MAX((b), (c)))
 
+#define RGBGetRValue(rgb)   (rgb & 0x000000FF)
+#define RGBGetGValue(rgb)   ((rgb >> 8) & 0x000000FF)
+#define RGBGetBValue(rgb)   ((rgb >> 16) & 0x000000FF)
 
-void rgb2hsv(COLORREF rgb, hsv_t* hsv)
+#define ToRGBColor(r, g, b) ((b << 16) | (g << 8) | (r))
+
+void rgb2hsv(unsigned int rgb, hsv_t* hsv)
 {
-	int r = GetRValue(rgb);
-	int g = GetGValue(rgb);
-	int b = GetBValue(rgb);
+    int r = RGBGetRValue(rgb);
+    int g = RGBGetGValue(rgb);
+    int b = RGBGetBValue(rgb);
 	int m = MIN3(r, g, b);
 	int M = MAX3(r, g, b);
 	int delta = M - m;
@@ -69,9 +74,11 @@ void rgb2hsv(COLORREF rgb, hsv_t* hsv)
 	hsv->value = M;
 }
 
-COLORREF hsv2rgb(hsv_t* hsv)
+unsigned int hsv2rgb(hsv_t* hsv)
 {
-	BYTE r, g, b;
+    unsigned char r = 0;
+	unsigned char g = 0;
+	unsigned char b = 0;
 
 	if (hsv->saturation == 0) {
 		r = g = b = hsv->value;
@@ -101,7 +108,7 @@ COLORREF hsv2rgb(hsv_t* hsv)
 		}
 	}
 
-	return RGB(r, g, b);
+    return ToRGBColor(r, g, b);
 }
 
 
