@@ -1428,19 +1428,19 @@ void Visualizer::LEDUpdateThread()
                 // OpenRGB doesn't yet have matrix mapping after reworking controller layout
                 // For now, just treat matrix devices as single zones
                 case ZONE_TYPE_MATRIX:
-                    for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
+                    if(rgb_controllers[c]->zones[z].matrix_map != NULL)
                     {
-                        if(rgb_controllers[c]->zones[z].matrix_map != NULL)
+                        for (int y = 0; y < rgb_controllers[c]->zones[z].matrix_map->height; y++)
                         {
-                            for (int y = 0; y < rgb_controllers[c]->zones[z].matrix_map->height; y++)
+                            for (int x = 0; x < rgb_controllers[c]->zones[z].matrix_map->width; x++)
                             {
-                                for (int x = 0; x < rgb_controllers[c]->zones[z].matrix_map->width; x++)
-                                {
-                                    rgb_controllers[c]->zones[z].colors[rgb_controllers[c]->zones[z].matrix_map->map[(y * rgb_controllers[c]->zones[z].matrix_map->width) + x]] = pixels_out->pixels[ 2 + y * (62 / rgb_controllers[c]->zones[z].matrix_map->height)][x * (256 / rgb_controllers[c]->zones[z].matrix_map->width)];
-                                }
+                                rgb_controllers[c]->zones[z].colors[rgb_controllers[c]->zones[z].matrix_map->map[(y * rgb_controllers[c]->zones[z].matrix_map->width) + x]] = pixels_out->pixels[ 2 + y * (62 / rgb_controllers[c]->zones[z].matrix_map->height)][x * (256 / rgb_controllers[c]->zones[z].matrix_map->width)];
                             }
                         }
-                        else
+                    }
+                    else
+                    {
+                        for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
                         {
                             rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
                         }
