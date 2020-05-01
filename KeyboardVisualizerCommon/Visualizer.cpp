@@ -1434,7 +1434,14 @@ void Visualizer::LEDUpdateThread()
                         {
                             for (int x = 0; x < rgb_controllers[c]->zones[z].matrix_map->width; x++)
                             {
-                                rgb_controllers[c]->zones[z].colors[rgb_controllers[c]->zones[z].matrix_map->map[(y * rgb_controllers[c]->zones[z].matrix_map->width) + x]] = pixels_out->pixels[ 2 + y * (62 / rgb_controllers[c]->zones[z].matrix_map->height)][x * (256 / rgb_controllers[c]->zones[z].matrix_map->width)];
+                                unsigned int map_idx = (y * rgb_controllers[c]->zones[z].matrix_map->width) + x;
+                                unsigned int color_idx = rgb_controllers[c]->zones[z].matrix_map->map[map_idx];
+                                if( color_idx != 0xFFFFFFFF )
+                                {
+                                    unsigned int pixels_y = 2 + y * (62 / rgb_controllers[c]->zones[z].matrix_map->height);
+                                    unsigned int pixels_x = x * (256 / rgb_controllers[c]->zones[z].matrix_map->width);
+                                    rgb_controllers[c]->zones[z].colors[color_idx] = pixels_out->pixels[pixels_y][pixels_x];
+                                }
                             }
                         }
                     }
