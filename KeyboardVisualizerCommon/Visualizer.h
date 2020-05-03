@@ -11,6 +11,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <thread>
 
 //Project includes
 #include "VisualizerDefines.h"
@@ -81,12 +82,11 @@ public:
     //Function to start thread
     void StartThread();
 
-    //Visualizer Thread
-    void VisThread();
-
-    //Network Threads
-    void NetConnectThread();
-    void NetUpdateThread();
+    //Thread Functions
+    void LEDUpdateThreadFunction();
+    void NetConnectThreadFunction();
+    void NetUpdateThreadFunction();
+    void VisThreadFunction();
 
     //Called when settings changed
     void OnSettingsChanged();
@@ -195,6 +195,12 @@ private:
     ALCdevice *device;
 #endif
 
+    //Threads
+    std::thread * LEDUpdateThread;
+    std::thread * NetConnectThread;
+    std::thread * NetUpdateThread;
+    std::thread * VisThread;
+
     //Background Step
     float bkgd_step;
 
@@ -223,9 +229,6 @@ private:
     unsigned char buffer[256];
 
     void DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixels *out_pixels);
-
-public:
-    void LEDUpdateThread();
 };
 
 #endif

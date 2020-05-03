@@ -5,22 +5,6 @@
 \*---------------------------------------------------------*/
 
 #include "Visualizer.h"
-
-//Thread functions have different types in Windows and Linux
-#ifdef WIN32
-#define THREAD static void
-#define THREADRETURN
-#else
-#define THREAD static void*
-#define THREADRETURN return(NULL);
-#endif
-
-//Include pthread and Unix standard libraries if not building for Windows
-#ifndef WIN32
-#include "pthread.h"
-#include "unistd.h"
-#endif
-
 #include <string.h>
 
 #ifndef TRUE
@@ -38,43 +22,6 @@ bool ledstrip_mirror_x = false;
 bool ledstrip_mirror_y = false;
 bool ledstrip_single_color = false;
 int ledstrip_rotate_x = 0;
-
-typedef struct
-{
-    Visualizer* vis;
-    unsigned int controller;
-} ledthread_arg_type;
-
-//Threads for Visualizer.cpp
-THREAD thread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->VisThread();
-    THREADRETURN
-}
-
-THREAD netconthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->NetConnectThread();
-    THREADRETURN
-}
-
-THREAD netupdthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->NetUpdateThread();
-    THREADRETURN
-}
-
-THREAD ledthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->LEDUpdateThread();
-    THREADRETURN
-}
-
-//Visualizer class functions start here
 
 Visualizer::Visualizer()
 {
@@ -724,21 +671,10 @@ void Visualizer::StartThread()
     //Set application running flag to TRUE before starting threads
     running = true;
 
-#ifdef WIN32
-    _beginthread(thread, 0, this);
-    _beginthread(netconthread, 0, this);
-    _beginthread(netupdthread, 0, this);
-    _beginthread(ledthread, 0, this);
-
-#else
-    pthread_t threads[10];
-
-    pthread_create(&threads[0], NULL, &thread, this);
-    pthread_create(&threads[1], NULL, &netconthread, this);
-    pthread_create(&threads[2], NULL, &netupdthread, this);
-    pthread_create(&threads[3], NULL, &ledthread, this);
-
-#endif
+    VisThread           = new std::thread(&Visualizer::VisThreadFunction, this);
+    NetConnectThread    = new std::thread(&Visualizer::NetConnectThreadFunction, this);
+    NetUpdateThread     = new std::thread(&Visualizer::NetUpdateThreadFunction, this);
+    LEDUpdateThread     = new std::thread(&Visualizer::LEDUpdateThreadFunction, this);
 }
 
 void Visualizer::Shutdown()
@@ -1058,7 +994,7 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
     }
 }
 
-void Visualizer::NetConnectThread()
+void Visualizer::NetConnectThreadFunction()
 {
     while (1)
     {
@@ -1087,7 +1023,7 @@ void Visualizer::NetConnectThread()
     }
 }
 
-void Visualizer::NetUpdateThread()
+void Visualizer::NetUpdateThreadFunction()
 {
     int counter = 0;
     char buf[sizeof(fft_fltr)];
@@ -1166,7 +1102,7 @@ void Visualizer::NetUpdateThread()
     }
 }
 
-void Visualizer::VisThread()
+void Visualizer::VisThreadFunction()
 {
     while (running == true)
     {
@@ -1415,7 +1351,7 @@ void Visualizer::VisThread()
     }
 }
 
-void Visualizer::LEDUpdateThread()
+void Visualizer::LEDUpdateThreadFunction()
 {
     while(1)
     {
