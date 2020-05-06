@@ -88,6 +88,9 @@ public:
     void NetUpdateThreadFunction();
     void VisThreadFunction();
 
+    //Connect to OpenRGB
+    void OpenRGBConnect(const char *ip, unsigned short port);
+
     //Called when settings changed
     void OnSettingsChanged();
 

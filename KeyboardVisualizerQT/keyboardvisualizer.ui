@@ -15,30 +15,14 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="9" column="0">
-     <widget class="QLabel" name="label_Visualization_Preview">
-      <property name="text">
-       <string>Visualization Preview</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="3">
-     <widget class="QComboBox" name="comboBox_FFT_Window_Mode">
-      <property name="sizeAdjustPolicy">
-       <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+     <widget class="QLabel" name="label_FFT_Window_Mode">
+      <property name="text">
+       <string>FFT Window Mode</string>
       </property>
      </widget>
     </item>
-    <item row="7" column="1">
-     <widget class="QLineEdit" name="lineEdit_Filter_Constant"/>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="lineEdit_Amplitude"/>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="lineEdit_Background_Brightness"/>
-    </item>
-    <item row="9" column="1" colspan="2">
+    <item row="9" column="2" colspan="2">
      <widget class="QGraphicsView" name="graphicsView_Visualization_Preview">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -69,100 +53,33 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_Background_Brightness">
-      <property name="text">
-       <string>Background Brightness</string>
-      </property>
-     </widget>
+    <item row="0" column="2">
+     <widget class="QLineEdit" name="lineEdit_Amplitude"/>
     </item>
-    <item row="8" column="0">
-     <widget class="QLabel" name="label_Background_Timeout">
-      <property name="text">
-       <string>Background Timeout</string>
-      </property>
-     </widget>
+    <item row="4" column="2">
+     <widget class="QLineEdit" name="lineEdit_Delay"/>
     </item>
     <item row="2" column="2">
-     <widget class="QLabel" name="label_Foreground_Mode">
-      <property name="text">
-       <string>Foreground Mode</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
      <widget class="QLineEdit" name="lineEdit_Average_Size"/>
     </item>
-    <item row="5" column="3">
-     <widget class="QComboBox" name="comboBox_Audio_Device">
+    <item row="1" column="4">
+     <widget class="QComboBox" name="comboBox_Background_Mode">
       <property name="sizeAdjustPolicy">
        <enum>QComboBox::AdjustToMinimumContentsLength</enum>
       </property>
      </widget>
     </item>
-    <item row="7" column="2">
-     <widget class="QLabel" name="label_Reactive_Background">
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_Visualization_Preview">
       <property name="text">
-       <string>Reactive Background</string>
+       <string>Visualization Preview</string>
       </property>
      </widget>
     </item>
-    <item row="8" column="3">
+    <item row="8" column="4">
      <widget class="QCheckBox" name="checkBox_Silent_Background">
       <property name="text">
        <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_Delay">
-      <property name="text">
-       <string>Delay (ms)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLineEdit" name="lineEdit_Delay"/>
-    </item>
-    <item row="0" column="2">
-     <widget class="QLabel" name="label_FFT_Window_Mode">
-      <property name="text">
-       <string>FFT Window Mode</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="3">
-     <widget class="QComboBox" name="comboBox_Single_Color_Mode">
-      <property name="sizeAdjustPolicy">
-       <enum>QComboBox::AdjustToMinimumContentsLength</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="3">
-     <widget class="QCheckBox" name="checkBox_Reactive_Background">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label_Average_Size">
-      <property name="text">
-       <string>Average Size</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="3">
-     <widget class="QComboBox" name="comboBox_Foreground_Mode">
-      <property name="sizeAdjustPolicy">
-       <enum>QComboBox::AdjustToMinimumContentsLength</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_Decay">
-      <property name="text">
-       <string>Decay (% per step)</string>
       </property>
      </widget>
     </item>
@@ -173,24 +90,133 @@
       </property>
      </widget>
     </item>
+    <item row="7" column="2">
+     <widget class="QLineEdit" name="lineEdit_Filter_Constant"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_Average_Size">
+      <property name="text">
+       <string>Average Size</string>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="0" colspan="5">
+     <widget class="QTreeWidget" name="tree_Devices">
+      <column>
+       <property name="text">
+        <string notr="true">1</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+    <item row="9" column="4">
+     <widget class="QPushButton" name="pushButton_Save_Settings">
+      <property name="text">
+       <string>Save Settings</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="4">
+     <widget class="QComboBox" name="comboBox_Foreground_Mode">
+      <property name="sizeAdjustPolicy">
+       <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_Normalization_Scale">
+      <property name="text">
+       <string>Normalization Scale</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_Delay">
+      <property name="text">
+       <string>Delay (ms)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="4">
+     <widget class="QCheckBox" name="checkBox_Reactive_Background">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_Background_Brightness">
+      <property name="text">
+       <string>Background Brightness</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="QLabel" name="label_Background_Mode">
+      <property name="text">
+       <string>Background Mode</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_Decay">
+      <property name="text">
+       <string>Decay (% per step)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="2">
+     <widget class="QLineEdit" name="lineEdit_Background_Timeout"/>
+    </item>
+    <item row="8" column="3">
+     <widget class="QLabel" name="label_Silent_Background">
+      <property name="text">
+       <string>Silent Background</string>
+      </property>
+     </widget>
+    </item>
     <item row="6" column="2">
-     <widget class="QLabel" name="label_Animation_Speed">
+     <widget class="QLineEdit" name="lineEdit_Normalization_Scale"/>
+    </item>
+    <item row="7" column="3">
+     <widget class="QLabel" name="label_Reactive_Background">
       <property name="text">
-       <string>Animation Speed</string>
+       <string>Reactive Background</string>
       </property>
      </widget>
     </item>
-    <item row="10" column="0" colspan="4">
-     <widget class="QLabel" name="label_GitHub_URL">
-      <property name="text">
-       <string>https://gitlab.com/CalcProgrammer1/KeyboardVisualizer</string>
+    <item row="5" column="4">
+     <widget class="QComboBox" name="comboBox_Audio_Device">
+      <property name="sizeAdjustPolicy">
+       <enum>QComboBox::AdjustToMinimumContentsLength</enum>
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_Amplitude">
+    <item row="5" column="3">
+     <widget class="QLabel" name="label_Audio_Device">
       <property name="text">
-       <string>Amplitude (%)</string>
+       <string>Audio Device</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QComboBox" name="comboBox_FFT_Window_Mode">
+      <property name="sizeAdjustPolicy">
+       <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="4">
+     <widget class="QComboBox" name="comboBox_Single_Color_Mode">
+      <property name="sizeAdjustPolicy">
+       <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_Background_Timeout">
+      <property name="text">
+       <string>Background Timeout</string>
       </property>
      </widget>
     </item>
@@ -201,90 +227,91 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="3">
-     <widget class="QLineEdit" name="lineEdit_Animation_Speed"/>
-    </item>
-    <item row="8" column="1">
-     <widget class="QLineEdit" name="lineEdit_Background_Timeout"/>
-    </item>
-    <item row="5" column="2">
-     <widget class="QLabel" name="label_Audio_Device">
-      <property name="text">
-       <string>Audio Device</string>
-      </property>
-     </widget>
+    <item row="1" column="2">
+     <widget class="QLineEdit" name="lineEdit_Background_Brightness"/>
     </item>
     <item row="4" column="3">
-     <widget class="QComboBox" name="comboBox_Average_Mode">
-      <property name="sizeAdjustPolicy">
-       <enum>QComboBox::AdjustToMinimumContentsLength</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QLabel" name="label_Single_Color_Mode">
-      <property name="text">
-       <string>Single Color Mode</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3">
-     <widget class="QComboBox" name="comboBox_Background_Mode">
-      <property name="sizeAdjustPolicy">
-       <enum>QComboBox::AdjustToMinimumContentsLength</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="2">
      <widget class="QLabel" name="label_Average_Mode">
       <property name="text">
        <string>Average Mode</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QLabel" name="label_Background_Mode">
+    <item row="5" column="2">
+     <widget class="QLineEdit" name="lineEdit_Normalization_Offset"/>
+    </item>
+    <item row="4" column="4">
+     <widget class="QComboBox" name="comboBox_Average_Mode">
+      <property name="sizeAdjustPolicy">
+       <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="label_IP">
       <property name="text">
-       <string>Background Mode</string>
+       <string>IP:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_Amplitude">
+      <property name="text">
+       <string>Amplitude (%)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="3">
+     <widget class="QLabel" name="label_Single_Color_Mode">
+      <property name="text">
+       <string>Single Color Mode</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="3">
+     <widget class="QLabel" name="label_Animation_Speed">
+      <property name="text">
+       <string>Animation Speed</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="4">
+     <widget class="QLineEdit" name="lineEdit_Animation_Speed"/>
+    </item>
+    <item row="3" column="2">
+     <widget class="QLineEdit" name="lineEdit_Decay"/>
+    </item>
+    <item row="10" column="2">
+     <widget class="QLineEdit" name="lineEdit_IP"/>
+    </item>
+    <item row="2" column="3">
+     <widget class="QLabel" name="label_Foreground_Mode">
+      <property name="text">
+       <string>Foreground Mode</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="4">
+     <widget class="QLineEdit" name="lineEdit_Port"/>
+    </item>
+    <item row="10" column="3">
+     <widget class="QLabel" name="label_Port">
+      <property name="text">
+       <string>Port</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="4">
+     <widget class="QPushButton" name="button_Connect">
+      <property name="text">
+       <string>Connect</string>
       </property>
      </widget>
     </item>
     <item row="11" column="0" colspan="4">
-     <widget class="QTreeWidget" name="tree_Devices">
-      <column>
-       <property name="text">
-        <string notr="true">1</string>
-       </property>
-      </column>
-     </widget>
-    </item>
-    <item row="8" column="2">
-     <widget class="QLabel" name="label_Silent_Background">
+     <widget class="QLabel" name="label_GitLab">
       <property name="text">
-       <string>Silent Background</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="1">
-     <widget class="QLineEdit" name="lineEdit_Normalization_Scale"/>
-    </item>
-    <item row="6" column="0">
-     <widget class="QLabel" name="label_Normalization_Scale">
-      <property name="text">
-       <string>Normalization Scale</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="1">
-     <widget class="QLineEdit" name="lineEdit_Normalization_Offset"/>
-    </item>
-    <item row="3" column="1">
-     <widget class="QLineEdit" name="lineEdit_Decay"/>
-    </item>
-    <item row="9" column="3">
-     <widget class="QPushButton" name="pushButton_Save_Settings">
-      <property name="text">
-       <string>Save Settings</string>
+       <string>https://gitlab.com/CalcProgrammer1/KeyboardVisualizer</string>
       </property>
      </widget>
     </item>

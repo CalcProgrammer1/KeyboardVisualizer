@@ -31,6 +31,9 @@ KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new Ke
     trayIcon->setToolTip("Keyboard Visualizer");
     trayIcon->setContextMenu(myTrayIconMenu);
     trayIcon->show();
+
+    ui->lineEdit_IP->setText("127.0.0.1");
+    ui->lineEdit_Port->setText("1337");
 }
 
 void KeyboardVisDlg::show()
@@ -195,40 +198,6 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
     image = new QImage(256, 64, QImage::Format_RGB32);
     scene = new QGraphicsScene(this);
     ui->graphicsView_Visualization_Preview->setScene(scene);
-
-    //OpenRGB device list
-    ui->tree_Devices->setColumnCount(3);
-    ui->tree_Devices->setHeaderLabels(QStringList() << "Device Zones" << "LEDs" << "Type");
-    for(int dev_idx = 0; dev_idx < vis_ptr->rgb_controllers.size(); dev_idx++)
-    {
-        QTreeWidgetItem* new_item = new QTreeWidgetItem(ui->tree_Devices);
-        new_item->setText(0, QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->name));
-
-        for(int zone_idx = 0; zone_idx < vis_ptr->rgb_controllers[dev_idx]->zones.size(); zone_idx++)
-        {
-            QTreeWidgetItem* new_child = new QTreeWidgetItem();
-
-            new_child->setText(0, QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].name));
-            new_child->setText(1, QString::fromStdString(std::to_string((vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].leds_count))));
-
-            switch(vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].type)
-            {
-                case ZONE_TYPE_SINGLE:
-                    new_child->setText(2, "Single");
-                break;
-
-                case ZONE_TYPE_LINEAR:
-                    new_child->setText(2, "Linear");
-                    break;
-
-                case ZONE_TYPE_MATRIX:
-                    new_child->setText(2, "Matrix");
-                    break;
-            }
-
-            new_item->addChild(new_child);
-        }
-    }
 }
 
 void KeyboardVisDlg::StartMinimized(boolean startmin)
@@ -379,4 +348,46 @@ void Ui::KeyboardVisDlg::on_lineEdit_Background_Timeout_textChanged(const QStrin
     }
 
     vis_ptr->OnSettingsChanged();
+}
+
+void Ui::KeyboardVisDlg::on_button_Connect_clicked()
+{
+    unsigned short  port = std::stoi(ui->lineEdit_Port->text().toStdString());
+    const char *    ip   = ui->lineEdit_IP->text().toStdString().c_str();
+
+    vis_ptr->OpenRGBConnect(ip, port);
+
+    //OpenRGB device list
+    ui->tree_Devices->setColumnCount(3);
+    ui->tree_Devices->setHeaderLabels(QStringList() << "Device Zones" << "LEDs" << "Type");
+    for(int dev_idx = 0; dev_idx < vis_ptr->rgb_controllers.size(); dev_idx++)
+    {
+        QTreeWidgetItem* new_item = new QTreeWidgetItem(ui->tree_Devices);
+        new_item->setText(0, QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->name));
+
+        for(int zone_idx = 0; zone_idx < vis_ptr->rgb_controllers[dev_idx]->zones.size(); zone_idx++)
+        {
+            QTreeWidgetItem* new_child = new QTreeWidgetItem();
+
+            new_child->setText(0, QString::fromStdString(vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].name));
+            new_child->setText(1, QString::fromStdString(std::to_string((vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].leds_count))));
+
+            switch(vis_ptr->rgb_controllers[dev_idx]->zones[zone_idx].type)
+            {
+                case ZONE_TYPE_SINGLE:
+                    new_child->setText(2, "Single");
+                break;
+
+                case ZONE_TYPE_LINEAR:
+                    new_child->setText(2, "Linear");
+                    break;
+
+                case ZONE_TYPE_MATRIX:
+                    new_child->setText(2, "Matrix");
+                    break;
+            }
+
+            new_item->addChild(new_child);
+        }
+    }
 }

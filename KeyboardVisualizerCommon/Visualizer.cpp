@@ -261,8 +261,6 @@ void Visualizer::Initialize()
 
     ChangeAudioDevice();
     SetNormalization(nrml_ofst, nrml_scl);
-
-    rgb_client = new NetworkClient(rgb_controllers);
 }
 
 void Visualizer::InitClient(char * clientstring)
@@ -674,7 +672,6 @@ void Visualizer::StartThread()
     VisThread           = new std::thread(&Visualizer::VisThreadFunction, this);
     NetConnectThread    = new std::thread(&Visualizer::NetConnectThreadFunction, this);
     NetUpdateThread     = new std::thread(&Visualizer::NetUpdateThreadFunction, this);
-    LEDUpdateThread     = new std::thread(&Visualizer::LEDUpdateThreadFunction, this);
 }
 
 void Visualizer::Shutdown()
@@ -1349,6 +1346,18 @@ void Visualizer::VisThreadFunction()
         //Wait 15ms (~60fps)
         Sleep(15);
     }
+}
+
+void Visualizer::OpenRGBConnect(const char * ip, unsigned short port)
+{
+    rgb_client = new NetworkClient(rgb_controllers);
+
+    rgb_client->SetIP(ip);
+    rgb_client->SetPort(port);
+
+    rgb_client->StartClient();
+
+    LEDUpdateThread     = new std::thread(&Visualizer::LEDUpdateThreadFunction, this);
 }
 
 void Visualizer::LEDUpdateThreadFunction()

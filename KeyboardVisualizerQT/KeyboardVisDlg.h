@@ -69,6 +69,8 @@ private slots:
 
     void on_lineEdit_Background_Timeout_textChanged(const QString &arg1);
 
+    void on_button_Connect_clicked();
+
 private:
     Ui::KeyboardVisualizerDlg *ui;
     QSystemTrayIcon* trayIcon;
