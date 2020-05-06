@@ -353,9 +353,11 @@ void Ui::KeyboardVisDlg::on_lineEdit_Background_Timeout_textChanged(const QStrin
 void Ui::KeyboardVisDlg::on_button_Connect_clicked()
 {
     unsigned short  port = std::stoi(ui->lineEdit_Port->text().toStdString());
-    const char *    ip   = ui->lineEdit_IP->text().toStdString().c_str();
+    std::string     ip   = ui->lineEdit_IP->text().toStdString();
 
-    vis_ptr->OpenRGBConnect(ip, port);
+    vis_ptr->OpenRGBConnect(ip.c_str(), port);
+
+    ui->tree_Devices->clear();
 
     //OpenRGB device list
     ui->tree_Devices->setColumnCount(3);

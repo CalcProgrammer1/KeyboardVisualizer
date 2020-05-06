@@ -180,7 +180,7 @@ public:
     std::vector<char *> audio_devices;
 
     //OpenRGB SDK
-    NetworkClient*              rgb_client;
+    std::vector<NetworkClient*> rgb_clients;
     std::vector<RGBController*> rgb_controllers;
 
 private:
