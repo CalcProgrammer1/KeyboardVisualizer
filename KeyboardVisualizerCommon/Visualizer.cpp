@@ -768,7 +768,10 @@ void DrawRainbow(int bright, float bkgd_step, vis_pixels *pixels)
         for (int y = 0; y < 64; y++)
         {
             int hsv_h = ((int)(bkgd_step + (256 - x)) % 360);
-            hsv_t hsv = { hsv_h, 255, (unsigned char)bright };
+            hsv_t hsv = { 0, 0, 0 };
+            hsv.hue = hsv_h;
+            hsv.saturation = 255;
+            hsv.value = (unsigned char)bright;
             pixels->pixels[y][x] = hsv2rgb(&hsv);
         }
     }
@@ -782,7 +785,10 @@ void DrawColorWheel(int bright, float bkgd_step, int center_x, int center_y, vis
         for (int y = 0; y < 64; y++)
         {
             float hue = (float)(bkgd_step + (int)(180 + atan2(y - center_y, x - center_x) * (180.0 / 3.14159)) % 360);
-            hsv_t hsv2 = { (int)hue, 255, (unsigned char)bright };
+            hsv_t hsv2 = { 0, 0, 0 };
+            hsv2.hue = (int)hue;
+            hsv2.saturation = 255;
+            hsv2.value = (unsigned char)bright;
             pixels->pixels[y][x] = hsv2rgb(&hsv2);
         }
     }
@@ -791,7 +797,10 @@ void DrawColorWheel(int bright, float bkgd_step, int center_x, int center_y, vis
 void DrawSpectrumCycle(int bright, float bkgd_step, vis_pixels *pixels)
 {
     bright = (int)(bright * (255.0f / 100.0f));
-    hsv_t hsv2 = { (int)bkgd_step, 255, (unsigned char)bright };
+    hsv_t hsv2 = { 0, 0, 0 };
+    hsv2.hue = (int)bkgd_step;
+    hsv2.saturation = 255;
+    hsv2.value = (unsigned char)bright;
     RGBColor color = hsv2rgb(&hsv2);
 
     for (int x = 0; x < 256; x++)
