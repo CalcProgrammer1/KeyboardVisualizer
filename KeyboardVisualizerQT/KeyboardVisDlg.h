@@ -25,6 +25,7 @@ public:
 
     void SetVisualizer(Visualizer* v);
     void StartMinimized(boolean startmin);
+    void UpdateOpenRGBClientList();
 
 private slots:
     void update();
