@@ -1357,7 +1357,7 @@ void Visualizer::VisThreadFunction()
     }
 }
 static bool started = false;
-void Visualizer::OpenRGBConnect(const char * ip, unsigned short port)
+NetworkClient * Visualizer::OpenRGBConnect(const char * ip, unsigned short port)
 {
     NetworkClient * rgb_client = new NetworkClient(rgb_controllers);
 
@@ -1374,6 +1374,8 @@ void Visualizer::OpenRGBConnect(const char * ip, unsigned short port)
         LEDUpdateThread     = new std::thread(&Visualizer::LEDUpdateThreadFunction, this);
         started = true;
     }
+
+    return(rgb_client);
 }
 
 void Visualizer::LEDUpdateThreadFunction()

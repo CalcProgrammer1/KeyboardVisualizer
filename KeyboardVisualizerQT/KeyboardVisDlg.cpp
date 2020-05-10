@@ -11,6 +11,13 @@ boolean firstrun;
 
 using namespace Ui;
 
+static void UpdateOpenRGBClientListCallback(void * this_ptr)
+{
+    KeyboardVisDlg * this_obj = (KeyboardVisDlg *)this_ptr;
+
+    QMetaObject::invokeMethod(this_obj, "UpdateOpenRGBClientList", Qt::QueuedConnection);
+}
+
 KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new KeyboardVisualizerDlg)
 {
     startminimized = false;
@@ -400,7 +407,7 @@ void Ui::KeyboardVisDlg::on_button_Connect_clicked()
     unsigned short  port = std::stoi(ui->lineEdit_Port->text().toStdString());
     std::string     ip   = ui->lineEdit_IP->text().toStdString();
 
-    vis_ptr->OpenRGBConnect(ip.c_str(), port);
+    NetworkClient * new_client = vis_ptr->OpenRGBConnect(ip.c_str(), port);
 
-    UpdateOpenRGBClientList();
+    new_client->RegisterClientInfoChangeCallback(UpdateOpenRGBClientListCallback, this);
 }
