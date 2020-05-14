@@ -96,6 +96,9 @@ public:
     //Connect to OpenRGB
     NetworkClient *OpenRGBConnect(const char *ip, unsigned short port);
 
+    //Disconnect from OpenRGB
+    void OpenRGBDisconnect(NetworkClient * client);
+
     //Called when settings changed
     void OnSettingsChanged();
 

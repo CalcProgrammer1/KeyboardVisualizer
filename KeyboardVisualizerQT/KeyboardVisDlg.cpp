@@ -4,6 +4,7 @@
 #include "ui_keyboardvisualizer.h"
 
 #include <QTreeWidgetItem>
+#include <QSignalMapper>
 
 Visualizer* vis_ptr;
 boolean startminimized;
@@ -357,6 +358,12 @@ void Ui::KeyboardVisDlg::on_lineEdit_Background_Timeout_textChanged(const QStrin
     vis_ptr->OnSettingsChanged();
 }
 
+class NetworkClientPointer : public QObject
+{
+public:
+    NetworkClient * net_client;
+};
+
 void Ui::KeyboardVisDlg::UpdateOpenRGBClientList()
 {
     ui->tree_Devices->clear();
@@ -364,10 +371,24 @@ void Ui::KeyboardVisDlg::UpdateOpenRGBClientList()
     //OpenRGB device list
     ui->tree_Devices->setColumnCount(3);
     ui->tree_Devices->setHeaderLabels(QStringList() << "Device Zones" << "LEDs" << "Type");
+
+    QSignalMapper* signalMapper = new QSignalMapper(this);
+    connect(signalMapper, SIGNAL(mapped(QObject *)), this, SLOT(on_button_Disconnect_clicked(QObject *)));
+
     for(int client_idx = 0; client_idx < vis_ptr->rgb_clients.size(); client_idx++)
     {
         QTreeWidgetItem* new_top_item = new QTreeWidgetItem(ui->tree_Devices);
         new_top_item->setText(0, QString::fromStdString(vis_ptr->rgb_clients[client_idx]->GetIP()));
+
+        QPushButton* new_button = new QPushButton( "Disconnect" );
+        ui->tree_Devices->setItemWidget(new_top_item, 2, new_button);
+
+        connect(new_button, SIGNAL(clicked()), signalMapper, SLOT(map()));
+
+        NetworkClientPointer * new_arg = new NetworkClientPointer();
+        new_arg->net_client = vis_ptr->rgb_clients[client_idx];
+
+        signalMapper->setMapping(new_button, new_arg);
 
         for(int dev_idx = 0; dev_idx < vis_ptr->rgb_clients[client_idx]->server_controllers.size(); dev_idx++)
         {
@@ -400,6 +421,13 @@ void Ui::KeyboardVisDlg::UpdateOpenRGBClientList()
             }
         }
     }
+}
+
+void Ui::KeyboardVisDlg::on_button_Disconnect_clicked(QObject * arg)
+{
+    NetworkClient * disconnect_client = ((NetworkClientPointer *)arg)->net_client;
+
+    vis_ptr->OpenRGBDisconnect(disconnect_client);
 }
 
 void Ui::KeyboardVisDlg::on_button_Connect_clicked()

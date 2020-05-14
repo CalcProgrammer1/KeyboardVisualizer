@@ -1378,6 +1378,20 @@ NetworkClient * Visualizer::OpenRGBConnect(const char * ip, unsigned short port)
     return(rgb_client);
 }
 
+void Visualizer::OpenRGBDisconnect(NetworkClient * client)
+{
+    client->StopClient();
+
+    for(unsigned int client_idx = 0; client_idx < rgb_clients.size(); client_idx++)
+    {
+        if(client == rgb_clients[client_idx])
+        {
+            rgb_clients.erase(rgb_clients.begin() + client_idx);
+            break;
+        }
+    }
+}
+
 void Visualizer::LEDUpdateThreadFunction()
 {
     while(1)
