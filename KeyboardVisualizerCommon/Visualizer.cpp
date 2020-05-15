@@ -35,105 +35,6 @@ Visualizer::Visualizer()
 
 void Visualizer::InitAudioDeviceList()
 {
-#ifdef WIN32
-    IMMDevice* pEndpoint;
-    IPropertyStore* pProps;
-    PROPVARIANT* varName;
-
-    //If using WASAPI, start WASAPI loopback capture device
-    CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&pMMDeviceEnumerator);
-
-    for (int i = 0; i < pMMDevices.size(); i++)
-    {
-        pMMDevices[i]->Release();
-        if (i != 0)
-        {
-            delete audio_devices[i];
-        }
-    }
-
-    pMMDevices.clear();
-    audio_devices.clear();
-    isCapture.clear();
-
-    //Enumerate default audio output
-    //pMMDeviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pEndpoint);
-    //audio_devices.push_back("Default Loopback Device");
-    //pMMDevices.push_back(pEndpoint);
-    //isCapture.push_back(false);
-
-    //Enumerate audio outputs
-    pMMDeviceEnumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &pMMDeviceCollection);
-
-    if (pMMDeviceCollection != NULL)
-    {
-        UINT count;
-        pMMDeviceCollection->GetCount(&count);
-        for (UINT i = 0; i < count; i++)
-        {
-            varName = new PROPVARIANT();
-
-            //Query the item from the list
-            pMMDeviceCollection->Item(i, &pEndpoint);
-
-            //Open property store for the given item
-            pEndpoint->OpenPropertyStore(STGM_READ, &pProps);
-
-            //Get the friendly device name string
-            pProps->GetValue(PKEY_Device_FriendlyName, varName);
-
-            if (varName->pwszVal != NULL)
-            {
-                int len = wcslen(varName->pwszVal) + 1;
-                char* new_device = new char[len + 11];
-                wcstombs(new_device, varName->pwszVal, len);
-                strncat(new_device, " (Loopback)", len);
-                audio_devices.push_back(new_device);
-                pMMDevices.push_back(pEndpoint);
-                isCapture.push_back(false);
-            }
-            delete varName;
-            pProps->Release();
-        }
-    }
-    pMMDeviceCollection->Release();
-
-    //Enumerate audio inputs
-    pMMDeviceEnumerator->EnumAudioEndpoints(eCapture, DEVICE_STATE_ACTIVE, &pMMDeviceCollection);
-
-    if (pMMDeviceCollection != NULL)
-    {
-        UINT count;
-        pMMDeviceCollection->GetCount(&count);
-        for (UINT i = 0; i < count; i++)
-        {
-            varName = new PROPVARIANT();
-
-            //Query the item from the list
-            pMMDeviceCollection->Item(i, &pEndpoint);
-
-            //Open property store for the given item
-            pEndpoint->OpenPropertyStore(STGM_READ, &pProps);
-
-            //Get the friendly device name string
-            pProps->GetValue(PKEY_Device_FriendlyName, varName);
-
-            if (varName->pwszVal != NULL)
-            {
-                int len = wcslen(varName->pwszVal) + 1;
-                char* new_device = new char[len];
-                wcstombs(new_device, varName->pwszVal, len);
-                audio_devices.push_back(new_device);
-                pMMDevices.push_back(pEndpoint);
-                isCapture.push_back(true);
-            }
-            delete varName;
-            pProps->Release();
-        }
-    }
-    pMMDeviceEnumerator->Release();
-#else
     //If using OpenAL, start OpenAL capture on default capture device
     ALCchar* devices;
     devices = (ALCchar *) alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
@@ -169,45 +70,10 @@ void Visualizer::InitAudioDeviceList()
             devicep++;
         }
     }
-#endif
 }
 
 void Visualizer::ChangeAudioDevice()
 {
-#ifdef WIN32
-    if (pAudioClient != NULL)
-    {
-        pAudioClient->Stop();
-        pAudioClient->Release();
-        pAudioClient = NULL;
-    }
-
-    if (audio_device_idx < audio_devices.size())
-    {
-        IMMDevice* pMMDevice = pMMDevices[audio_device_idx];
-        pMMDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, NULL, (void**)&pAudioClient);
-
-        pAudioClient->GetMixFormat(&waveformat);
-
-        if (isCapture[audio_device_idx])
-        {
-            pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, 0, 0, waveformat, 0);
-        }
-        else
-        {
-            pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_LOOPBACK, 0, 0, waveformat, 0);
-        }
-
-        pAudioClient->GetService(__uuidof(IAudioCaptureClient), (void**)&pAudioCaptureClient);
-
-        pAudioClient->Start();
-    }
-    else if (audio_devices.size() > 0)
-    {
-        audio_device_idx = 0;
-        ChangeAudioDevice();
-    }
-#else
     if(device != NULL)
     {
         alcCaptureStop(device);
@@ -223,7 +89,6 @@ void Visualizer::ChangeAudioDevice()
         audio_device_idx = 0;
         ChangeAudioDevice();
     }
-#endif
 }
 
 void Visualizer::Initialize()
@@ -459,51 +324,6 @@ void Visualizer::Update()
         fft[i] = fft[i] * (((float)decay) / 100.0f);
     }
 
-#ifdef WIN32
-    unsigned int buffer_pos = 0;
-    static float input_wave[512];
-
-    unsigned int nextPacketSize = 1;
-    unsigned int flags;
-
-    while (nextPacketSize > 0)
-    {
-        float *buf;
-        if (pAudioCaptureClient != NULL)
-        {
-            pAudioCaptureClient->GetBuffer((BYTE**)&buf, &nextPacketSize, (DWORD *)&flags, NULL, NULL);
-
-            if (buf == NULL && nextPacketSize > 0)
-            {
-                pAudioClient->Stop();
-                pAudioCaptureClient->Release();
-                pAudioClient->Release();
-                pAudioCaptureClient = NULL;
-                pAudioClient = NULL;
-            }
-            else
-            {
-                for (unsigned int i = 0; i < nextPacketSize; i += 4)
-                {
-                    for (int j = 0; j < 255; j++)
-                    {
-                        input_wave[2 * j] = input_wave[2 * (j + 1)];
-                        input_wave[(2 * j) + 1] = input_wave[2 * j];
-                    }
-
-                    float avg_buf = (buf[i] + buf[i + 1] + buf[i + 2] + buf[i + 3]) / 4;
-                    input_wave[510] = avg_buf * 2.0f * amplitude;
-                    input_wave[511] = input_wave[510];
-                }
-
-                buffer_pos += nextPacketSize / 4;
-                pAudioCaptureClient->ReleaseBuffer(nextPacketSize);
-            }
-        }
-    }
-
-    memcpy(fft_tmp, input_wave, sizeof(input_wave));
-#else
     //Only update FFT if there are at least 256 samples in the sample buffer
     int samples;
 
@@ -524,7 +344,6 @@ void Visualizer::Update()
     {
         fft_tmp[i] = (buffer[i / 2] - 128.0f) * (amplitude / 128.0f);
     }
-#endif
 
     //Apply selected window
     switch (window_mode)

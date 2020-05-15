@@ -36,12 +36,8 @@
 | Audio Library Includes                                    |
 \*---------------------------------------------------------*/
 #ifdef _WIN32
-#include <mmsystem.h>
-#include <mmdeviceapi.h>
-#include <audioclient.h>
-#include <initguid.h>
-#include <mmdeviceapi.h>
-#include <functiondiscoverykeys_devpkey.h>
+#include <AL/al.h>
+#include <AL/alc.h>
 #endif
 
 #ifdef __linux__
@@ -229,19 +225,8 @@ public:
     void ClientInfoChanged();
 
 private:
-#ifdef WIN32
-    //WASAPI objects if building for Windows
-    IMMDeviceEnumerator *pMMDeviceEnumerator;
-    std::vector<IMMDevice *> pMMDevices;
-    std::vector<bool> isCapture;
-    IMMDeviceCollection *pMMDeviceCollection;
-    IAudioClient *pAudioClient;
-    IAudioCaptureClient *pAudioCaptureClient;
-    WAVEFORMATEX *waveformat;
-#else
     //Audio Device Pointer
     ALCdevice *device;
-#endif
 
     //Threads
     std::thread * LEDUpdateThread;

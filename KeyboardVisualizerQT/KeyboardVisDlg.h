@@ -8,6 +8,7 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 
+typedef char boolean;
 namespace Ui
 {
     class KeyboardVisDlg;

@@ -90,14 +90,19 @@ SOURCES +=                                                              \
 #-----------------------------------------------------------------------#
 # Windows-specific Configuration                                        #
 #-----------------------------------------------------------------------#
+win32:INCLUDEPATH +=                                                    \
+    dependencies/openal-soft/include/                                   \
+
 win32:contains(QMAKE_TARGET.arch, x86_64) {
     LIBS +=                                                             \
+        -L"$$PWD/dependencies/openal-soft/x64/" -lOpenAL32              \
         -lws2_32                                                        \
         -lole32                                                         \
 }
 
 win32:contains(QMAKE_TARGET.arch, x86) {
     LIBS +=                                                             \
+        -L"$$PWD/dependencies/openal-soft/x86/" -lOpenAL32              \
         -lws2_32                                                        \
         -lole32                                                         \
 }
