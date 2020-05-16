@@ -7,16 +7,17 @@
 #ifndef VISUALIZER_DEFINES_H
 #define VISUALIZER_DEFINES_H
 
+/*---------------------------------------------------------*\
+| Project Includes                                          |
+\*---------------------------------------------------------*/
 #include "RGBController.h"
 
-#ifdef WIN32
-#ifndef _WINDOWS_
-#endif
-#else
-//Includes for non-Windows builds
+/*---------------------------------------------------------*\
+| Define Windows types for non-Windows builds               |
+\*---------------------------------------------------------*/
+#ifndef _WIN32
 #include <unistd.h>
 
-//Define Windows types for non-Windows Builds
 typedef unsigned int    COLORREF;
 typedef unsigned char   BYTE;
 typedef bool            boolean;

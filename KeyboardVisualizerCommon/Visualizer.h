@@ -7,41 +7,51 @@
 #ifndef VISUALIZER_H
 #define VISUALIZER_H
 
+/*---------------------------------------------------------*\
+| C/C++ Standard Library Includes                           |
+\*---------------------------------------------------------*/
 #include <math.h>
 #include <fstream>
 #include <string>
+#include <string.h>
 #include <vector>
 #include <thread>
 
-//Project includes
+/*---------------------------------------------------------*\
+| Project Includes                                          |
+\*---------------------------------------------------------*/
 #include "VisualizerDefines.h"
 #include "chuck_fft.h"
 #include "hsv.h"
 #include "net_port.h"
 
-//OpenRGB SDK
+/*---------------------------------------------------------*\
+| OpenRGB SDK Includes                                      |
+\*---------------------------------------------------------*/
 #include "OpenRGB.h"
 #include "NetworkClient.h"
 #include "RGBController.h"
 
-//If building on Windows, use WASAPI
-#ifdef WIN32
+/*---------------------------------------------------------*\
+| Audio Library Includes                                    |
+\*---------------------------------------------------------*/
+#ifdef _WIN32
 #include <mmsystem.h>
 #include <mmdeviceapi.h>
 #include <audioclient.h>
 #include <initguid.h>
 #include <mmdeviceapi.h>
 #include <functiondiscoverykeys_devpkey.h>
+#endif
 
-//If not building on Windows, use OpenAL
-#else
-#ifdef __APPLE__
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
-#else
+#ifdef __linux__
 #include <AL/al.h>
 #include <AL/alc.h>
 #endif
+
+#ifdef __APPLE__
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
 #endif
 
 typedef struct

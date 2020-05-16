@@ -1,32 +1,33 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2016-12-18T13:03:22
-#
-#-------------------------------------------------
+#-----------------------------------------------------------------------#
+# Keyboard Visualizer 4.x QMake Project                                 #
+#                                                                       #
+#   Adam Honse (CalcProgrammer1)                        5/15/2020       #
+#-----------------------------------------------------------------------#
 
-QT       += core gui
+#-----------------------------------------------------------------------#
+# Qt Configuration                                                      #
+#-----------------------------------------------------------------------#
+QT +=                                                                   \
+    core                                                                \
+    gui                                                                 \
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = KeyboardVisualizer
-TEMPLATE = app
+#-----------------------------------------------------------------------#
+# Application Configuration                                             #
+#-----------------------------------------------------------------------#
+TARGET      = KeyboardVisualizer
+TEMPLATE    = app
 
-macx: {
-    LIBS += -framework OpenAL
-}
-
-unix:!macx {
-    LIBS += -lopenal
-}
-
-DISTFILES +=
-
-INCLUDEPATH +=                                                          \
-    OpenRGB/                                                            \
-    OpenRGB/dependencies/libe131/src/                                   \
-    OpenRGB/net_port/                                                   \
-    OpenRGB/RGBController/                                              \
-    OpenRGB/qt/                                                         \
+#-----------------------------------------------------------------------#
+# Keyboard Visualizer                                                   #
+#-----------------------------------------------------------------------#
+HEADERS +=                                                              \
+    KeyboardVisualizerCommon/chuck_fft.h                                \
+    KeyboardVisualizerCommon/hsv.h                                      \
+    KeyboardVisualizerCommon/Visualizer.h                               \
+    KeyboardVisualizerCommon/VisualizerDefines.h                        \
+    KeyboardVisualizerQT/KeyboardVisDlg.h                               \
 
 SOURCES +=                                                              \
     KeyboardVisualizerCommon/hsv.cpp                                    \
@@ -35,38 +36,41 @@ SOURCES +=                                                              \
     KeyboardVisualizerQT/KeyboardVisDlg.cpp                             \
     KeyboardVisualizerQT/main.cpp                                       \
 
-# From OpenRGB
-SOURCES +=                                                              \
-    OpenRGB/NetworkClient.cpp                                           \
-    OpenRGB/net_port/net_port.cpp                                       \
-    OpenRGB/RGBController/RGBController.cpp                             \
-    OpenRGB/RGBController/RGBController_Network.cpp                     \
+RESOURCES +=                                                            \
+    KeyboardVisualizerQT/resources.qrc
 
-HEADERS += \
-    KeyboardVisualizerCommon/chuck_fft.h                                \
-    KeyboardVisualizerCommon/hsv.h                                      \
-    KeyboardVisualizerCommon/Visualizer.h                               \
-    KeyboardVisualizerCommon/VisualizerDefines.h                        \
-    KeyboardVisualizerQT/KeyboardVisDlg.h                               \
+FORMS +=                                                                \
+    KeyboardVisualizerQT/keyboardvisualizer.ui
 
-# From OpenRGB
-HEADERS += \
+RC_ICONS +=                                                             \
+    KeyboardVisualizerQT/KeyboardVisualizer.ico
+
+DISTFILES +=                                                            \
+
+#-----------------------------------------------------------------------#
+# OpenRGB SDK                                                           #
+#-----------------------------------------------------------------------#
+INCLUDEPATH +=                                                          \
+    OpenRGB/                                                            \
+    OpenRGB/net_port/                                                   \
+    OpenRGB/RGBController/                                              \
+
+HEADERS +=                                                              \
     OpenRGB/NetworkClient.h                                             \
     OpenRGB/NetworkProtocol.h                                           \
     OpenRGB/net_port/net_port.h                                         \
     OpenRGB/RGBController/RGBController.h                               \
     OpenRGB/RGBController/RGBController_Network.h                       \
 
-RESOURCES += \
-    KeyboardVisualizerQT/resources.qrc
+SOURCES +=                                                              \
+    OpenRGB/NetworkClient.cpp                                           \
+    OpenRGB/net_port/net_port.cpp                                       \
+    OpenRGB/RGBController/RGBController.cpp                             \
+    OpenRGB/RGBController/RGBController_Network.cpp                     \
 
-FORMS += \
-    KeyboardVisualizerQT/keyboardvisualizer.ui
-
-#-----------------------------------------------
-# Windows specific project configuration
-#-----------------------------------------------
-
+#-----------------------------------------------------------------------#
+# Windows-specific Configuration                                        #
+#-----------------------------------------------------------------------#
 win32:contains(QMAKE_TARGET.arch, x86_64) {
     LIBS +=                                                             \
         -lws2_32                                                        \
@@ -88,3 +92,17 @@ win32:DEFINES +=                                                        \
     _CRT_SECURE_NO_WARNINGS                                             \
     _WINSOCK_DEPRECATED_NO_WARNINGS                                     \
     WIN32_LEAN_AND_MEAN
+
+#-----------------------------------------------------------------------#
+# Linux-specific Configuration                                          #
+#-----------------------------------------------------------------------#
+unix:!macx {
+    LIBS += -lopenal
+}
+
+#-----------------------------------------------------------------------#
+# MacOS-specific Configuration                                          #
+#-----------------------------------------------------------------------#
+macx: {
+    LIBS += -framework OpenAL
+}

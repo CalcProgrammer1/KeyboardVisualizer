@@ -5,24 +5,29 @@
 \*---------------------------------------------------------*/
 
 #include "Visualizer.h"
-#include <string.h>
 
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
 #endif
 
-char * net_string;
-int ledstrip_sections_size = 1;
-int matrix_setup_pos;
-int matrix_setup_size;
-float fft_nrml[256];
-float fft_fltr[256];
-bool ledstrip_mirror_x = false;
-bool ledstrip_mirror_y = false;
-bool ledstrip_single_color = false;
-int ledstrip_rotate_x = 0;
+/*---------------------------------------------------------*\
+| Global variables                                          |
+\*---------------------------------------------------------*/
+char *  net_string;
+int     ledstrip_sections_size  = 1;
+int     matrix_setup_pos;
+int     matrix_setup_size;
+float   fft_nrml[256];
+float   fft_fltr[256];
+bool    ledstrip_mirror_x       = false;
+bool    ledstrip_mirror_y       = false;
+bool    ledstrip_single_color   = false;
+int     ledstrip_rotate_x       = 0;
 
+/*---------------------------------------------------------*\
+| Visualizer class implementation                           |
+\*---------------------------------------------------------*/
 Visualizer::Visualizer()
 {
 
