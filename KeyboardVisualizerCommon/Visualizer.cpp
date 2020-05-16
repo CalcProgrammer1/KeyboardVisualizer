@@ -241,7 +241,7 @@ void Visualizer::Initialize()
     bkgd_step            = 0;
     bkgd_bright          = 100;
     bkgd_mode            = VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL;
-    delay                = 500;
+    delay                = 25;
     window_mode          = 1;
     decay                = 80;
     frgd_mode            = VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED;
