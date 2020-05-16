@@ -374,8 +374,11 @@ void Ui::KeyboardVisDlg::UpdateOpenRGBClientList()
     ui->tree_Devices->clear();
 
     //OpenRGB device list
-    ui->tree_Devices->setColumnCount(3);
-    ui->tree_Devices->setHeaderLabels(QStringList() << "Device Zones" << "LEDs" << "Type");
+    ui->tree_Devices->setColumnCount(2);
+    ui->tree_Devices->header()->setStretchLastSection(false);
+    ui->tree_Devices->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->tree_Devices->setColumnWidth(1, 100);
+    ui->tree_Devices->setHeaderLabels(QStringList() << "Connected Clients" << "");
 
     QSignalMapper* signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(QObject *)), this, SLOT(on_button_Disconnect_clicked(QObject *)));
@@ -386,7 +389,7 @@ void Ui::KeyboardVisDlg::UpdateOpenRGBClientList()
         new_top_item->setText(0, QString::fromStdString(vis_ptr->rgb_clients[client_idx]->GetIP()));
 
         QPushButton* new_button = new QPushButton( "Disconnect" );
-        ui->tree_Devices->setItemWidget(new_top_item, 2, new_button);
+        ui->tree_Devices->setItemWidget(new_top_item, 1, new_button);
 
         connect(new_button, SIGNAL(clicked()), signalMapper, SLOT(map()));
 
@@ -404,23 +407,27 @@ void Ui::KeyboardVisDlg::UpdateOpenRGBClientList()
             {
                 QTreeWidgetItem* new_child = new QTreeWidgetItem();
 
-                new_child->setText(0, QString::fromStdString(vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones[zone_idx].name));
-                new_child->setText(1, QString::fromStdString(std::to_string((vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones[zone_idx].leds_count))));
+                std::string zone_str = vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones[zone_idx].name + ", ";
+                zone_str.append(std::to_string(vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones[zone_idx].leds_count));
+                zone_str.append(" LEDs, ");
 
                 switch(vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones[zone_idx].type)
                 {
                     case ZONE_TYPE_SINGLE:
-                        new_child->setText(2, "Single");
+                        zone_str.append("Single");
                     break;
 
                     case ZONE_TYPE_LINEAR:
-                        new_child->setText(2, "Linear");
+                        zone_str.append("Linear");
                         break;
 
                     case ZONE_TYPE_MATRIX:
-                        new_child->setText(2, "Matrix");
+                        zone_str.append("Matrix");
                         break;
                 }
+
+                new_child->setText(0, QString::fromStdString(zone_str));
+
 
                 new_item->addChild(new_child);
             }

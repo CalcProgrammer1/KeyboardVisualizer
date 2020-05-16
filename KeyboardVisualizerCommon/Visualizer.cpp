@@ -1397,6 +1397,62 @@ void Visualizer::OpenRGBDisconnect(NetworkClient * client)
     }
 }
 
+static void SetupMatrixGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list)
+{
+    for(int x = 0; x < x_count; x++)
+    {
+        if(x_count < 10)
+        {
+            x_idx_list[x] = (int)((x * (SPECTROGRAPH_COLS / (x_count))) + (0.5f * (SPECTROGRAPH_COLS / (x_count))));
+        }
+        else if(x < ((x_count) / 2))
+        {
+            x_idx_list[x] = (int)((x * (SPECTROGRAPH_COLS / (x_count - 1))) + (0.5f * (SPECTROGRAPH_COLS / (x_count - 1))));
+        }
+        else
+        {
+            x_idx_list[x] = (int)((x * (SPECTROGRAPH_COLS / (x_count - 1))) - (0.5f * (SPECTROGRAPH_COLS / (x_count - 1))));
+        }
+
+    }
+    for(int y = 0; y < y_count; y++)
+    {
+        y_idx_list[y] = (int)(ROW_IDX_SPECTROGRAPH_TOP + (y * (SPECTROGRAPH_ROWS / y_count)) + (0.5f * (SPECTROGRAPH_ROWS / y_count)));
+    }
+}
+
+static void SetupLinearGrid(int x_count, int * x_idx_list)
+{
+    if((x_count % 2) == 0)
+    {
+        //Even number of LEDs
+        for(int x = 0; x < x_count; x++)
+        {
+            x_idx_list[x] = (int)((float)x * (256.0f / (float)x_count)) + (128.0f / (float)x_count);
+        }
+    }
+    else
+    {
+        //Odd number of LEDs
+        for(int x = 0; x < x_count; x++)
+        {
+            if (x == (x_count / 2))
+            {
+                x_idx_list[x] = 128;
+            }
+            else if (x < ((x_count / 2) + 1))
+            {
+                x_idx_list[x] = (x_count / 2) + ((x + 1) * (256 / (x_count + 1)));
+            }
+            else
+            {
+                x_idx_list[x] = ((x_count / 2) + 1) + (x * (256 / (x_count + 1)));
+            }
+
+        }
+    }
+}
+
 void Visualizer::LEDUpdateThreadFunction()
 {
     while(1)
@@ -1412,20 +1468,28 @@ void Visualizer::LEDUpdateThreadFunction()
                 case ZONE_TYPE_MATRIX:
                     if(rgb_controllers[c]->zones[z].matrix_map != NULL)
                     {
-                        for (int y = 0; y < rgb_controllers[c]->zones[z].matrix_map->height; y++)
+                        int x_count      = rgb_controllers[c]->zones[z].matrix_map->width;
+                        int y_count      = rgb_controllers[c]->zones[z].matrix_map->height;
+                        int * ZoneXIndex = new int[x_count];
+                        int * ZoneYIndex = new int[y_count];
+
+                        SetupMatrixGrid(x_count, y_count, ZoneXIndex, ZoneYIndex);
+
+                        for (int y = 0; y < y_count; y++)
                         {
-                            for (int x = 0; x < rgb_controllers[c]->zones[z].matrix_map->width; x++)
+                            for (int x = 0; x < x_count; x++)
                             {
                                 unsigned int map_idx = (y * rgb_controllers[c]->zones[z].matrix_map->width) + x;
                                 unsigned int color_idx = rgb_controllers[c]->zones[z].matrix_map->map[map_idx];
                                 if( color_idx != 0xFFFFFFFF )
                                 {
-                                    unsigned int pixels_y = 2 + y * (62 / rgb_controllers[c]->zones[z].matrix_map->height);
-                                    unsigned int pixels_x = x * (256 / rgb_controllers[c]->zones[z].matrix_map->width);
-                                    rgb_controllers[c]->zones[z].colors[color_idx] = pixels_out->pixels[pixels_y][pixels_x];
+                                    rgb_controllers[c]->zones[z].colors[color_idx] = pixels_out->pixels[ZoneYIndex[y]][ZoneXIndex[x]];
                                 }
                             }
                         }
+
+                        delete[] ZoneXIndex;
+                        delete[] ZoneYIndex;
                     }
                     else
                     {
@@ -1444,10 +1508,17 @@ void Visualizer::LEDUpdateThreadFunction()
                     break;
 
                 case ZONE_TYPE_LINEAR:
-                    for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
+                    unsigned int num_leds = rgb_controllers[c]->zones[z].leds_count;
+                    int * ZoneXIndex = new int[num_leds];
+
+                    SetupLinearGrid(num_leds, ZoneXIndex);
+
+                    for (int x = 0; x < rgb_controllers[c]->zones[z].leds_count; x++)
                     {
-                        rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][r * (256 / rgb_controllers[c]->zones[z].leds_count)];
+                        rgb_controllers[c]->zones[z].colors[x] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][ZoneXIndex[x]];
                     }
+
+                    delete[] ZoneXIndex;
                     break;
                 }
             }
