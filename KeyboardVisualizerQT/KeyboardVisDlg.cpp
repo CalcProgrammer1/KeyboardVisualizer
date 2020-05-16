@@ -25,6 +25,11 @@ KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new Ke
     firstrun = true;
 
     ui->setupUi(this);
+
+    std::string titleString = "Keyboard Visualizer ";
+    titleString.append(VERSION_STRING);
+    setWindowTitle(titleString.c_str());
+
     QIcon icon(":Icon.png");
     setWindowIcon(icon);
 

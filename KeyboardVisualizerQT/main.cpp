@@ -230,20 +230,6 @@ bool parse_command_line(int argc, char *argv[])
             printf("    client            - Configure this instance as a client for synchronization\r\n");
             printf("                      -  Takes the IP/hostname of the server and port as arguments,\r\n");
             printf("                      -  i.e. client=192.168.1.100,1234\r\n");
-            printf("    ledstrip          - LED config strings :\r\n");
-            printf("                      - Serial : ledstrip=port,baud,num_leds\r\n");
-            printf("                      - (ex.ledstrip=COM1,115200,30)\r\n");
-            printf("                      - UDP : ledstrip=udp:client,port,num_leds\r\n");
-            printf("                      - (ex.ledstrip=udp:192.168.1.5,1234,30)\r\n");
-            printf("    xmas              - COM port, ex. xmas=COM2\r\n");
-            printf("    hueplus           - HUE+ config:\r\n");
-            printf("                      - hueplus=port,channel,num_leds\r\n");
-            printf("                      - channel: 0 -> both channels, 1 -> channel 1, 2 -> channel 2\r\n");
-            printf("                      - num_leds: Fans * 8 ex. 3 Fans -> 24\r\n");
-            printf("                      - Important for Fans: If you have connected fans on both channels only count the fans on the channel with the most fans\r\n");
-            printf("                                            ex. 3 Fans on Ch. 1 4 Fans on CH. 2: num_leds 32 for the 4 Fans\r\n");
-            printf("                                            For best Visualizer results don`t connect on one channel 3 fans more than on the other channel\r\n");
-            printf("                      - (ex. hueplus=COM4,1,24\r\n");
             return false;
         }
 
