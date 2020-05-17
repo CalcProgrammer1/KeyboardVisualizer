@@ -1459,72 +1459,157 @@ void Visualizer::LEDUpdateThreadFunction()
     {
         for(int c = 0; c < rgb_controllers.size(); c++)
         {
+            ControllerIndexType *   controller_index_map    = NULL;
+            bool                    index_map_found         = false;
+
+            // Find matching controller index map
+            if((c < ZoneIndex.size()) && (ZoneIndex[c].controller_ptr == rgb_controllers[c]))
+            {
+                // The controller index map has been found
+                controller_index_map = &ZoneIndex[c];
+                index_map_found      = true;
+            }
+            else
+            {
+                // Search all the controller index maps
+                for(int i = 0; i < ZoneIndex.size(); i++)
+                {
+                    if(ZoneIndex[i].controller_ptr == rgb_controllers[c])
+                    {
+                        // The controller index map has been found
+                        controller_index_map = &ZoneIndex[i];
+                        index_map_found      = true;
+                    }
+                }
+            }
+
+            // If the index map doesn't exist for this controller, create it
+            if(index_map_found == false)
+            {
+                ControllerIndexType *   new_index_map       = new ControllerIndexType();
+                new_index_map->controller_ptr               = rgb_controllers[c];
+
+                ZoneIndex.insert(ZoneIndex.begin() + c, *new_index_map);
+
+                controller_index_map = &ZoneIndex[c];
+            }
+
             for(int z = 0; z < rgb_controllers[c]->zones.size(); z++)
             {
-                switch (rgb_controllers[c]->zones[z].type)
+                int                 x_count                 = rgb_controllers[c]->zones[z].leds_count;
+                int                 y_count                 = 0;
+                zone_type           type                    = rgb_controllers[c]->zones[z].type;
+                ZoneIndexType *     zone_index_map          = NULL;
+                index_map_found                             = false;
+
+                // If matrix type and matrix mapping is valid, get X and Y count
+                if(type == ZONE_TYPE_MATRIX)
                 {
-                // OpenRGB doesn't yet have matrix mapping after reworking controller layout
-                // For now, just treat matrix devices as single zones
-                case ZONE_TYPE_MATRIX:
                     if(rgb_controllers[c]->zones[z].matrix_map != NULL)
                     {
-                        int x_count      = rgb_controllers[c]->zones[z].matrix_map->width;
-                        int y_count      = rgb_controllers[c]->zones[z].matrix_map->height;
-                        int * ZoneXIndex = new int[x_count];
-                        int * ZoneYIndex = new int[y_count];
-
-                        SetupMatrixGrid(x_count, y_count, ZoneXIndex, ZoneYIndex);
-
-                        for (int y = 0; y < y_count; y++)
-                        {
-                            for (int x = 0; x < x_count; x++)
-                            {
-                                unsigned int map_idx = (y * rgb_controllers[c]->zones[z].matrix_map->width) + x;
-                                unsigned int color_idx = rgb_controllers[c]->zones[z].matrix_map->map[map_idx];
-                                if( color_idx != 0xFFFFFFFF )
-                                {
-                                    rgb_controllers[c]->zones[z].colors[color_idx] = pixels_out->pixels[ZoneYIndex[y]][ZoneXIndex[x]];
-                                }
-                            }
-                        }
-
-                        delete[] ZoneXIndex;
-                        delete[] ZoneYIndex;
+                        x_count     = rgb_controllers[c]->zones[z].matrix_map->width;
+                        y_count     = rgb_controllers[c]->zones[z].matrix_map->height;
                     }
                     else
                     {
-                        for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
+                        type = ZONE_TYPE_SINGLE;
+                    }
+                }
+
+                // Search all the zone index maps
+                for(int i = 0; i < controller_index_map->zones.size(); i++)
+                {
+                    zone_index_map = &controller_index_map->zones[i];
+
+                    if((zone_index_map->x_count == x_count) && (zone_index_map->y_count == y_count))
+                    {
+                        index_map_found = true;
+                        break;
+                    }
+                }
+
+                // If the index map doesn't exist for this zone, create it
+                if(index_map_found == false)
+                {
+                    ZoneIndexType *   new_index_map             = new ZoneIndexType();
+                    new_index_map->x_count                      = x_count;
+                    new_index_map->y_count                      = y_count;
+
+                    if(type == ZONE_TYPE_MATRIX)
+                    {
+                        new_index_map->x_index                  = new int[x_count];
+                        new_index_map->y_index                  = new int[y_count];
+
+                        SetupMatrixGrid(x_count, y_count, new_index_map->x_index, new_index_map->y_index);
+                    }
+                    else if(type == ZONE_TYPE_LINEAR)
+                    {
+                        new_index_map->x_index                  = new int[x_count];
+
+                        SetupLinearGrid(x_count, new_index_map->x_index);
+                    }
+
+                    controller_index_map->zones.push_back(*new_index_map);
+
+                    zone_index_map = &controller_index_map->zones[controller_index_map->zones.size() - 1];
+                }
+
+                switch (rgb_controllers[c]->zones[z].type)
+                {
+                case ZONE_TYPE_MATRIX:
+                    for (int y = 0; y < y_count; y++)
+                    {
+                        for (int x = 0; x < x_count; x++)
                         {
-                            rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
+                            unsigned int map_idx = (y * x_count) + x;
+                            unsigned int color_idx = rgb_controllers[c]->zones[z].matrix_map->map[map_idx];
+                            if( color_idx != 0xFFFFFFFF )
+                            {
+                                rgb_controllers[c]->zones[z].colors[color_idx] = pixels_out->pixels[zone_index_map->y_index[y]][zone_index_map->x_index[x]];
+                            }
                         }
                     }
                     break;
 
                 case ZONE_TYPE_SINGLE:
-                    for (int r = 0; r < rgb_controllers[c]->zones[z].leds_count; r++)
+                    for (int r = 0; r < x_count; r++)
                     {
                         rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
                     }
                     break;
 
                 case ZONE_TYPE_LINEAR:
-                    unsigned int num_leds = rgb_controllers[c]->zones[z].leds_count;
-                    int * ZoneXIndex = new int[num_leds];
-
-                    SetupLinearGrid(num_leds, ZoneXIndex);
-
-                    for (int x = 0; x < rgb_controllers[c]->zones[z].leds_count; x++)
+                    for (int x = 0; x < x_count; x++)
                     {
-                        rgb_controllers[c]->zones[z].colors[x] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][ZoneXIndex[x]];
+                        rgb_controllers[c]->zones[z].colors[x] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][zone_index_map->x_index[x]];
                     }
-
-                    delete[] ZoneXIndex;
                     break;
                 }
             }
             rgb_controllers[c]->DeviceUpdateLEDs();
         }
 
+        if(ZoneIndex.size() > rgb_controllers.size())
+        {
+            for(int z = 0; z < ZoneIndex.size(); z++)
+            {
+                bool controller_found = false;
+
+                for(int r = 0; r < rgb_controllers.size(); r++)
+                {
+                    if(ZoneIndex[z].controller_ptr == rgb_controllers[r])
+                    {
+                        controller_found = true;
+                    }
+                }
+
+                if(controller_found == false)
+                {
+                    ZoneIndex.erase(ZoneIndex.begin() + z);
+                    z--;
+                }
+            }
+        }
         Sleep(delay);
     }
 }

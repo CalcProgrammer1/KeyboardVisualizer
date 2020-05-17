@@ -83,6 +83,20 @@ enum
     NET_MODE_SERVER
 };
 
+typedef struct
+{
+    int                 x_count;
+    int                 y_count;
+    int *               x_index;
+    int *               y_index;
+} ZoneIndexType;
+
+typedef struct
+{
+    RGBController *             controller_ptr;
+    std::vector<ZoneIndexType>  zones;
+} ControllerIndexType;
+
 class Visualizer
 {
 public:
@@ -200,6 +214,9 @@ public:
     //OpenRGB SDK
     std::vector<NetworkClient*> rgb_clients;
     std::vector<RGBController*> rgb_controllers;
+
+    //Zone index maps
+    std::vector<ControllerIndexType>    ZoneIndex;
 
 private:
 #ifdef WIN32
