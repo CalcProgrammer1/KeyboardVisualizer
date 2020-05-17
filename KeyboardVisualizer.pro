@@ -59,9 +59,6 @@ RESOURCES +=                                                            \
 FORMS +=                                                                \
     KeyboardVisualizerQT/keyboardvisualizer.ui
 
-RC_ICONS +=                                                             \
-    KeyboardVisualizerQT/KeyboardVisualizer.ico
-
 DISTFILES +=                                                            \
 
 #-----------------------------------------------------------------------#
@@ -110,6 +107,9 @@ win32:DEFINES +=                                                        \
     _WINSOCK_DEPRECATED_NO_WARNINGS                                     \
     WIN32_LEAN_AND_MEAN
 
+win32:RC_ICONS +=                                                       \
+    KeyboardVisualizerQT/KeyboardVisualizer.ico
+
 #-----------------------------------------------------------------------#
 # Linux-specific Configuration                                          #
 #-----------------------------------------------------------------------#
@@ -123,3 +123,6 @@ unix:!macx {
 macx: {
     LIBS += -framework OpenAL
 }
+
+macx:ICON +=                                                            \
+    KeyboardVisualizerQT/KeyboardVisualizer.icns
