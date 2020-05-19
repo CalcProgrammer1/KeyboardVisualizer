@@ -12,11 +12,33 @@ https://gitlab.com/CalcProgrammer1/OpenRGB
 
 Development on this version has stalled as I'm not interested in supporting a multitude of proprietary SDKs that change constantly and only work on Windows.  This version remains as Keyboard Visualizer 3.x and downloads are still available in the Release submodule.  I will accept pull requests for this version if others wish to keep it alive, but I plan to focus primarily on the OpenRGB version (4.x) going forwards.
 
-# Building
+# Download/Build
 
-You must have the Microsoft Visual C++ 2015 32-bit redistributable package installed to run this program (Windows).
+## Windows
+  *  Pre-built binaries are available under the Releases section on GitLab.
 
-To build this project in Linux, install QT Creator and libopenal-dev and open/build the .pro file.
+  *  If you wish to build the application yourself:
+
+      1. Download the latest Visual Studio Community Edition and Qt Creator.
+      2. git clone https://gitlab.com/CalcProgrammer1/KeyboardVisualizer
+      3. git submodule update --init --recursive
+      4. Open the KeyboardVisualizer.pro project in Qt Creator.
+      5. Use the MSVC compiler kit, either 32- or 64-bit, to build the application.
+      6. Run the project from Qt Creator.  If you want to use your custom build standalone, download the latest matching Release package and replace the OpenRGB.exe in it with your new build.
+
+## Linux
+  *  Pre-built binaries are not currently available for Linux
+
+  *  You can build the project using Qt Creator or on the command line.  The commands listed here work for Debian-based distros.
+
+      1.  sudo apt install build-essential qtcreator qt5-default libopenal-dev
+      2.  git clone https://gitlab.com/CalcProgrammer1/KeyboardVisualizer
+      3.  git submodule update --init --recursive
+      4.  cd KeyboardVisualizer
+      5.  qmake OpenRGB.pro
+      6.  make -j8
+    
+  *  Run the application with ./KeyboardVisualizer
 
 # Settings
 
