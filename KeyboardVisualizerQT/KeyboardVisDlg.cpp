@@ -46,7 +46,7 @@ KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new Ke
     trayIcon->show();
 
     ui->lineEdit_IP->setText("127.0.0.1");
-    ui->lineEdit_Port->setText("1337");
+    ui->lineEdit_Port->setText(QString::number(OPENRGB_SDK_PORT));
 }
 
 void KeyboardVisDlg::show()

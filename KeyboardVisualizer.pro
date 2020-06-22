@@ -16,7 +16,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 #-----------------------------------------------------------------------#
 # Application Configuration                                             #
 #-----------------------------------------------------------------------#
-VERSION     = 4.00
+VERSION     = 4.01
 TARGET      = KeyboardVisualizer
 TEMPLATE    = app
 

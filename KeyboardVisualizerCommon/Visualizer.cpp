@@ -1366,8 +1366,11 @@ NetworkClient * Visualizer::OpenRGBConnect(const char * ip, unsigned short port)
 {
     NetworkClient * rgb_client = new NetworkClient(rgb_controllers);
 
+    std::string titleString = "Keyboard Visualizer ";
+    titleString.append(VERSION_STRING);
+
     rgb_client->SetIP(ip);
-    rgb_client->SetName("Keyboard Visualizer OpenRGB SDK Dev Build");
+    rgb_client->SetName(titleString.c_str());
     rgb_client->SetPort(port);
 
     rgb_client->StartClient();
