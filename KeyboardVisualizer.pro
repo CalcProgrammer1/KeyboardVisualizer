@@ -39,6 +39,10 @@ DEFINES +=                                                              \
 #-----------------------------------------------------------------------#
 # Keyboard Visualizer                                                   #
 #-----------------------------------------------------------------------#
+INCLUDEPATH +=                                                          \
+    KeyboardVisualizerCommon/                                           \
+    KeyboardVisualizerQT/                                               \
+
 HEADERS +=                                                              \
     KeyboardVisualizerCommon/chuck_fft.h                                \
     KeyboardVisualizerCommon/hsv.h                                      \
