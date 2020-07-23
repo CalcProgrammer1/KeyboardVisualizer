@@ -19,6 +19,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 VERSION     = 4.01
 TARGET      = KeyboardVisualizer
 TEMPLATE    = app
+CONFIG     += no_batch
 
 #-----------------------------------------------------------------------#
 # Automatically generated build information                             #
