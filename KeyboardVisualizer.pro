@@ -115,6 +115,22 @@ win32:DEFINES +=                                                        \
 win32:RC_ICONS +=                                                       \
     KeyboardVisualizerQT/KeyboardVisualizer.ico
 
+#-------------------------------------------------------------------#
+# Windows GitLab CI Configuration                                   #
+#-------------------------------------------------------------------#
+win32:CONFIG(debug, debug|release) {
+    win32:DESTDIR = debug
+}
+
+win32:CONFIG(release, debug|release) {
+    win32:DESTDIR = release
+}
+
+win32:OBJECTS_DIR = _intermediate_$$DESTDIR/.obj
+win32:MOC_DIR     = _intermediate_$$DESTDIR/.moc
+win32:RCC_DIR     = _intermediate_$$DESTDIR/.qrc
+win32:UI_DIR      = _intermediate_$$DESTDIR/.ui
+
 #-----------------------------------------------------------------------#
 # Linux-specific Configuration                                          #
 #-----------------------------------------------------------------------#
