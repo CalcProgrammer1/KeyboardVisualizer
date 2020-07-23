@@ -87,7 +87,7 @@ build_windows_32:
   - _fold_final_
   
   - _fold_start_ 'start the actual build with jom instead of nmake; for speed'
-  - ..\_qt\make
+  - ..\_qt\5.15.0\msvc2019\bin\make
   - _fold_final_
   
   - _fold_start_ 'run windeployqt to automatically copy the needed dll files'
@@ -159,7 +159,7 @@ build_windows_64:
   - _fold_final_
   
   - _fold_start_ 'start the actual build with jom instead of nmake; for speed'
-  - ..\_qt\make
+  - ..\_qt\5.15.0\msvc2019_64\bin\make
   - _fold_final_
   
   - _fold_start_ 'run windeployqt to automatically copy the needed dll files'
