@@ -136,6 +136,21 @@ win32:UI_DIR      = _intermediate_$$DESTDIR/.ui
 #-----------------------------------------------------------------------#
 unix:!macx {
     LIBS += -lopenal
+
+    #-------------------------------------------------------------------#
+    # Set up install paths                                              #
+    # These install paths are used for AppImage and .deb packaging      #
+    #-------------------------------------------------------------------#
+    isEmpty(PREFIX) {
+        PREFIX = /usr
+    }
+
+    target.path=$$PREFIX/bin/
+    desktop.path=$$PREFIX/share/applications/
+    desktop.files+=KeyboardVisualizerQT/KeyboardVisualizer.desktop
+    pixmap.path=$$PREFIX/share/pixmaps/
+    pixmap.files+=KeyboardVisualizerQT/KeyboardVisualizer.png
+    INSTALLS += target desktop pixmap
 }
 
 #-----------------------------------------------------------------------#

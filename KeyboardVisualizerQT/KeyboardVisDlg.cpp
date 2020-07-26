@@ -30,7 +30,7 @@ KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new Ke
     titleString.append(VERSION_STRING);
     setWindowTitle(titleString.c_str());
 
-    QIcon icon(":Icon.png");
+    QIcon icon(":KeyboardVisualizer.png");
     setWindowIcon(icon);
 
     QAction* actionExit = new QAction( "Show/Hide", this );
