@@ -243,7 +243,7 @@ bool parse_command_line(int argc, char *argv[])
     return true;
 }
 
-void parse_settings_file(char * filename)
+void parse_settings_file(const char * filename)
 {
     std::ifstream infile;
 
