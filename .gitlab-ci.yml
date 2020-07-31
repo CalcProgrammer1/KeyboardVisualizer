@@ -35,7 +35,7 @@ build_linux:
   
   artifacts:
     paths:
-    - KeyboardVisualizer-x86_64.AppImage
+    - Keyboard_Visualizer-x86_64.AppImage
     expire_in: 1337 years
 
 #-----------------------------------------------------------------------#
