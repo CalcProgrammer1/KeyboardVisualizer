@@ -78,5 +78,5 @@ export QML_SOURCES_PATHS="$REPO_ROOT"/src
 #-----------------------------------------------------------------------#
 # Move built AppImage back into original CWD                            #
 #-----------------------------------------------------------------------#
-mv KeyboardVisualizer*.AppImage "$OLD_CWD"
+mv Keyboard_Visualizer*.AppImage "$OLD_CWD"
 
