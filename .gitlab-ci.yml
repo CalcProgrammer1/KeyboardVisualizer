@@ -25,18 +25,18 @@ before_script:
 #-----------------------------------------------------------------------#
 # Linux (AppImage) Build Target                                         #
 #-----------------------------------------------------------------------#
-# build_linux:
-#   image: ubuntu:bionic
-#   stage: build
-#   script:
-#   - apt update
-#   - apt install -y build-essential qtcreator qt5-default libusb-1.0-0-dev libhidapi-dev pkgconf wget git
-#   - ./scripts/build-appimage.sh
+build_linux:
+  image: ubuntu:bionic
+  stage: build
+  script:
+  - apt update
+  - apt install -y build-essential qtcreator qt5-default libopenal-dev pkgconf wget git
+  - ./scripts/build-appimage.sh
   
-#   artifacts:
-#     paths:
-#     - OpenRGB-x86_64.AppImage
-#     expire_in: 1337 years
+  artifacts:
+    paths:
+    - KeyboardVisualizer-x86_64.AppImage
+    expire_in: 1337 years
 
 #-----------------------------------------------------------------------#
 # Windows (32-bit) Build Target                                         #
