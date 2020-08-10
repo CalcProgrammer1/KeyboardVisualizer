@@ -7,15 +7,17 @@
 #ifndef VISUALIZER_DEFINES_H
 #define VISUALIZER_DEFINES_H
 
-#ifdef WIN32
-#ifndef _WINDOWS_
-#include "..\KeyboardVisualizerVC\stdafx.h"
-#endif
-#else
-//Includes for non-Windows builds
+/*---------------------------------------------------------*\
+| Project Includes                                          |
+\*---------------------------------------------------------*/
+#include "RGBController.h"
+
+/*---------------------------------------------------------*\
+| Define Windows types for non-Windows builds               |
+\*---------------------------------------------------------*/
+#ifndef _WIN32
 #include <unistd.h>
 
-//Define Windows types for non-Windows Builds
 typedef unsigned int    COLORREF;
 typedef unsigned char   BYTE;
 typedef bool            boolean;
@@ -138,7 +140,7 @@ const char * const visualizer_single_color_labels[VISUALIZER_NUM_SINGLE_COLOR] =
 
 typedef struct
 {
-    COLORREF pixels[64][256];
+    RGBColor pixels[64][256];
 } vis_pixels;
 
 #endif

@@ -7,30 +7,51 @@
 #ifndef VISUALIZER_H
 #define VISUALIZER_H
 
+/*---------------------------------------------------------*\
+| C/C++ Standard Library Includes                           |
+\*---------------------------------------------------------*/
 #include <math.h>
 #include <fstream>
 #include <string>
+#include <string.h>
 #include <vector>
+#include <thread>
 
-//Project includes
+/*---------------------------------------------------------*\
+| Project Includes                                          |
+\*---------------------------------------------------------*/
 #include "VisualizerDefines.h"
 #include "chuck_fft.h"
 #include "hsv.h"
 #include "net_port.h"
 
-//If building on Windows, use WASAPI
-#ifdef WIN32
+/*---------------------------------------------------------*\
+| OpenRGB SDK Includes                                      |
+\*---------------------------------------------------------*/
+#include "OpenRGB.h"
+#include "NetworkClient.h"
+#include "RGBController.h"
+
+/*---------------------------------------------------------*\
+| Audio Library Includes                                    |
+\*---------------------------------------------------------*/
+#ifdef _WIN32
 #include <mmsystem.h>
 #include <mmdeviceapi.h>
 #include <audioclient.h>
 #include <initguid.h>
 #include <mmdeviceapi.h>
 #include <functiondiscoverykeys_devpkey.h>
+#endif
 
-//If not building on Windows, use OpenAL
-#else
+#ifdef __linux__
 #include <AL/al.h>
 #include <AL/alc.h>
+#endif
+
+#ifdef __APPLE__
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
 #endif
 
 typedef struct
@@ -62,6 +83,20 @@ enum
     NET_MODE_SERVER
 };
 
+typedef struct
+{
+    int                 x_count;
+    int                 y_count;
+    int *               x_index;
+    int *               y_index;
+} ZoneIndexType;
+
+typedef struct
+{
+    RGBController *             controller_ptr;
+    std::vector<ZoneIndexType>  zones;
+} ControllerIndexType;
+
 class Visualizer
 {
 public:
@@ -76,28 +111,17 @@ public:
     //Function to start thread
     void StartThread();
 
-    //Visualizer Thread
-    void VisThread();
+    //Thread Functions
+    void LEDUpdateThreadFunction();
+    void NetConnectThreadFunction();
+    void NetUpdateThreadFunction();
+    void VisThreadFunction();
 
-    //Network Threads
-    void NetConnectThread();
-    void NetUpdateThread();
+    //Connect to OpenRGB
+    NetworkClient *OpenRGBConnect(const char *ip, unsigned short port);
 
-#ifdef WIN32
-    //Update threads for devices supported only under Windows
-    void CmKeyboardUpdateThread();
-    void LogitechSDKUpdateThread();
-	void AuraSDKUpdateThread();
-#else
-
-#endif
-    //Update threads for devices supported on both Windows and Linux
-    void RazerChromaUpdateThread();
-    void CorsairKeyboardUpdateThread();
-    void SteelSeriesKeyboardUpdateThread();
-    void MSIKeyboardUpdateThread();
-    void PoseidonZRGBKeyboardUpdateThread();
-    void LEDStripUpdateThread();
+    //Disconnect from OpenRGB
+    void OpenRGBDisconnect(NetworkClient * client);
 
     //Called when settings changed
     void OnSettingsChanged();
@@ -122,13 +146,6 @@ public:
 
     //Shut Down
     void Shutdown();
-
-    //Add LED strip
-    void BeginLEDMatrix(int size);
-	void AddLEDStrip(int led_type, char* ledstring);
-
-    //Function to set custom properties for devices
-    void SetDeviceProperty(char * devprop, char * argument);
 
     //Save Settings File
     void SaveSettings();
@@ -178,12 +195,6 @@ public:
     unsigned int background_timeout;
     unsigned int background_timer;
 
-    void LEDStripSections(int sections);
-    void LEDMirrorX();
-    void LEDMirrorY();
-    void LEDSingleColor();
-    void LEDRotateX(int rotate);
-
     //Single Color Mode
     int single_color_mode;
 
@@ -200,6 +211,13 @@ public:
     //Audio Device List
     std::vector<char *> audio_devices;
 
+    //OpenRGB SDK
+    std::vector<NetworkClient*> rgb_clients;
+    std::vector<RGBController*> rgb_controllers;
+
+    //Zone index maps
+    std::vector<ControllerIndexType>    ZoneIndex;
+
 private:
 #ifdef WIN32
     //WASAPI objects if building for Windows
@@ -214,6 +232,12 @@ private:
     //Audio Device Pointer
     ALCdevice *device;
 #endif
+
+    //Threads
+    std::thread * LEDUpdateThread;
+    std::thread * NetConnectThread;
+    std::thread * NetUpdateThread;
+    std::thread * VisThread;
 
     //Background Step
     float bkgd_step;

@@ -3,11 +3,21 @@
 #include "KeyboardVisualizerCommon/VisualizerDefines.h"
 #include "ui_keyboardvisualizer.h"
 
+#include <QTreeWidgetItem>
+#include <QSignalMapper>
+
 Visualizer* vis_ptr;
 boolean startminimized;
 boolean firstrun;
 
 using namespace Ui;
+
+static void UpdateOpenRGBClientListCallback(void * this_ptr)
+{
+    KeyboardVisDlg * this_obj = (KeyboardVisDlg *)this_ptr;
+
+    QMetaObject::invokeMethod(this_obj, "UpdateOpenRGBClientList", Qt::QueuedConnection);
+}
 
 KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new KeyboardVisualizerDlg)
 {
@@ -15,7 +25,12 @@ KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new Ke
     firstrun = true;
 
     ui->setupUi(this);
-    QIcon icon(":Icon.png");
+
+    std::string titleString = "Keyboard Visualizer ";
+    titleString.append(VERSION_STRING);
+    setWindowTitle(titleString.c_str());
+
+    QIcon icon(":KeyboardVisualizer.png");
     setWindowIcon(icon);
 
     QAction* actionExit = new QAction( "Show/Hide", this );
@@ -29,6 +44,9 @@ KeyboardVisDlg::KeyboardVisDlg(QWidget *parent) : QMainWindow(parent), ui(new Ke
     trayIcon->setToolTip("Keyboard Visualizer");
     trayIcon->setContextMenu(myTrayIconMenu);
     trayIcon->show();
+
+    ui->lineEdit_IP->setText("127.0.0.1");
+    ui->lineEdit_Port->setText(QString::number(OPENRGB_SDK_PORT));
 }
 
 void KeyboardVisDlg::show()
@@ -343,4 +361,93 @@ void Ui::KeyboardVisDlg::on_lineEdit_Background_Timeout_textChanged(const QStrin
     }
 
     vis_ptr->OnSettingsChanged();
+}
+
+class NetworkClientPointer : public QObject
+{
+public:
+    NetworkClient * net_client;
+};
+
+void Ui::KeyboardVisDlg::UpdateOpenRGBClientList()
+{
+    ui->tree_Devices->clear();
+
+    //OpenRGB device list
+    ui->tree_Devices->setColumnCount(2);
+    ui->tree_Devices->header()->setStretchLastSection(false);
+    ui->tree_Devices->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->tree_Devices->setColumnWidth(1, 100);
+    ui->tree_Devices->setHeaderLabels(QStringList() << "Connected Clients" << "");
+
+    QSignalMapper* signalMapper = new QSignalMapper(this);
+    connect(signalMapper, SIGNAL(mapped(QObject *)), this, SLOT(on_button_Disconnect_clicked(QObject *)));
+
+    for(int client_idx = 0; client_idx < vis_ptr->rgb_clients.size(); client_idx++)
+    {
+        QTreeWidgetItem* new_top_item = new QTreeWidgetItem(ui->tree_Devices);
+        new_top_item->setText(0, QString::fromStdString(vis_ptr->rgb_clients[client_idx]->GetIP()));
+
+        QPushButton* new_button = new QPushButton( "Disconnect" );
+        ui->tree_Devices->setItemWidget(new_top_item, 1, new_button);
+
+        connect(new_button, SIGNAL(clicked()), signalMapper, SLOT(map()));
+
+        NetworkClientPointer * new_arg = new NetworkClientPointer();
+        new_arg->net_client = vis_ptr->rgb_clients[client_idx];
+
+        signalMapper->setMapping(new_button, new_arg);
+
+        for(int dev_idx = 0; dev_idx < vis_ptr->rgb_clients[client_idx]->server_controllers.size(); dev_idx++)
+        {
+            QTreeWidgetItem* new_item = new QTreeWidgetItem(new_top_item);
+            new_item->setText(0, QString::fromStdString(vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->name));
+
+            for(int zone_idx = 0; zone_idx < vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones.size(); zone_idx++)
+            {
+                QTreeWidgetItem* new_child = new QTreeWidgetItem();
+
+                std::string zone_str = vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones[zone_idx].name + ", ";
+                zone_str.append(std::to_string(vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones[zone_idx].leds_count));
+                zone_str.append(" LEDs, ");
+
+                switch(vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones[zone_idx].type)
+                {
+                    case ZONE_TYPE_SINGLE:
+                        zone_str.append("Single");
+                    break;
+
+                    case ZONE_TYPE_LINEAR:
+                        zone_str.append("Linear");
+                        break;
+
+                    case ZONE_TYPE_MATRIX:
+                        zone_str.append("Matrix");
+                        break;
+                }
+
+                new_child->setText(0, QString::fromStdString(zone_str));
+
+
+                new_item->addChild(new_child);
+            }
+        }
+    }
+}
+
+void Ui::KeyboardVisDlg::on_button_Disconnect_clicked(QObject * arg)
+{
+    NetworkClient * disconnect_client = ((NetworkClientPointer *)arg)->net_client;
+
+    vis_ptr->OpenRGBDisconnect(disconnect_client);
+}
+
+void Ui::KeyboardVisDlg::on_button_Connect_clicked()
+{
+    unsigned short  port = std::stoi(ui->lineEdit_Port->text().toStdString());
+    std::string     ip   = ui->lineEdit_IP->text().toStdString();
+
+    NetworkClient * new_client = vis_ptr->OpenRGBConnect(ip.c_str(), port);
+
+    new_client->RegisterClientInfoChangeCallback(UpdateOpenRGBClientListCallback, this);
 }

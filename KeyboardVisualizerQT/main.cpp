@@ -1,10 +1,17 @@
 #include "KeyboardVisDlg.h"
 #include <QApplication>
-#include "KeyboardVisualizerCommon/LEDStrip.h"
 #include "KeyboardVisualizerCommon/Visualizer.h"
 #include "KeyboardVisualizerCommon/VisualizerDefines.h"
 
+#if defined(_WIN32) || defined(_WIN64)
+/* We are on Windows */
+# define strtok_r strtok_s
+#endif
+
+#ifndef WIN32
 #include <unistd.h>
+#endif
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -111,18 +118,6 @@ void parse_argument_string(char * argument, char * value)
                 vis.avg_mode = atoi(value);
             }
         }
-		else if (strcmp(argument, "ledstrip") == 0)
-		{
-			vis.AddLEDStrip(LED_STRIP_NORMAL, value);
-		}
-		else if (strcmp(argument, "xmas") == 0)
-		{
-			vis.AddLEDStrip(LED_STRIP_XMAS, value);
-		}
-		else if (strcmp(argument, "hueplus") == 0)
-		{
-			vis.AddLEDStrip(LED_STRIP_NORMAL, value);
-		}
         else if (strcmp(argument, "server") == 0)
         {
             vis.InitServer(value);
@@ -240,20 +235,6 @@ bool parse_command_line(int argc, char *argv[])
             printf("    client            - Configure this instance as a client for synchronization\r\n");
             printf("                      -  Takes the IP/hostname of the server and port as arguments,\r\n");
             printf("                      -  i.e. client=192.168.1.100,1234\r\n");
-            printf("    ledstrip          - LED config strings :\r\n");
-            printf("                      - Serial : ledstrip=port,baud,num_leds\r\n");
-            printf("                      - (ex.ledstrip=COM1,115200,30)\r\n");
-            printf("                      - UDP : ledstrip=udp:client,port,num_leds\r\n");
-            printf("                      - (ex.ledstrip=udp:192.168.1.5,1234,30)\r\n");
-            printf("    xmas              - COM port, ex. xmas=COM2\r\n");
-            printf("    hueplus           - HUE+ config:\r\n");
-            printf("                      - hueplus=port,channel,num_leds\r\n");
-            printf("                      - channel: 0 -> both channels, 1 -> channel 1, 2 -> channel 2\r\n");
-            printf("                      - num_leds: Fans * 8 ex. 3 Fans -> 24\r\n");
-            printf("                      - Important for Fans: If you have connected fans on both channels only count the fans on the channel with the most fans\r\n");
-            printf("                                            ex. 3 Fans on Ch. 1 4 Fans on CH. 2: num_leds 32 for the 4 Fans\r\n");
-            printf("                                            For best Visualizer results don`t connect on one channel 3 fans more than on the other channel\r\n");
-            printf("                      - (ex. hueplus=COM4,1,24\r\n");
             return false;
         }
 
@@ -262,7 +243,7 @@ bool parse_command_line(int argc, char *argv[])
     return true;
 }
 
-void parse_settings_file(char * filename)
+void parse_settings_file(const char * filename)
 {
     std::ifstream infile;
 
@@ -301,16 +282,8 @@ int main(int argc, char *argv[])
     //Initialize Visualizer
     vis.Initialize();
 
-    //Get file path in executable directory
-    char filename[2048];
-    //GetModuleFileName(NULL, filename, 2048);
-    char arg1[64];
-    snprintf(arg1, 64, "/proc/%d/exe", getpid());
-    readlink(arg1, filename, 1024);
-    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
-    //strcat(filename, "\\settings.txt");
-    strcat(filename, "/settings.txt");
-    parse_settings_file(filename);
+    //Parse Settings File
+    parse_settings_file("settings.txt");
 
     //Parse Command Line
     if (!parse_command_line(argc, argv))

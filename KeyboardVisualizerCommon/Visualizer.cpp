@@ -6,168 +6,28 @@
 
 #include "Visualizer.h"
 
-//Thread functions have different types in Windows and Linux
-#ifdef WIN32
-#define THREAD static void
-#define THREADRETURN
-#else
-#define THREAD static void*
-#define THREADRETURN return(NULL);
+#ifndef TRUE
+#define TRUE 1
+#define FALSE 0
 #endif
 
-//Include pthread and Unix standard libraries if not building for Windows
-#ifndef WIN32
-#include "pthread.h"
-#include "unistd.h"
-#endif
+/*---------------------------------------------------------*\
+| Global variables                                          |
+\*---------------------------------------------------------*/
+char *  net_string;
+int     ledstrip_sections_size  = 1;
+int     matrix_setup_pos;
+int     matrix_setup_size;
+float   fft_nrml[256];
+float   fft_fltr[256];
+bool    ledstrip_mirror_x       = false;
+bool    ledstrip_mirror_y       = false;
+bool    ledstrip_single_color   = false;
+int     ledstrip_rotate_x       = 0;
 
-//Includes for devices supported only under Windows
-#ifdef WIN32
-#include "RazerChroma.h"
-#include "CorsairCUE.h"
-#include "CmKeyboard.h"
-#include "LogitechSDK.h"
-#include "AsusAuraSDK.h"
-
-//Includes for devices supported only under Linux
-#else
-#include "RazerChromaLinux.h"
-#include "CorsairCKBLinux.h"
-#endif
-
-//Includes for devices supported on both Windows and Linux
-#include "SteelSeriesGameSense.h"
-#include "MSIKeyboard.h"
-#include "PoseidonZRGBKeyboard.h"
-#include "LEDStrip.h"
-
-//Devices supported only under Windows
-#ifdef WIN32
-CorsairCUE              ckb;
-CmKeyboard              cmkb;
-LogitechSDK             lkb;
-AsusAuraSDK             asa;
-
-//Devices supported only under Linux
-#else
-CorsairCKB              ckb;
-#endif
-
-//Devices supported on both Windows and Linux
-RazerChroma             rkb;
-SteelSeriesGameSense    skb;
-MSIKeyboard             mkb;
-PoseidonZRGBKeyboard    pkb;
-std::vector<LEDStrip *> str;
-
-std::vector<char *>     device_properties;
-
-char * net_string;
-int ledstrip_sections_size = 1;
-int matrix_setup_pos;
-int matrix_setup_size;
-float fft_nrml[256];
-float fft_fltr[256];
-bool ledstrip_mirror_x = false;
-bool ledstrip_mirror_y = false;
-bool ledstrip_single_color = false;
-int ledstrip_rotate_x = 0;
-
-//Threads for Visualizer.cpp
-THREAD thread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->VisThread();
-    THREADRETURN
-}
-
-THREAD netconthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->NetConnectThread();
-    THREADRETURN
-}
-
-THREAD netupdthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->NetUpdateThread();
-    THREADRETURN
-}
-
-//Threads for devices supported only under Windows
-#ifdef WIN32
-THREAD cmkbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->CmKeyboardUpdateThread();
-    THREADRETURN
-}
-
-THREAD lkbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->LogitechSDKUpdateThread();
-    THREADRETURN
-}
-
-THREAD asathread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->AuraSDKUpdateThread();
-    THREADRETURN
-}
-
-//Threads for devices supported only under Linux
-#else
-
-#endif
-
-//Threads for devices supported on both Windows and Linux
-THREAD rkbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->RazerChromaUpdateThread();
-    THREADRETURN
-}
-
-THREAD ckbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->CorsairKeyboardUpdateThread();
-    THREADRETURN
-}
-
-THREAD skbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->SteelSeriesKeyboardUpdateThread();
-    THREADRETURN
-}
-
-THREAD mkbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->MSIKeyboardUpdateThread();
-    THREADRETURN
-}
-
-THREAD pkbthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->PoseidonZRGBKeyboardUpdateThread();
-    THREADRETURN
-}
-
-THREAD lsthread(void *param)
-{
-    Visualizer* vis = static_cast<Visualizer*>(param);
-    vis->LEDStripUpdateThread();
-    THREADRETURN
-}
-
-//Visualizer class functions start here
-
+/*---------------------------------------------------------*\
+| Visualizer class implementation                           |
+\*---------------------------------------------------------*/
 Visualizer::Visualizer()
 {
 
@@ -294,10 +154,10 @@ void Visualizer::InitAudioDeviceList()
     isCapture.clear();
 
     //Enumerate default audio output
-    pMMDeviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pEndpoint);
-    audio_devices.push_back("Default Loopback Device");
-    pMMDevices.push_back(pEndpoint);
-    isCapture.push_back(false);
+    //pMMDeviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pEndpoint);
+    //audio_devices.push_back("Default Loopback Device");
+    //pMMDevices.push_back(pEndpoint);
+    //isCapture.push_back(false);
 
     //Enumerate audio outputs
     pMMDeviceEnumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &pMMDeviceCollection);
@@ -466,24 +326,6 @@ void Visualizer::Initialize()
 {
     InitAudioDeviceList();
 
-    //Initialize devices supported only under Windows
-#ifdef WIN32
-    cmkb.Initialize();
-    lkb.Initialize();
-    asa.Initialize();
-
-    //Initialize devices supported only under Linux
-#else
-
-#endif
-
-    //Initialize devices supported by both Windows and Linux
-    rkb.Initialize();
-    ckb.Initialize();
-    skb.Initialize();
-    mkb.Initialize();
-    pkb.Initialize();
-
     netmode              = NET_MODE_DISABLED;
     background_timer     = 0;
     background_timeout   = 120;
@@ -495,7 +337,7 @@ void Visualizer::Initialize()
     bkgd_step            = 0;
     bkgd_bright          = 100;
     bkgd_mode            = VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL;
-    delay                = 50;
+    delay                = 25;
     window_mode          = 1;
     decay                = 80;
     frgd_mode            = VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED;
@@ -563,17 +405,17 @@ void Visualizer::SaveSettings()
     }
 
     //Get file path in executable directory
-#ifdef WIN32
-    GetModuleFileName(NULL, filename, 2048);
-    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
-    strcat(filename, "\\settings.txt");
-#else
-    char arg1[64];
-    snprintf(arg1, 64, "/proc/%d/exe", getpid());
-    readlink(arg1, filename, 1024);
-    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
-    strcat(filename, "/settings.txt");
-#endif
+//#ifdef WIN32
+//    GetModuleFileName(NULL, filename, 2048);
+//    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
+//    strcat(filename, "\\settings.txt");
+//#else
+//    char arg1[64];
+//    snprintf(arg1, 64, "/proc/%d/exe", getpid());
+//    readlink(arg1, filename, 1024);
+//    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
+//    strcat(filename, "/settings.txt");
+//#endif
 
     //Open settings file
     outfile.open(filename);
@@ -689,14 +531,6 @@ void Visualizer::SaveSettings()
         snprintf(out_str, 1024, "server=%s\r\n", net_string);
         outfile.write(out_str, strlen(out_str));
         break;
-    }
-
-    //Save Device Properties
-    for (int i = 0; i < device_properties.size(); i++)
-    {
-        //Save Device Property
-        snprintf(out_str, 1024, "%s\r\n", device_properties[i]);
-        outfile.write(out_str, strlen(out_str));
     }
 
     //Close Output File
@@ -961,33 +795,9 @@ void Visualizer::StartThread()
     //Set application running flag to TRUE before starting threads
     running = true;
 
-#ifdef WIN32
-    _beginthread(thread, 0, this);
-    _beginthread(netconthread, 0, this);
-    _beginthread(netupdthread, 0, this);
-    _beginthread(rkbthread, 0, this);
-    _beginthread(ckbthread, 0, this);
-    _beginthread(cmkbthread, 0, this);
-    _beginthread(lkbthread, 0, this);
-    _beginthread(skbthread, 0, this);
-    _beginthread(mkbthread, 0, this);
-    _beginthread(pkbthread, 0, this);
-    _beginthread(lsthread, 0, this);
-    _beginthread(asathread, 0, this);
-
-#else
-    pthread_t threads[10];
-
-    pthread_create(&threads[0], NULL, &thread, this);
-    pthread_create(&threads[1], NULL, &netconthread, this);
-    pthread_create(&threads[2], NULL, &netupdthread, this);
-    pthread_create(&threads[3], NULL, &rkbthread, this);
-    pthread_create(&threads[4], NULL, &ckbthread, this);
-    pthread_create(&threads[5], NULL, &skbthread, this);
-    pthread_create(&threads[6], NULL, &mkbthread, this);
-    pthread_create(&threads[7], NULL, &pkbthread, this);
-    pthread_create(&threads[8], NULL, &lsthread, this);
-#endif
+    VisThread           = new std::thread(&Visualizer::VisThreadFunction, this);
+    NetConnectThread    = new std::thread(&Visualizer::NetConnectThreadFunction, this);
+    NetUpdateThread     = new std::thread(&Visualizer::NetUpdateThreadFunction, this);
 }
 
 void Visualizer::Shutdown()
@@ -1003,7 +813,7 @@ void Visualizer::Shutdown()
     }
 }
 
-void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)
+void DrawSolidColor(int bright, RGBColor color, vis_pixels *pixels)
 {
     bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
@@ -1015,7 +825,7 @@ void DrawSolidColor(int bright, COLORREF color, vis_pixels *pixels)
     }
 }
 
-void DrawVerticalBars(int bright, COLORREF * colors, int num_colors, vis_pixels *pixels)
+void DrawVerticalBars(int bright, RGBColor * colors, int num_colors, vis_pixels *pixels)
 {
     bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
@@ -1028,7 +838,7 @@ void DrawVerticalBars(int bright, COLORREF * colors, int num_colors, vis_pixels 
     }
 }
 
-void DrawHorizontalBars(int bright, COLORREF * colors, int num_colors, vis_pixels *pixels)
+void DrawHorizontalBars(int bright, RGBColor * colors, int num_colors, vis_pixels *pixels)
 {
     bright = (int)(bright * (255.0f / 100.0f));
     for (int x = 0; x < 256; x++)
@@ -1084,7 +894,10 @@ void DrawRainbow(int bright, float bkgd_step, vis_pixels *pixels)
         for (int y = 0; y < 64; y++)
         {
             int hsv_h = ((int)(bkgd_step + (256 - x)) % 360);
-            hsv_t hsv = { hsv_h, 255, (unsigned char)bright };
+            hsv_t hsv = { 0, 0, 0 };
+            hsv.hue = hsv_h;
+            hsv.saturation = 255;
+            hsv.value = (unsigned char)bright;
             pixels->pixels[y][x] = hsv2rgb(&hsv);
         }
     }
@@ -1098,7 +911,10 @@ void DrawColorWheel(int bright, float bkgd_step, int center_x, int center_y, vis
         for (int y = 0; y < 64; y++)
         {
             float hue = (float)(bkgd_step + (int)(180 + atan2(y - center_y, x - center_x) * (180.0 / 3.14159)) % 360);
-            hsv_t hsv2 = { (int)hue, 255, (unsigned char)bright };
+            hsv_t hsv2 = { 0, 0, 0 };
+            hsv2.hue = (int)hue;
+            hsv2.saturation = 255;
+            hsv2.value = (unsigned char)bright;
             pixels->pixels[y][x] = hsv2rgb(&hsv2);
         }
     }
@@ -1107,8 +923,11 @@ void DrawColorWheel(int bright, float bkgd_step, int center_x, int center_y, vis
 void DrawSpectrumCycle(int bright, float bkgd_step, vis_pixels *pixels)
 {
     bright = (int)(bright * (255.0f / 100.0f));
-    hsv_t hsv2 = { (int)bkgd_step, 255, (unsigned char)bright };
-    COLORREF color = hsv2rgb(&hsv2);
+    hsv_t hsv2 = { 0, 0, 0 };
+    hsv2.hue = (int)bkgd_step;
+    hsv2.saturation = 255;
+    hsv2.value = (unsigned char)bright;
+    RGBColor color = hsv2rgb(&hsv2);
 
     for (int x = 0; x < 256; x++)
     {
@@ -1121,7 +940,7 @@ void DrawSpectrumCycle(int bright, float bkgd_step, vis_pixels *pixels)
 
 void DrawSinusoidalCycle(int bright, float bkgd_step, vis_pixels *pixels)
 {
-    COLORREF color;
+    RGBColor color;
     bright = (int)(bright * (255.0f / 100.0f));
     int red = (int)(127 * (sin(((((int)(((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f)) + 1));
     int grn = (int)(127 * (sin(((((int)(((360 / 255.0f)) - bkgd_step) % 360) / 360.0f) * 2 * 3.14f) - (6.28f / 3)) + 1));
@@ -1181,7 +1000,7 @@ void Visualizer::DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixel
     }
 }
 
-void DrawSingleColorStatic(float amplitude, COLORREF in_color, vis_pixels *out_pixels)
+void DrawSingleColorStatic(float amplitude, RGBColor in_color, vis_pixels *out_pixels)
 {
     if (amplitude >= 1.0f)
     {
@@ -1216,7 +1035,7 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
         break;
 
     case VISUALIZER_PATTERN_SOLID_ORANGE:
-        DrawSolidColor(bright, 0x000060FF, pixels);
+        DrawSolidColor(bright, 0x000040FF, pixels);
         break;
 
     case VISUALIZER_PATTERN_SOLID_YELLOW:
@@ -1236,19 +1055,19 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
         break;
 
     case VISUALIZER_PATTERN_SOLID_PURPLE:
-        DrawSolidColor(bright, 0x00FF0060, pixels);
+        DrawSolidColor(bright, 0x00FF0040, pixels);
         break;
 
     case VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED:
         {
-        COLORREF colors[] = { 0x0000FF00, 0x0000FFFF, 0x000000FF };
+        RGBColor colors[] = { 0x0000FF00, 0x0000FFFF, 0x000000FF };
         DrawHorizontalBars(bright, colors, 3, pixels);
         }
         break;
 
     case VISUALIZER_PATTERN_STATIC_GREEN_WHITE_RED:
         {
-        COLORREF colors[] = { 0x0000FF00, 0x00FFFFFF, 0x000000FF };
+        RGBColor colors[] = { 0x0000FF00, 0x00FFFFFF, 0x000000FF };
         DrawHorizontalBars(bright, colors, 3, pixels);
         }
         break;
@@ -1262,28 +1081,28 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
 
     case VISUALIZER_PATTERN_STATIC_BLUE_CYAN_WHITE:
         {
-        COLORREF colors[] = { 0x00FF0000, 0x00FFFF00, 0x00FFFFFF };
+        RGBColor colors[] = { 0x00FF0000, 0x00FFFF00, 0x00FFFFFF };
         DrawHorizontalBars(bright, colors, 3, pixels);
         }
         break;
 
     case VISUALIZER_PATTERN_STATIC_RED_WHITE_BLUE:
         {
-        COLORREF colors[] = { 0x000000FF, 0x00FFFFFF, 0x00FF0000 };
+        RGBColor colors[] = { 0x000000FF, 0x00FFFFFF, 0x00FF0000 };
         DrawHorizontalBars(bright, colors, 3, pixels);
         }
         break;
 
     case VISUALIZER_PATTERN_STATIC_RAINBOW:
         {
-        COLORREF colors[] = { 0x000000FF, 0x0000FFFF, 0x0000FF00, 0x00FFFF00, 0x00FF0000, 0x00FF00FF };
+        RGBColor colors[] = { 0x000000FF, 0x0000FFFF, 0x0000FF00, 0x00FFFF00, 0x00FF0000, 0x00FF00FF };
         DrawHorizontalBars(bright, colors, 6, pixels);
         }
         break;
 
     case VISUALIZER_PATTERN_STATIC_RAINBOW_INVERSE:
         {
-        COLORREF colors[] = { 0x00FF00FF, 0x00FF0000, 0x00FFFF00, 0x0000FF00, 0x0000FFFF, 0x000000FF };
+        RGBColor colors[] = { 0x00FF00FF, 0x00FF0000, 0x00FFFF00, 0x0000FF00, 0x0000FFFF, 0x000000FF };
         DrawHorizontalBars(bright, colors, 6, pixels);
         }
         break;
@@ -1314,7 +1133,7 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
     }
 }
 
-void Visualizer::NetConnectThread()
+void Visualizer::NetConnectThreadFunction()
 {
     while (1)
     {
@@ -1343,7 +1162,7 @@ void Visualizer::NetConnectThread()
     }
 }
 
-void Visualizer::NetUpdateThread()
+void Visualizer::NetUpdateThreadFunction()
 {
     int counter = 0;
     char buf[sizeof(fft_fltr)];
@@ -1422,7 +1241,7 @@ void Visualizer::NetUpdateThread()
     }
 }
 
-void Visualizer::VisThread()
+void Visualizer::VisThreadFunction()
 {
     while (running == true)
     {
@@ -1670,93 +1489,262 @@ void Visualizer::VisThread()
         Sleep(15);
     }
 }
-
-//Thread update functions for devices supported only under Windows
-#ifdef WIN32
-void Visualizer::CmKeyboardUpdateThread()
+static bool started = false;
+NetworkClient * Visualizer::OpenRGBConnect(const char * ip, unsigned short port)
 {
-    while (cmkb.SetLEDs(pixels_out->pixels))
+    NetworkClient * rgb_client = new NetworkClient(rgb_controllers);
+
+    std::string titleString = "Keyboard Visualizer ";
+    titleString.append(VERSION_STRING);
+
+    rgb_client->SetIP(ip);
+    rgb_client->SetName(titleString.c_str());
+    rgb_client->SetPort(port);
+
+    rgb_client->StartClient();
+
+    rgb_clients.push_back(rgb_client);
+
+    if(!started)
     {
-        Sleep(delay);
+        LEDUpdateThread     = new std::thread(&Visualizer::LEDUpdateThreadFunction, this);
+        started = true;
     }
+
+    return(rgb_client);
 }
 
-void Visualizer::LogitechSDKUpdateThread()
+void Visualizer::OpenRGBDisconnect(NetworkClient * client)
 {
-    while (lkb.SetLEDs(pixels_out->pixels))
+    client->StopClient();
+
+    for(unsigned int client_idx = 0; client_idx < rgb_clients.size(); client_idx++)
     {
-        Sleep(delay);
-    }
-}
-
-void Visualizer::AuraSDKUpdateThread()
-{
-    while (asa.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-//Thread update functions for devices supported only under Linux
-#else
-
-#endif
-
-//Thread update functions for devices supported on both Windows and Linux
-void Visualizer::RazerChromaUpdateThread()
-{
-    while (rkb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-void Visualizer::CorsairKeyboardUpdateThread()
-{
-    while (ckb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-
-void Visualizer::SteelSeriesKeyboardUpdateThread()
-{
-    while (skb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-void Visualizer::MSIKeyboardUpdateThread()
-{
-    while (mkb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-void Visualizer::PoseidonZRGBKeyboardUpdateThread()
-{
-    while (pkb.SetLEDs(pixels_out->pixels))
-    {
-        Sleep(delay);
-    }
-}
-
-void Visualizer::LEDStripUpdateThread()
-{
-    if (str.size() > 0)
-    {
-        while (TRUE)
+        if(client == rgb_clients[client_idx])
         {
-            for (unsigned int i = 0; i < str.size(); i++)
+            rgb_clients.erase(rgb_clients.begin() + client_idx);
+            break;
+        }
+    }
+}
+
+static void SetupMatrixGrid(int x_count, int y_count, int * x_idx_list, int * y_idx_list)
+{
+    for(int x = 0; x < x_count; x++)
+    {
+        if(x_count < 10)
+        {
+            x_idx_list[x] = (int)((x * (SPECTROGRAPH_COLS / (x_count))) + (0.5f * (SPECTROGRAPH_COLS / (x_count))));
+        }
+        else if(x < ((x_count) / 2))
+        {
+            x_idx_list[x] = (int)((x * (SPECTROGRAPH_COLS / (x_count - 1))) + (0.5f * (SPECTROGRAPH_COLS / (x_count - 1))));
+        }
+        else
+        {
+            x_idx_list[x] = (int)((x * (SPECTROGRAPH_COLS / (x_count - 1))) - (0.5f * (SPECTROGRAPH_COLS / (x_count - 1))));
+        }
+
+    }
+    for(int y = 0; y < y_count; y++)
+    {
+        y_idx_list[y] = (int)(ROW_IDX_SPECTROGRAPH_TOP + (y * (SPECTROGRAPH_ROWS / y_count)) + (0.5f * (SPECTROGRAPH_ROWS / y_count)));
+    }
+}
+
+static void SetupLinearGrid(int x_count, int * x_idx_list)
+{
+    if((x_count % 2) == 0)
+    {
+        //Even number of LEDs
+        for(int x = 0; x < x_count; x++)
+        {
+            x_idx_list[x] = (int)((float)x * (256.0f / (float)x_count)) + (128.0f / (float)x_count);
+        }
+    }
+    else
+    {
+        //Odd number of LEDs
+        for(int x = 0; x < x_count; x++)
+        {
+            if (x == (x_count / 2))
+            {
+                x_idx_list[x] = 128;
+            }
+            else if (x < ((x_count / 2) + 1))
+            {
+                x_idx_list[x] = (x_count / 2) + ((x + 1) * (256 / (x_count + 1)));
+            }
+            else
+            {
+                x_idx_list[x] = ((x_count / 2) + 1) + (x * (256 / (x_count + 1)));
+            }
+
+        }
+    }
+}
+
+void Visualizer::LEDUpdateThreadFunction()
+{
+    while(1)
+    {
+        for(int c = 0; c < rgb_controllers.size(); c++)
+        {
+            ControllerIndexType *   controller_index_map    = NULL;
+            bool                    index_map_found         = false;
+
+            // Find matching controller index map
+            if((c < ZoneIndex.size()) && (ZoneIndex[c].controller_ptr == rgb_controllers[c]))
+            {
+                // The controller index map has been found
+                controller_index_map = &ZoneIndex[c];
+                index_map_found      = true;
+            }
+            else
+            {
+                // Search all the controller index maps
+                for(int i = 0; i < ZoneIndex.size(); i++)
+                {
+                    if(ZoneIndex[i].controller_ptr == rgb_controllers[c])
+                    {
+                        // The controller index map has been found
+                        controller_index_map = &ZoneIndex[i];
+                        index_map_found      = true;
+                    }
+                }
+            }
+
+            // If the index map doesn't exist for this controller, create it
+            if(index_map_found == false)
+            {
+                ControllerIndexType *   new_index_map       = new ControllerIndexType();
+                new_index_map->controller_ptr               = rgb_controllers[c];
+
+                ZoneIndex.insert(ZoneIndex.begin() + c, *new_index_map);
+
+                controller_index_map = &ZoneIndex[c];
+            }
+
+            for(int z = 0; z < rgb_controllers[c]->zones.size(); z++)
             {
                 str[i]->SetPixels(pixels_out->pixels);
                 str[i]->SetDelay(delay);
-            }
+                int                 x_count                 = rgb_controllers[c]->zones[z].leds_count;
+                int                 y_count                 = 0;
+                zone_type           type                    = rgb_controllers[c]->zones[z].type;
+                ZoneIndexType *     zone_index_map          = NULL;
+                index_map_found                             = false;
 
-            Sleep(delay);
+                // If matrix type and matrix mapping is valid, get X and Y count
+                if(type == ZONE_TYPE_MATRIX)
+                {
+                    if(rgb_controllers[c]->zones[z].matrix_map != NULL)
+                    {
+                        x_count     = rgb_controllers[c]->zones[z].matrix_map->width;
+                        y_count     = rgb_controllers[c]->zones[z].matrix_map->height;
+                    }
+                    else
+                    {
+                        type = ZONE_TYPE_SINGLE;
+                    }
+                }
+
+                // Search all the zone index maps
+                for(int i = 0; i < controller_index_map->zones.size(); i++)
+                {
+                    zone_index_map = &controller_index_map->zones[i];
+
+                    if((zone_index_map->x_count == x_count) && (zone_index_map->y_count == y_count))
+                    {
+                        index_map_found = true;
+                        break;
+                    }
+                }
+
+                // If the index map doesn't exist for this zone, create it
+                if(index_map_found == false)
+                {
+                    ZoneIndexType *   new_index_map             = new ZoneIndexType();
+                    new_index_map->x_count                      = x_count;
+                    new_index_map->y_count                      = y_count;
+
+                    if(type == ZONE_TYPE_MATRIX)
+                    {
+                        new_index_map->x_index                  = new int[x_count];
+                        new_index_map->y_index                  = new int[y_count];
+
+                        SetupMatrixGrid(x_count, y_count, new_index_map->x_index, new_index_map->y_index);
+                    }
+                    else if(type == ZONE_TYPE_LINEAR)
+                    {
+                        new_index_map->x_index                  = new int[x_count];
+
+                        SetupLinearGrid(x_count, new_index_map->x_index);
+                    }
+
+                    controller_index_map->zones.push_back(*new_index_map);
+
+                    zone_index_map = &controller_index_map->zones[controller_index_map->zones.size() - 1];
+                }
+
+                switch (rgb_controllers[c]->zones[z].type)
+                {
+                case ZONE_TYPE_MATRIX:
+                    for (int y = 0; y < y_count; y++)
+                    {
+                        for (int x = 0; x < x_count; x++)
+                        {
+                            unsigned int map_idx = (y * x_count) + x;
+                            unsigned int color_idx = rgb_controllers[c]->zones[z].matrix_map->map[map_idx];
+                            if( color_idx != 0xFFFFFFFF )
+                            {
+                                rgb_controllers[c]->zones[z].colors[color_idx] = pixels_out->pixels[zone_index_map->y_index[y]][zone_index_map->x_index[x]];
+                            }
+                        }
+                    }
+                    break;
+
+                case ZONE_TYPE_SINGLE:
+                    for (int r = 0; r < x_count; r++)
+                    {
+                        rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
+                    }
+                    break;
+
+                case ZONE_TYPE_LINEAR:
+                    for (int x = 0; x < x_count; x++)
+                    {
+                        rgb_controllers[c]->zones[z].colors[x] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][zone_index_map->x_index[x]];
+                    }
+                    break;
+                }
+            }
+            rgb_controllers[c]->DeviceUpdateLEDs();
         }
+
+        if(ZoneIndex.size() > rgb_controllers.size())
+        {
+            for(int z = 0; z < ZoneIndex.size(); z++)
+            {
+                bool controller_found = false;
+
+                for(int r = 0; r < rgb_controllers.size(); r++)
+                {
+                    if(ZoneIndex[z].controller_ptr == rgb_controllers[r])
+                    {
+                        controller_found = true;
+                    }
+                }
+                
+                Sleep(delay);
+
+                if(controller_found == false)
+                {
+                    ZoneIndex.erase(ZoneIndex.begin() + z);
+                    z--;
+                }
+            }
+        }
+        Sleep(delay);
     }
 }

@@ -1,11 +1,44 @@
-# Keyboard Visualizer ![Icon](https://raw.githubusercontent.com/CalcProgrammer1/KeyboardVisualizer/master/KeyboardVisualizerVC/Icon.png)
-Razer Chroma and Corsair RGB Keyboard Spectrograph Visualizer for Windows and Linux
+# Keyboard Visualizer ![Icon](https://raw.githubusercontent.com/CalcProgrammer1/KeyboardVisualizer/master/KeyboardVisualizerQT/Icon.png)
 
-Binary Windows builds can be downloaded from the Release submodule
+## OpenRGB Audio Visualizer for Windows, Linux, and MacOS
 
-You must have the Microsoft Visual C++ 2015 32-bit redistributable package installed to run this program (Windows).
+Keyboard Visualizer turns your OpenRGB-supported RGB setup into a spectacular light show for your music.  Keyboard Visualizer is able to listen to any input or loopback audio device on your computer so it can visualize audio from any music player, website, game, or other application.
 
-To build this project in Linux, install QT Creator and libopenal-dev, libhidapi-dev and open/build the .pro file.
+To use Keyboard Visualizer with your setup, you must first install OpenRGB and set it up to detect all of your RGB devices.  OpenRGB can be found here:
+
+https://gitlab.com/CalcProgrammer1/OpenRGB
+
+## What about the old Keyboard Visualizer with Razer Chroma SDK, Corsair SDK, etc?
+
+Development on this version has stalled as I'm not interested in supporting a multitude of proprietary SDKs that change constantly and only work on Windows.  This version remains as Keyboard Visualizer 3.x and downloads are still available in the Release submodule.  I will accept pull requests for this version if others wish to keep it alive, but I plan to focus primarily on the OpenRGB version (4.x) going forwards.
+
+# Download/Build
+
+## Windows
+  *  Pre-built binaries are available under the Releases section on GitLab.
+
+  *  If you wish to build the application yourself:
+
+      1. Download the latest Visual Studio Community Edition and Qt Creator.
+      2. git clone https://gitlab.com/CalcProgrammer1/KeyboardVisualizer
+      3. git submodule update --init --recursive
+      4. Open the KeyboardVisualizer.pro project in Qt Creator.
+      5. Use the MSVC compiler kit, either 32- or 64-bit, to build the application.
+      6. Run the project from Qt Creator.  If you want to use your custom build standalone, download the latest matching Release package and replace the OpenRGB.exe in it with your new build.
+
+## Linux
+  *  Pre-built binaries are not currently available for Linux
+
+  *  You can build the project using Qt Creator or on the command line.  The commands listed here work for Debian-based distros.
+
+      1.  sudo apt install build-essential qtcreator qt5-default libopenal-dev
+      2.  git clone https://gitlab.com/CalcProgrammer1/KeyboardVisualizer
+      3.  git submodule update --init --recursive
+      4.  cd KeyboardVisualizer
+      5.  qmake OpenRGB.pro
+      6.  make -j8
+    
+  *  Run the application with ./KeyboardVisualizer
 
 # Settings
 
@@ -127,198 +160,12 @@ Keyboard Visualizer allows you to save your custom settings in two different way
         client            - Configure this instance as a client for synchronization
                           -  Takes the IP/hostname of the server and port as arguments,
                           -  i.e. client=192.168.1.100,1234
-        ledstrip          - LED config strings :
-                          - Serial : ledstrip=port,baud,num_leds
-                          - (ex.ledstrip=COM1,115200,30)
-                          - UDP : ledstrip=udp:client,port,num_leds
-                          - (ex.ledstrip=udp:192.168.1.5,1234,30)
-        xmas              - COM port, ex. xmas=COM2
-        hueplus           - HUE+ config:
-                          - hueplus=port,channel,num_leds
-                          - channel: 0 -> both channels, 1 -> channel 1, 2 -> channel 2
-	                      - num_leds: Fans * 8 ex. 3 Fans -> 24
-	                      - Important for Fans: If you have connected fans on both channels only count the fans on the channel with the most fans
-	                                            ex. 3 Fans on Ch. 1 4 Fans on CH. 2: num_leds 32 for the 4 Fans
-	                                            For best Visualizer results don`t connect on one channel 3 fans more than on the other channel
-	                      - (ex. hueplus=COM4,1,24
-	    razer_use_keyboard_generic_effect
-	                     - Use generic effect type in the Razer SDK, allows the use of SDK-unsupported keyboards at the expense of scaling
-	    razer_use_headset_custom_effect
-	                      - Use custom effect for headsets, allows smooth color transitions on the Kraken V2 but disables the Kraken V1
-	    razer_use_chromalink_single_color
-	                      - Use the single color option for the Chroma Link SDK outputs instead of bar graph option
-	    razer_disable_chromalink
-	                      - Disable the Chroma Link SDK, works around a bug in the current Chroma SDK where the Chroma HDK commands are overridden
-	    razer_chroma_box_mode
-	                      - razer_chroma_box_mode=mode
-	                      - 0:  Matrix (use 4 strips for best effect)
-	                      - 1:  Bar graph per single strip
-	                      - 2:  Bar graph stretched across 2 strips each
-	                      - 3:  Bar graph stretched across all 4 strips
 
 # Available Visual Effects
 
     * Spectrograph - Shows vertical bars for each frequency in the audio
     * Bar - Shows a single bar representing bass frequencies
     * Single Color - Brightness and color represent strength of bass frequencies
-
-# Supported Devices (Windows)
-    
-    * Razer Chroma SDK
-    
-        Keyboards
-        - BlackWidow Chroma (spectrograph)
-        - BlackWidow Chroma Tournament Edition (spectrograph)
-        - DeathStalker Chroma (horizontal bar)
-        - BlackWidow X Chroma (spectrograph)
-        - BlackWidow X Chroma Tournament Edition (spectrograph)
-        - Razer Blade Stealth (spectrograph)
-        - Razer Blade (spectrograph)
-        - Razer Ornata Chroma (spectrograph)
-        
-        - Unsupported keyboards may be used in "generic" mode by adding the razer_use_keyboard_generic_effect settings parameter
-        - This uses a single effect for all keyboards supported by the SDK core, even those that don't have a device ID
-        - Use this setting for support of these otherwise unsupported keyboards:
-            - Razer Blade Stealth (late 2016, Kaby Lake) (spectrograph)
-            - Razer BlackWidow Chroma V2 (spectrograph)
-
-        Keypads
-        - Razer Orbweaver Chroma (spectrograph)
-        - Razer Tartarus Chroma (single color)
-
-        Mice
-        - Diamondback Chroma (bar and single color)
-        - Mamba Tournament Edition (bar and single color)
-        - Mamba Chroma Wireless (bar and single color, wired and wireless)
-        - DeathAdder Chroma (single color)
-        - Naga Epic Chroma (single color, wired only)
-        - Naga Chroma (single color)
-        - Orochi Chroma (single color, wired only)
-        
-        Headsets
-        - Kraken 7.1 Chroma (single color)
-        - Kraken 7.1 Chroma V2 (single color)
-        - ManO'War (single color)
-
-        - The Kraken 7.1 Chroma V1 does not support custom effects, so a flickery workaround is used.  If you only have a V2 you
-        - can add the settings parameter razer_use_headset_custom_effect to make the V2 output a smooth, non-flickery output but
-        - if you also have a V1 or ManO'War connected it will go black.
-        
-        Mouse Mats
-        - Firefly (bar)
-    
-        External Graphics Dock
-        - Razer Core (bar and single color)
-
-        Other
-        - Razer Chroma Mug (bar)
-
-    * Corsair CUE SDK
-    
-        Keyboards
-        - K70 RGB (spectrograph)
-        - Likely other CUE SDK supported keyboards (spectrograph), untested
-
-    * Cooler Master RGB
-
-    	Keyboards
-    	- Masterkeys Pro L (spectrograph)
-    	- Masterkeys Pro S (spectrograph)
-
-    * Logitech G Gaming SDK
-
-        Keyboards
-        - G910 Orion Spark (spectrograph)
-        - G810 Orion Spectrum (spectrograph)
-        - Other single-zone RGB and Monochrome keyboards (single color)
-
-        Headsets
-        - G633 (single color)
-        - G933 (single color)
-
-        Mice
-        - G600 (single color)
-        - G900 Chaos Spectrum (single color)
-        - G303 Daedalus Apex (single color)
-        - G502 Proteus Spectrum (single color)
-    * SteelSeries
-
-        Keyboards
-        - Apex M800 (spectrograph)
-
-    * MSI SteelSeries
-        
-        Keyboards
-        - MSI 3-zone laptop keyboards and additional LED zones (MSI GS63VR, etc) (bar, single color)
-
-    * NZXT Hue+
-
-        - Configured using the hueplus=port,num_leds option in the settings file (bar)
-
-    * WS28XX Pixel LED Strips
-    
-        - Arduino (Serial/USB-Serial) or ESP8266 (UDP over WiFi) may be used for controller
-        - WS2812B, WS2811, and compatible LED strips/strings supported
-        - Adjust the LEDs value in the Arduino sketch to match the number of LEDs on your LED strip/string
-        - Recommended maximum of 90 or so LEDs on Arduino using 115200 baud rate
-        - Configure LED strip using the ledstrip command line/settings file parameter
-        - Number of LEDs in Arduino sketch must match num_leds parameter in LED command string
-        - For serial connected LEDs, -ledstrip=port,baud,num_leds (ex. -ledstrip=COM1,115200,30)
-        - For WiFi connected LEDs, -ledstrip=client,port,num_leds (ex. -ledstrip=192.168.1.5,1234,30)
-
-        - For up to 200 LEDs on Arduino using 1000000 baud rate, see my pixel_controller repository
-        - This requires AVR Studio 4 + WinAVR to build, but is more efficient by skipping Arduino IDE
-
-# Supported Devices (Linux)
-
-    * Razer Linux Drivers (https://github.com/terrycain/razer-drivers)
-
-        Keyboards
-        - BlackWidow Chroma (spectrograph)
-        - BlackWidow Chroma Tournament Edition (spectrograph)
-        - DeathStalker Chroma (horizontal bar)
-        - Razer Ornata Chroma (spectrograph)
-        - Razer Blade Stealth (spectrograph)
-        - Razer Blade Pro (spectrograph)
-
-        Keypads
-        - Razer Tartarus Chroma (single color)
-
-        Mice
-        - Diamondback Chroma (bar and single color)
-        - Mamba Tournament Edition (bar and single color)
-        - DeathAdder Chroma (single color)
-
-        Headsets
-        - Kraken 7.1 Chroma (single color)
-        - Kraken 7.1 Chroma V2 (single color)
-
-        Mouse Mats
-        - Firefly (bar)
-
-        External Graphics Dock
-        - Razer Core (bar and single color)
-
-        Other
-        - Razer Chroma Mug (bar)
-
-    * SteelSeries
-
-        Keyboards
-        - Apex M800 (spectrograph)
-
-    * MSI SteelSeries
-        
-        Keyboards
-        - MSI 3-zone laptop keyboards and additional LED zones (MSI GS63VR, etc) (bar, single color)
-
-    * NZXT Hue+
-
-        - Configured using the hueplus=port,num_leds option in the settings file (bar)
-
-    * WS28XX Pixel LED Strips
-    
-        - See the information under the Windows supported devices list.
 
 # Donations
 

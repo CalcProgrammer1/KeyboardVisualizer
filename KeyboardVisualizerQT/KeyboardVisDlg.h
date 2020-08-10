@@ -26,6 +26,9 @@ public:
     void SetVisualizer(Visualizer* v);
     void StartMinimized(boolean startmin);
 
+public slots:
+    void UpdateOpenRGBClientList();
+
 private slots:
     void update();
 
@@ -68,6 +71,10 @@ private slots:
     void on_checkBox_Silent_Background_clicked(bool checked);
 
     void on_lineEdit_Background_Timeout_textChanged(const QString &arg1);
+
+    void on_button_Connect_clicked();
+
+    void on_button_Disconnect_clicked(QObject *);
 
 private:
     Ui::KeyboardVisualizerDlg *ui;
