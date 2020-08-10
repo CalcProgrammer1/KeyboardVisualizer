@@ -33,6 +33,102 @@ Visualizer::Visualizer()
 
 }
 
+void Visualizer::BeginLEDMatrix(int size)
+{
+    matrix_setup_size = size;
+    matrix_setup_pos = 1;
+}
+
+void Visualizer::LEDStripSections(int size)
+{
+    ledstrip_sections_size = size;
+}
+
+void Visualizer::LEDMirrorX()
+{
+    ledstrip_mirror_x = true;
+}
+
+void Visualizer::LEDMirrorY()
+{
+    ledstrip_mirror_y = true;
+}
+
+void Visualizer::LEDSingleColor()
+{
+    ledstrip_single_color = true;
+}
+
+void Visualizer::LEDRotateX(int rotate)
+{
+    ledstrip_rotate_x = rotate;
+}
+
+void Visualizer::AddLEDStrip(int led_type, char* ledstring)
+{
+    //Scan through already registered LED strips and
+    //verify that the port name is not already in use
+    for (unsigned int i = 0; i < str.size(); i++)
+    {
+        if (strcmp(str[i]->GetLEDString(), ledstring) == 0)
+        {
+            return;
+        }
+    }
+
+    LEDStrip *newstr = new LEDStrip();
+    newstr->Initialize(led_type, ledstring, matrix_setup_size, matrix_setup_pos, ledstrip_sections_size, ledstrip_rotate_x, ledstrip_mirror_x, ledstrip_mirror_y, ledstrip_single_color);
+    str.push_back(newstr);
+
+    ledstrip_sections_size = 1;
+    ledstrip_mirror_x = false;
+    ledstrip_mirror_y = false;
+    ledstrip_single_color = false;
+    ledstrip_rotate_x = 0;
+
+    if (matrix_setup_pos < matrix_setup_size)
+    {
+        matrix_setup_pos += ledstrip_sections_size;
+    }
+    else
+    {
+        matrix_setup_size = 0;
+        matrix_setup_pos = 0;
+    }
+}
+
+void Visualizer::SetDeviceProperty(char * devprop, char * argument)
+{
+    //Save device property to list of device properties
+    char * buf = new char[strlen(devprop) + 1];
+    strcpy(buf, devprop);
+    device_properties.push_back(buf);
+
+    //Parse device properties exclusive to Windows
+#ifdef WIN32
+    if (strcmp(devprop, "razer_use_keyboard_custom_effect") == 0)
+    {
+        rkb.use_keyboard_custom_effect = true;
+    }
+    else if (strcmp(devprop, "razer_use_headset_custom_effect") == 0)
+    {
+        rkb.use_headset_custom_effect = true;
+    }
+    else if (strcmp(devprop, "razer_use_chromalink_single_color") == 0)
+    {
+        rkb.use_chromalink_single_color = true;
+    }
+    else if (strcmp(devprop, "razer_disable_chromalink") == 0)
+    {
+        rkb.disable_chromalink = true;
+    }
+    else if (strcmp(devprop, "razer_chroma_box_mode") == 0)
+    {
+        rkb.chroma_box_mode = atoi(argument);
+    }
+#endif
+}
+
 void Visualizer::InitAudioDeviceList()
 {
 #ifdef WIN32
@@ -395,6 +491,31 @@ void Visualizer::SaveSettings()
     //Save Audio Device Index
     snprintf(out_str, 1024, "audio_device_idx=%d\r\n", audio_device_idx);
     outfile.write(out_str, strlen(out_str));
+
+    //Save LED Strip Configurations
+    for (unsigned int i = 0; i < str.size(); i++)
+    {
+        switch (str[i]->led_type)
+        {
+        case LED_STRIP_NORMAL:
+            //Save LED Strip Configuration
+            snprintf(out_str, 1024, "ledstrip=%s\r\n", str[i]->GetLEDString());
+            outfile.write(out_str, strlen(out_str));
+            break;
+
+        case LED_STRIP_XMAS:
+            //Save Xmas Strip Configuration
+            snprintf(out_str, 1024, "xmas=%s\r\n", str[i]->GetLEDString());
+            outfile.write(out_str, strlen(out_str));
+            break;
+
+        case LED_STRIP_HUE_PLUS:
+            //Save HuePlus Configuration
+            snprintf(out_str, 1024, "hueplus=%s\r\n", str[i]->GetLEDString());
+            outfile.write(out_str, strlen(out_str));
+            break;
+        }
+    }
 
     //Save Network Mode
     switch (netmode)
@@ -951,6 +1072,13 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
         }
         break;
 
+    case VISUALIZER_PATTERN_STATIC_FLAG_BULGARIA:
+    {
+        COLORREF colors[] = { 0x000000FF, 0x0000FF00, 0x00FFFFFF };
+        DrawHorizontalBars(bright, colors, 3, pixels);
+    }
+        break;
+
     case VISUALIZER_PATTERN_STATIC_BLUE_CYAN_WHITE:
         {
         RGBColor colors[] = { 0x00FF0000, 0x00FFFF00, 0x00FFFFFF };
@@ -1499,6 +1627,8 @@ void Visualizer::LEDUpdateThreadFunction()
 
             for(int z = 0; z < rgb_controllers[c]->zones.size(); z++)
             {
+                str[i]->SetPixels(pixels_out->pixels);
+                str[i]->SetDelay(delay);
                 int                 x_count                 = rgb_controllers[c]->zones[z].leds_count;
                 int                 y_count                 = 0;
                 zone_type           type                    = rgb_controllers[c]->zones[z].type;
@@ -1605,6 +1735,8 @@ void Visualizer::LEDUpdateThreadFunction()
                         controller_found = true;
                     }
                 }
+                
+                Sleep(delay);
 
                 if(controller_found == false)
                 {
