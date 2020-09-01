@@ -76,6 +76,8 @@ private slots:
 
     void on_button_Disconnect_clicked(QObject *);
 
+    void on_button_Enabled_clicked(QObject *);
+
 private:
     Ui::KeyboardVisualizerDlg *ui;
     QSystemTrayIcon* trayIcon;

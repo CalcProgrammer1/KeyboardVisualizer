@@ -1361,10 +1361,231 @@ void Visualizer::VisThreadFunction()
         Sleep(15);
     }
 }
+
+static void UpdateOpenRGBClientListCallback(void * this_ptr)
+{
+    Visualizer * this_obj = (Visualizer *)this_ptr;
+
+    this_obj->UpdateClientSettings();
+}
+
+void Visualizer::RegisterClientInfoChangeCallback(NetClientCallback new_callback, void * new_callback_arg)
+{
+    ClientInfoChangeCallbacks.push_back(new_callback);
+    ClientInfoChangeCallbackArgs.push_back(new_callback_arg);
+}
+
+void Visualizer::ClientInfoChanged()
+{
+    ClientInfoChangeMutex.lock();
+
+    /*-------------------------------------------------*\
+    | Client info has changed, call the callbacks       |
+    \*-------------------------------------------------*/
+    for(unsigned int callback_idx = 0; callback_idx < ClientInfoChangeCallbacks.size(); callback_idx++)
+    {
+        ClientInfoChangeCallbacks[callback_idx](ClientInfoChangeCallbackArgs[callback_idx]);
+    }
+
+    ClientInfoChangeMutex.unlock();
+}
+
+void Visualizer::UpdateClientSettings()
+{
+    /*-----------------------------------------------------*\
+    | Loop through all clients and make sure each has an    |
+    | associated settings                                   |
+    \*-----------------------------------------------------*/
+    for(unsigned int client_idx = 0; client_idx < rgb_clients.size(); client_idx++)
+    {
+        if(client_idx < rgb_client_settings.size())
+        {
+            /*-----------------------------------------------------*\
+            | If the client settings at this index matches the      |
+            | controller at this index, continue                    |
+            \*-----------------------------------------------------*/
+            if(rgb_client_settings[client_idx]->client_ptr == rgb_clients[client_idx])
+            {
+                continue;
+            }
+            /*-----------------------------------------------------*\
+            | Otherwise, search the rest of the client settings list|
+            | to see if the client settings for this controller has |
+            | been misplaced                                        |
+            \*-----------------------------------------------------*/
+            else
+            {
+                bool found_match = false;
+
+                for(unsigned int search_client_idx = client_idx; search_client_idx < rgb_client_settings.size(); search_client_idx++)
+                {
+                    /*-----------------------------------------------------*\
+                    | If the client settings at this index matches the      |
+                    | controller at this index, swap the settings at the    |
+                    | original position for those at the search position    |
+                    \*-----------------------------------------------------*/
+                    if(rgb_client_settings[search_client_idx]->client_ptr == rgb_clients[client_idx])
+                    {
+                        ClientSettingsType* tmp_settings = rgb_client_settings[search_client_idx];
+
+                        rgb_client_settings[search_client_idx] = rgb_client_settings[client_idx];
+
+                        rgb_client_settings[client_idx] = tmp_settings;
+
+                        found_match = true;
+
+                        break;
+                    }
+                }
+
+                /*-----------------------------------------------------*\
+                | If a matching settings was not found, create a new one|
+                \*-----------------------------------------------------*/
+                if(!found_match)
+                {
+                    ClientSettingsType* new_settings = new ClientSettingsType();
+
+                    new_settings->client_ptr = rgb_clients[client_idx];
+
+                    rgb_client_settings.insert(rgb_client_settings.begin() + client_idx, new_settings);
+                }
+            }
+        }
+        else
+        {
+            /*-----------------------------------------------------*\
+            | If the settings list is smaller than the client index |
+            | that means this client wasn't found in the existing   |
+            | list.  Create a new settings for this client          |
+            \*-----------------------------------------------------*/
+
+            ClientSettingsType* new_settings = new ClientSettingsType();
+
+            new_settings->client_ptr = rgb_clients[client_idx];
+
+            rgb_client_settings.insert(rgb_client_settings.begin() + client_idx, new_settings);
+        }
+    }
+
+    /*-----------------------------------------------------*\
+    | At this point, the clients and settings lists should  |
+    | line up.  If the settings list is longer than the     |
+    | clients list, delete the extras as they are unused    |
+    \*-----------------------------------------------------*/
+    for(unsigned int settings_idx = rgb_clients.size(); settings_idx < rgb_client_settings.size(); settings_idx++)
+    {
+        rgb_client_settings.pop_back();
+    }
+
+    /*-----------------------------------------------------*\
+    | Now go through each client and make sure all the      |
+    | controller settings entries line up                   |
+    \*-----------------------------------------------------*/
+    for(unsigned int client_idx = 0; client_idx < rgb_clients.size(); client_idx++)
+    {
+        std::vector<RGBController *> &          controllers         = rgb_clients[client_idx]->server_controllers;
+        std::vector<ControllerSettingsType *> & controller_settings = rgb_client_settings[client_idx]->controller_settings;
+
+        for(unsigned int controller_idx = 0; controller_idx < controllers.size(); controller_idx++)
+        {
+            if(controller_idx < controller_settings.size())
+            {
+                /*-----------------------------------------------------*\
+                | If the controller settings at this index matches the  |
+                | controller at this index, continue                    |
+                \*-----------------------------------------------------*/
+                if(controller_settings[controller_idx]->controller_ptr == controllers[controller_idx])
+                {
+                    continue;
+                }
+                /*-----------------------------------------------------*\
+                | Otherwise, search the rest of the client settings list|
+                | to see if the client settings for this controller has |
+                | been misplaced                                        |
+                \*-----------------------------------------------------*/
+                else
+                {
+                    bool found_match = false;
+
+                    for(unsigned int search_controller_idx = controller_idx; search_controller_idx < controllers.size(); search_controller_idx++)
+                    {
+                        /*-----------------------------------------------------*\
+                        | If the client settings at this index matches the      |
+                        | controller at this index, swap the settings at the    |
+                        | original position for those at the search position    |
+                        \*-----------------------------------------------------*/
+                        if(controller_settings[search_controller_idx]->controller_ptr == controllers[controller_idx])
+                        {
+                            ControllerSettingsType* tmp_settings = controller_settings[search_controller_idx];
+
+                            controller_settings[search_controller_idx] = controller_settings[controller_idx];
+
+                            controller_settings[controller_idx] = tmp_settings;
+
+                            found_match = true;
+
+                            break;
+                        }
+                    }
+
+                    /*-----------------------------------------------------*\
+                    | If a matching settings was not found, create a new one|
+                    \*-----------------------------------------------------*/
+                    if(!found_match)
+                    {
+                        ControllerSettingsType* new_settings = new ControllerSettingsType();
+
+                        new_settings->controller_ptr = controllers[controller_idx];
+
+                        controller_settings.insert(controller_settings.begin() + controller_idx, new_settings);
+                    }
+                }
+            }
+            else
+            {
+                /*-----------------------------------------------------*\
+                | If the settings list is smaller than the client index |
+                | that means this client wasn't found in the existing   |
+                | list.  Create a new settings for this client          |
+                \*-----------------------------------------------------*/
+
+                ControllerSettingsType* new_settings = new ControllerSettingsType();
+
+                new_settings->controller_ptr = controllers[controller_idx];
+                new_settings->enabled        = false;
+
+                for(int mode_idx = 0; mode_idx < controllers[controller_idx]->modes.size(); mode_idx++)
+                {
+                    if(controllers[controller_idx]->modes[mode_idx].name == "Direct")
+                    {
+                        new_settings->enabled = true;
+                    }
+                }
+
+                controller_settings.insert(controller_settings.begin() + controller_idx, new_settings);
+            }
+        }
+
+        /*-----------------------------------------------------*\
+        | At this point, the clients and settings lists should  |
+        | line up.  If the settings list is longer than the     |
+        | clients list, delete the extras as they are unused    |
+        \*-----------------------------------------------------*/
+        for(unsigned int settings_idx = controllers.size(); settings_idx < controller_settings.size(); settings_idx++)
+        {
+            controller_settings.pop_back();
+        }
+    }
+
+    ClientInfoChanged();
+}
+
 static bool started = false;
 NetworkClient * Visualizer::OpenRGBConnect(const char * ip, unsigned short port)
 {
     NetworkClient * rgb_client = new NetworkClient(rgb_controllers);
+
+    rgb_clients.push_back(rgb_client);
 
     std::string titleString = "Keyboard Visualizer ";
     titleString.append(VERSION_STRING);
@@ -1373,14 +1594,14 @@ NetworkClient * Visualizer::OpenRGBConnect(const char * ip, unsigned short port)
     rgb_client->SetName(titleString.c_str());
     rgb_client->SetPort(port);
 
-    rgb_client->StartClient();
+    rgb_client->RegisterClientInfoChangeCallback(UpdateOpenRGBClientListCallback, this);
 
-    rgb_clients.push_back(rgb_client);
+    rgb_client->StartClient();
 
     if(!started)
     {
-        LEDUpdateThread     = new std::thread(&Visualizer::LEDUpdateThreadFunction, this);
         started = true;
+        LEDUpdateThread     = new std::thread(&Visualizer::LEDUpdateThreadFunction, this);
     }
 
     return(rgb_client);
@@ -1388,6 +1609,9 @@ NetworkClient * Visualizer::OpenRGBConnect(const char * ip, unsigned short port)
 
 void Visualizer::OpenRGBDisconnect(NetworkClient * client)
 {
+    started = false;
+    LEDUpdateThread->join();
+
     client->StopClient();
 
     for(unsigned int client_idx = 0; client_idx < rgb_clients.size(); client_idx++)
@@ -1395,8 +1619,15 @@ void Visualizer::OpenRGBDisconnect(NetworkClient * client)
         if(client == rgb_clients[client_idx])
         {
             rgb_clients.erase(rgb_clients.begin() + client_idx);
+            rgb_client_settings.erase(rgb_client_settings.begin() + client_idx);
             break;
         }
+    }
+
+    if(!started)
+    {
+        started = true;
+        LEDUpdateThread     = new std::thread(&Visualizer::LEDUpdateThreadFunction, this);
     }
 }
 
@@ -1458,158 +1689,125 @@ static void SetupLinearGrid(int x_count, int * x_idx_list)
 
 void Visualizer::LEDUpdateThreadFunction()
 {
-    while(1)
+    while(started)
     {
-        for(int c = 0; c < rgb_controllers.size(); c++)
+        for(unsigned int client_idx = 0; client_idx < rgb_clients.size(); client_idx++)
         {
-            ControllerIndexType *   controller_index_map    = NULL;
-            bool                    index_map_found         = false;
-
-            // Find matching controller index map
-            if((c < ZoneIndex.size()) && (ZoneIndex[c].controller_ptr == rgb_controllers[c]))
+            if(client_idx < rgb_client_settings.size())
             {
-                // The controller index map has been found
-                controller_index_map = &ZoneIndex[c];
-                index_map_found      = true;
-            }
-            else
-            {
-                // Search all the controller index maps
-                for(int i = 0; i < ZoneIndex.size(); i++)
+                if(rgb_client_settings[client_idx]->client_ptr == rgb_clients[client_idx])
                 {
-                    if(ZoneIndex[i].controller_ptr == rgb_controllers[c])
+                    std::vector<RGBController *> &          controllers           = rgb_clients[client_idx]->server_controllers;
+                    std::vector<ControllerSettingsType *> & controllers_settings  = rgb_client_settings[client_idx]->controller_settings;
+
+                    for(unsigned int controller_idx = 0; controller_idx < controllers.size(); controller_idx++)
                     {
-                        // The controller index map has been found
-                        controller_index_map = &ZoneIndex[i];
-                        index_map_found      = true;
-                    }
-                }
-            }
-
-            // If the index map doesn't exist for this controller, create it
-            if(index_map_found == false)
-            {
-                ControllerIndexType *   new_index_map       = new ControllerIndexType();
-                new_index_map->controller_ptr               = rgb_controllers[c];
-
-                ZoneIndex.insert(ZoneIndex.begin() + c, *new_index_map);
-
-                controller_index_map = &ZoneIndex[c];
-            }
-
-            for(int z = 0; z < rgb_controllers[c]->zones.size(); z++)
-            {
-                int                 x_count                 = rgb_controllers[c]->zones[z].leds_count;
-                int                 y_count                 = 0;
-                zone_type           type                    = rgb_controllers[c]->zones[z].type;
-                ZoneIndexType *     zone_index_map          = NULL;
-                index_map_found                             = false;
-
-                // If matrix type and matrix mapping is valid, get X and Y count
-                if(type == ZONE_TYPE_MATRIX)
-                {
-                    if(rgb_controllers[c]->zones[z].matrix_map != NULL)
-                    {
-                        x_count     = rgb_controllers[c]->zones[z].matrix_map->width;
-                        y_count     = rgb_controllers[c]->zones[z].matrix_map->height;
-                    }
-                    else
-                    {
-                        type = ZONE_TYPE_SINGLE;
-                    }
-                }
-
-                // Search all the zone index maps
-                for(int i = 0; i < controller_index_map->zones.size(); i++)
-                {
-                    zone_index_map = &controller_index_map->zones[i];
-
-                    if((zone_index_map->x_count == x_count) && (zone_index_map->y_count == y_count))
-                    {
-                        index_map_found = true;
-                        break;
-                    }
-                }
-
-                // If the index map doesn't exist for this zone, create it
-                if(index_map_found == false)
-                {
-                    ZoneIndexType *   new_index_map             = new ZoneIndexType();
-                    new_index_map->x_count                      = x_count;
-                    new_index_map->y_count                      = y_count;
-
-                    if(type == ZONE_TYPE_MATRIX)
-                    {
-                        new_index_map->x_index                  = new int[x_count];
-                        new_index_map->y_index                  = new int[y_count];
-
-                        SetupMatrixGrid(x_count, y_count, new_index_map->x_index, new_index_map->y_index);
-                    }
-                    else if(type == ZONE_TYPE_LINEAR)
-                    {
-                        new_index_map->x_index                  = new int[x_count];
-
-                        SetupLinearGrid(x_count, new_index_map->x_index);
-                    }
-
-                    controller_index_map->zones.push_back(*new_index_map);
-
-                    zone_index_map = &controller_index_map->zones[controller_index_map->zones.size() - 1];
-                }
-
-                switch (rgb_controllers[c]->zones[z].type)
-                {
-                case ZONE_TYPE_MATRIX:
-                    for (int y = 0; y < y_count; y++)
-                    {
-                        for (int x = 0; x < x_count; x++)
+                        if(controller_idx < controllers_settings.size())
                         {
-                            unsigned int map_idx = (y * x_count) + x;
-                            unsigned int color_idx = rgb_controllers[c]->zones[z].matrix_map->map[map_idx];
-                            if( color_idx != 0xFFFFFFFF )
+                            if(controllers_settings[controller_idx]->controller_ptr == controllers[controller_idx])
                             {
-                                rgb_controllers[c]->zones[z].colors[color_idx] = pixels_out->pixels[zone_index_map->y_index[y]][zone_index_map->x_index[x]];
+                                RGBController *               controller            = controllers[controller_idx];
+                                ControllerSettingsType *      controller_settings   = controllers_settings[controller_idx];
+
+                                if(controller_settings->enabled)
+                                {
+                                    for(unsigned int zone_idx = 0; zone_idx < controller->zones.size(); zone_idx++)
+                                    {
+                                        int                 x_count                 = controller->zones[zone_idx].leds_count;
+                                        int                 y_count                 = 0;
+                                        zone_type           type                    = controller->zones[zone_idx].type;
+                                        ZoneIndexType *     zone_index_map          = NULL;
+                                        bool                index_map_found         = false;
+
+                                        // If matrix type and matrix mapping is valid, get X and Y count
+                                        if(type == ZONE_TYPE_MATRIX)
+                                        {
+                                            if(controller->zones[zone_idx].matrix_map != NULL)
+                                            {
+                                                x_count     = controller->zones[zone_idx].matrix_map->width;
+                                                y_count     = controller->zones[zone_idx].matrix_map->height;
+                                            }
+                                            else
+                                            {
+                                                type = ZONE_TYPE_SINGLE;
+                                            }
+                                        }
+
+                                        // Search all the zone index maps
+                                        for(int i = 0; i < controller_settings->zones.size(); i++)
+                                        {
+                                            zone_index_map = &controller_settings->zones[i];
+
+                                            if((zone_index_map->x_count == x_count) && (zone_index_map->y_count == y_count))
+                                            {
+                                                index_map_found = true;
+                                                break;
+                                            }
+                                        }
+
+                                        // If the index map doesn't exist for this zone, create it
+                                        if(index_map_found == false)
+                                        {
+                                            ZoneIndexType *   new_index_map             = new ZoneIndexType();
+                                            new_index_map->x_count                      = x_count;
+                                            new_index_map->y_count                      = y_count;
+
+                                            if(type == ZONE_TYPE_MATRIX)
+                                            {
+                                                new_index_map->x_index                  = new int[x_count];
+                                                new_index_map->y_index                  = new int[y_count];
+
+                                                SetupMatrixGrid(x_count, y_count, new_index_map->x_index, new_index_map->y_index);
+                                            }
+                                            else if(type == ZONE_TYPE_LINEAR)
+                                            {
+                                                new_index_map->x_index                  = new int[x_count];
+
+                                                SetupLinearGrid(x_count, new_index_map->x_index);
+                                            }
+
+                                            controller_settings->zones.push_back(*new_index_map);
+
+                                            zone_index_map = &controller_settings->zones[controller_settings->zones.size() - 1];
+                                        }
+
+                                        switch (controller->zones[zone_idx].type)
+                                        {
+                                        case ZONE_TYPE_MATRIX:
+                                            for (int y = 0; y < y_count; y++)
+                                            {
+                                                for (int x = 0; x < x_count; x++)
+                                                {
+                                                    unsigned int map_idx = (y * x_count) + x;
+                                                    unsigned int color_idx = controller->zones[zone_idx].matrix_map->map[map_idx];
+                                                    if( color_idx != 0xFFFFFFFF )
+                                                    {
+                                                        controller->zones[zone_idx].colors[color_idx] = pixels_out->pixels[zone_index_map->y_index[y]][zone_index_map->x_index[x]];
+                                                    }
+                                                }
+                                            }
+                                            break;
+
+                                        case ZONE_TYPE_SINGLE:
+                                            for (int r = 0; r < x_count; r++)
+                                            {
+                                                controller->zones[zone_idx].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
+                                            }
+                                            break;
+
+                                        case ZONE_TYPE_LINEAR:
+                                            for (int x = 0; x < x_count; x++)
+                                            {
+                                                controller->zones[zone_idx].colors[x] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][zone_index_map->x_index[x]];
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    controller->DeviceUpdateLEDs();
+                                }
                             }
                         }
                     }
-                    break;
-
-                case ZONE_TYPE_SINGLE:
-                    for (int r = 0; r < x_count; r++)
-                    {
-                        rgb_controllers[c]->zones[z].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
-                    }
-                    break;
-
-                case ZONE_TYPE_LINEAR:
-                    for (int x = 0; x < x_count; x++)
-                    {
-                        rgb_controllers[c]->zones[z].colors[x] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][zone_index_map->x_index[x]];
-                    }
-                    break;
-                }
-            }
-            rgb_controllers[c]->DeviceUpdateLEDs();
-        }
-
-        if(ZoneIndex.size() > rgb_controllers.size())
-        {
-            for(int z = 0; z < ZoneIndex.size(); z++)
-            {
-                bool controller_found = false;
-
-                for(int r = 0; r < rgb_controllers.size(); r++)
-                {
-                    if(ZoneIndex[z].controller_ptr == rgb_controllers[r])
-                    {
-                        controller_found = true;
-                    }
-                }
-
-                if(controller_found == false)
-                {
-                    ZoneIndex.erase(ZoneIndex.begin() + z);
-                    z--;
                 }
             }
         }

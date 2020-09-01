@@ -94,8 +94,15 @@ typedef struct
 typedef struct
 {
     RGBController *             controller_ptr;
+    bool                        enabled;
     std::vector<ZoneIndexType>  zones;
-} ControllerIndexType;
+} ControllerSettingsType;
+
+typedef struct
+{
+    NetworkClient *                         client_ptr;
+    std::vector<ControllerSettingsType *>   controller_settings;
+} ClientSettingsType;
 
 class Visualizer
 {
@@ -215,8 +222,11 @@ public:
     std::vector<NetworkClient*> rgb_clients;
     std::vector<RGBController*> rgb_controllers;
 
-    //Zone index maps
-    std::vector<ControllerIndexType>    ZoneIndex;
+    std::vector<ClientSettingsType*> rgb_client_settings;
+
+    void UpdateClientSettings();
+    void RegisterClientInfoChangeCallback(NetClientCallback new_callback, void * new_callback_arg);
+    void ClientInfoChanged();
 
 private:
 #ifdef WIN32
@@ -267,6 +277,10 @@ private:
     unsigned char buffer[256];
 
     void DrawSingleColorForeground(float amplitude, vis_pixels *fg_pixels, vis_pixels *out_pixels);
+
+    std::mutex                          ClientInfoChangeMutex;
+    std::vector<NetClientCallback>      ClientInfoChangeCallbacks;
+    std::vector<void *>                 ClientInfoChangeCallbackArgs;
 };
 
 #endif

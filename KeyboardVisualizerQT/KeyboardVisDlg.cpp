@@ -143,6 +143,8 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
 {
     vis_ptr = v;
 
+    vis_ptr->RegisterClientInfoChangeCallback(UpdateOpenRGBClientListCallback, this);
+
     ui->lineEdit_Normalization_Offset->setText(QString::number(vis_ptr->nrml_ofst));
     ui->lineEdit_Normalization_Scale->setText(QString::number(vis_ptr->nrml_scl));
     ui->lineEdit_Animation_Speed->setText(QString::number(vis_ptr->anim_speed));
@@ -369,6 +371,12 @@ public:
     NetworkClient * net_client;
 };
 
+class EnableCheckboxArg : public QObject
+{
+public:
+    ControllerSettingsType * settings_ptr;
+};
+
 void Ui::KeyboardVisDlg::UpdateOpenRGBClientList()
 {
     ui->tree_Devices->clear();
@@ -380,14 +388,29 @@ void Ui::KeyboardVisDlg::UpdateOpenRGBClientList()
     ui->tree_Devices->setColumnWidth(1, 100);
     ui->tree_Devices->setHeaderLabels(QStringList() << "Connected Clients" << "");
 
+    /*-----------------------------------------------------*\
+    | Create a signal mapper for Disconnect buttons         |
+    \*-----------------------------------------------------*/
     QSignalMapper* signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(QObject *)), this, SLOT(on_button_Disconnect_clicked(QObject *)));
 
+    /*-----------------------------------------------------*\
+    | Create a signal mapper for Enabled checkboxes         |
+    \*-----------------------------------------------------*/
+    QSignalMapper* checkMapper = new QSignalMapper(this);
+    connect(checkMapper, SIGNAL(mapped(QObject *)), this, SLOT(on_button_Enabled_clicked(QObject *)));
+
+    /*-----------------------------------------------------*\
+    | Loop through all active clients and populate list     |
+    \*-----------------------------------------------------*/
     for(int client_idx = 0; client_idx < vis_ptr->rgb_clients.size(); client_idx++)
     {
         QTreeWidgetItem* new_top_item = new QTreeWidgetItem(ui->tree_Devices);
         new_top_item->setText(0, QString::fromStdString(vis_ptr->rgb_clients[client_idx]->GetIP()));
 
+        /*-----------------------------------------------------*\
+        | Create a Disconnect button for this client and map it |
+        \*-----------------------------------------------------*/
         QPushButton* new_button = new QPushButton( "Disconnect" );
         ui->tree_Devices->setItemWidget(new_top_item, 1, new_button);
 
@@ -398,20 +421,42 @@ void Ui::KeyboardVisDlg::UpdateOpenRGBClientList()
 
         signalMapper->setMapping(new_button, new_arg);
 
-        for(int dev_idx = 0; dev_idx < vis_ptr->rgb_clients[client_idx]->server_controllers.size(); dev_idx++)
+        /*-----------------------------------------------------*\
+        | Loop through all devices on this client               |
+        \*-----------------------------------------------------*/
+        for(int controller_idx = 0; controller_idx < vis_ptr->rgb_clients[client_idx]->server_controllers.size(); controller_idx++)
         {
             QTreeWidgetItem* new_item = new QTreeWidgetItem(new_top_item);
-            new_item->setText(0, QString::fromStdString(vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->name));
+            new_item->setText(0, QString::fromStdString(vis_ptr->rgb_clients[client_idx]->server_controllers[controller_idx]->name));
 
-            for(int zone_idx = 0; zone_idx < vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones.size(); zone_idx++)
+            /*-----------------------------------------------------*\
+            | Create an Enabled checkbox for this device and map it |
+            \*-----------------------------------------------------*/
+            QCheckBox* new_check = new QCheckBox( "Enabled" );
+            ui->tree_Devices->setItemWidget(new_item, 1, new_check);
+
+            if(controller_idx < vis_ptr->rgb_client_settings[client_idx]->controller_settings.size())
+            {
+                new_check->setChecked(vis_ptr->rgb_client_settings[client_idx]->controller_settings[controller_idx]->enabled);
+
+                connect(new_check, SIGNAL(clicked()), checkMapper, SLOT(map()));
+                EnableCheckboxArg * check_arg = new EnableCheckboxArg();
+                check_arg->settings_ptr = vis_ptr->rgb_client_settings[client_idx]->controller_settings[controller_idx];
+                checkMapper->setMapping(new_check, check_arg);
+            }
+
+            /*-----------------------------------------------------*\
+            | Loop through all zones on this device                 |
+            \*-----------------------------------------------------*/
+            for(int zone_idx = 0; zone_idx < vis_ptr->rgb_clients[client_idx]->server_controllers[controller_idx]->zones.size(); zone_idx++)
             {
                 QTreeWidgetItem* new_child = new QTreeWidgetItem();
 
-                std::string zone_str = vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones[zone_idx].name + ", ";
-                zone_str.append(std::to_string(vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones[zone_idx].leds_count));
+                std::string zone_str = vis_ptr->rgb_clients[client_idx]->server_controllers[controller_idx]->zones[zone_idx].name + ", ";
+                zone_str.append(std::to_string(vis_ptr->rgb_clients[client_idx]->server_controllers[controller_idx]->zones[zone_idx].leds_count));
                 zone_str.append(" LEDs, ");
 
-                switch(vis_ptr->rgb_clients[client_idx]->server_controllers[dev_idx]->zones[zone_idx].type)
+                switch(vis_ptr->rgb_clients[client_idx]->server_controllers[controller_idx]->zones[zone_idx].type)
                 {
                     case ZONE_TYPE_SINGLE:
                         zone_str.append("Single");
@@ -442,12 +487,24 @@ void Ui::KeyboardVisDlg::on_button_Disconnect_clicked(QObject * arg)
     vis_ptr->OpenRGBDisconnect(disconnect_client);
 }
 
+void Ui::KeyboardVisDlg::on_button_Enabled_clicked(QObject * arg)
+{
+    EnableCheckboxArg * checkbox_arg = ((EnableCheckboxArg *)arg);
+
+    if(checkbox_arg->settings_ptr->enabled)
+    {
+        checkbox_arg->settings_ptr->enabled = false;
+    }
+    else
+    {
+        checkbox_arg->settings_ptr->enabled = true;
+    }
+}
+
 void Ui::KeyboardVisDlg::on_button_Connect_clicked()
 {
     unsigned short  port = std::stoi(ui->lineEdit_Port->text().toStdString());
     std::string     ip   = ui->lineEdit_IP->text().toStdString();
 
     NetworkClient * new_client = vis_ptr->OpenRGBConnect(ip.c_str(), port);
-
-    new_client->RegisterClientInfoChangeCallback(UpdateOpenRGBClientListCallback, this);
 }
