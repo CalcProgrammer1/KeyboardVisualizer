@@ -1507,7 +1507,7 @@ void Visualizer::UpdateClientSettings()
                 {
                     bool found_match = false;
 
-                    for(unsigned int search_controller_idx = controller_idx; search_controller_idx < controllers.size(); search_controller_idx++)
+                    for(unsigned int search_controller_idx = controller_idx; search_controller_idx < controller_settings.size(); search_controller_idx++)
                     {
                         /*-----------------------------------------------------*\
                         | If the client settings at this index matches the      |
@@ -1536,6 +1536,15 @@ void Visualizer::UpdateClientSettings()
                         ControllerSettingsType* new_settings = new ControllerSettingsType();
 
                         new_settings->controller_ptr = controllers[controller_idx];
+                        new_settings->enabled        = false;
+
+                        for(int mode_idx = 0; mode_idx < controllers[controller_idx]->modes.size(); mode_idx++)
+                        {
+                            if(controllers[controller_idx]->modes[mode_idx].name == "Direct")
+                            {
+                                new_settings->enabled = true;
+                            }
+                        }
 
                         controller_settings.insert(controller_settings.begin() + controller_idx, new_settings);
                     }
@@ -1693,6 +1702,8 @@ void Visualizer::LEDUpdateThreadFunction()
     {
         for(unsigned int client_idx = 0; client_idx < rgb_clients.size(); client_idx++)
         {
+            rgb_clients[client_idx]->ControllerListMutex.lock();
+
             if(client_idx < rgb_client_settings.size())
             {
                 if(rgb_client_settings[client_idx]->client_ptr == rgb_clients[client_idx])
@@ -1810,6 +1821,8 @@ void Visualizer::LEDUpdateThreadFunction()
                     }
                 }
             }
+
+            rgb_clients[client_idx]->ControllerListMutex.unlock();
         }
         Sleep(delay);
     }
