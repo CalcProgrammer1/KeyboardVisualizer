@@ -1,4 +1,4 @@
-# Keyboard Visualizer ![Icon](https://raw.githubusercontent.com/CalcProgrammer1/KeyboardVisualizer/master/KeyboardVisualizerQT/Icon.png)
+# Keyboard Visualizer ![Icon](https://raw.githubusercontent.com/CalcProgrammer1/KeyboardVisualizer/master/KeyboardVisualizerQT/KeyboardVisualizer.png)
 
 ## OpenRGB Audio Visualizer for Windows, Linux, and MacOS
 
