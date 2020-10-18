@@ -308,18 +308,8 @@ void Visualizer::SaveSettings()
         silent_bkgd = FALSE;
     }
 
-    //Get file path in executable directory
-//#ifdef WIN32
-//    GetModuleFileName(NULL, filename, 2048);
-//    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
-//    strcat(filename, "\\settings.txt");
-//#else
-//    char arg1[64];
-//    snprintf(arg1, 64, "/proc/%d/exe", getpid());
-//    readlink(arg1, filename, 1024);
-//    strcpy(filename, std::string(filename).substr(0, std::string(filename).find_last_of("\\/")).c_str());
-//    strcat(filename, "/settings.txt");
-//#endif
+    //Set filename
+    strcpy(filename, "settings.txt");
 
     //Open settings file
     outfile.open(filename);
