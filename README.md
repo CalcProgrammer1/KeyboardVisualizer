@@ -35,7 +35,7 @@ Development on this version has stalled as I'm not interested in supporting a mu
       2.  git clone https://gitlab.com/CalcProgrammer1/KeyboardVisualizer
       3.  git submodule update --init --recursive
       4.  cd KeyboardVisualizer
-      5.  qmake OpenRGB.pro
+      5.  qmake KeyboardVisualizer.pro
       6.  make -j8
     
   *  Run the application with ./KeyboardVisualizer
