@@ -157,6 +157,7 @@ unix:!macx {
 # MacOS-specific Configuration                                          #
 #-----------------------------------------------------------------------#
 macx: {
+    CONFIG += c++14
     LIBS += -framework OpenAL
 }
 
