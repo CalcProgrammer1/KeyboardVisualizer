@@ -33,9 +33,9 @@ Development on this version has stalled as I'm not interested in supporting a mu
 
       1.  sudo apt install build-essential qtcreator qt5-default libopenal-dev
       2.  git clone https://gitlab.com/CalcProgrammer1/KeyboardVisualizer
-      3.  git submodule update --init --recursive
-      4.  cd KeyboardVisualizer
-      5.  qmake OpenRGB.pro
+      3.  cd KeyboardVisualizer
+      4.  git submodule update --init --recursive
+      5.  qmake KeyboardVisualizer.pro
       6.  make -j8
     
   *  Run the application with ./KeyboardVisualizer
