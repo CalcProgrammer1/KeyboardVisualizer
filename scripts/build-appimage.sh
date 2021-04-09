@@ -55,25 +55,18 @@ make -j$(nproc)
 make install INSTALL_ROOT=AppDir
 
 #-----------------------------------------------------------------------#
-# Now, build AppImage using linuxdeploy and linuxdeploy-plugin-qt       #
-# Download linuxdeploy and its Qt plugin                                #
-#-----------------------------------------------------------------------#
-wget https://artifacts.assassinate-you.net/artifactory/list/linuxdeploy/travis-456/linuxdeploy-x86_64.AppImage
-wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-
-#-----------------------------------------------------------------------#
 # Make them executable                                                  #
 #-----------------------------------------------------------------------#
-chmod +x linuxdeploy*.AppImage
+chmod +x "$REPO_ROOT"/OpenRGB/scripts/tools/linuxdeploy*.AppImage
 
 #-----------------------------------------------------------------------#
 # Make sure Qt plugin finds QML sources so it can deploy the imported   #
 # files                                                                 #
 export QML_SOURCES_PATHS="$REPO_ROOT"/src
 
-./linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir AppDir -e KeyboardVisualizer -i "$REPO_ROOT"/KeyboardVisualizerQT/KeyboardVisualizer.png -d "$REPO_ROOT"/KeyboardVisualizerQT/KeyboardVisualizer.desktop 
-./linuxdeploy-plugin-qt-x86_64.AppImage --appimage-extract-and-run --appdir AppDir
-./linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir AppDir --output appimage
+"$REPO_ROOT"/OpenRGB/scripts/tools/linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir AppDir -e KeyboardVisualizer -i "$REPO_ROOT"/KeyboardVisualizerQT/KeyboardVisualizer.png -d "$REPO_ROOT"/KeyboardVisualizerQT/KeyboardVisualizer.desktop 
+"$REPO_ROOT"/OpenRGB/scripts/tools/linuxdeploy-plugin-qt-x86_64.AppImage --appimage-extract-and-run --appdir AppDir
+"$REPO_ROOT"/OpenRGB/scripts/tools/linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir AppDir --output appimage
 
 #-----------------------------------------------------------------------#
 # Move built AppImage back into original CWD                            #
