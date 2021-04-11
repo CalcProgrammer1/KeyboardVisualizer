@@ -36,7 +36,7 @@ build_linux:
   artifacts:
     paths:
     - Keyboard_Visualizer-x86_64.AppImage
-    expire_in: 1337 years
+    expire_in: 30 days
 
 #-----------------------------------------------------------------------#
 # Windows (32-bit) Build Target                                         #
@@ -108,7 +108,7 @@ build_windows_32:
   artifacts:
     paths:
     - _build/*.7z
-    expire_in: 1337 years
+    expire_in: 30 days
 
 #-----------------------------------------------------------------------#
 # Windows (64-bit) Build Target                                         #
@@ -180,4 +180,49 @@ build_windows_64:
   artifacts:
     paths:
     - _build/*.7z
-    expire_in: 1337 years
+    expire_in: 30 days
+
+#-----------------------------------------------------------------------#
+# MacOS Build Target                                                    #
+#-----------------------------------------------------------------------#
+build_macos_arm64:
+  tags:
+  - macos
+  stage: build
+  script:
+  - eval $(/opt/homebrew/bin/brew shellenv)
+  - qmake KeyboardVisualizer.pro
+  - make -j16
+  - macdeployqt KeyboardVisualizer.app -codesign=OpenRGB
+
+  artifacts:
+    paths:
+    - KeyboardVisualizer.app
+    expire_in: 30 days
+
+  rules:
+  - if: '$CI_PROJECT_PATH == "CalcProgrammer1/KeyboardVisualizer"'
+    when: on_success
+  - if: '$BUILD_MACOS =~ /.+/'
+    when: on_success
+
+build_macos_intel:
+  tags:
+  - macos
+  stage: build
+  script:
+  - eval $(/usr/local/bin/brew shellenv)
+  - arch -x86_64 /usr/local/bin/qmake KeyboardVisualizer.pro
+  - arch -x86_64 make -j16
+  - arch -x86_64 macdeployqt KeyboardVisualizer.app -codesign=OpenRGB
+
+  artifacts:
+    paths:
+    - KeyboardVisualizer.app
+    expire_in: 30 days
+
+  rules:
+  - if: '$CI_PROJECT_PATH == "CalcProgrammer1/KeyboardVisualizer"'
+    when: on_success
+  - if: '$BUILD_MACOS =~ /.+/'
+    when: on_success
