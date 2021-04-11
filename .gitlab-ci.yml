@@ -22,15 +22,37 @@ stages:
 before_script:
  - echo "started by ${GITLAB_USER_NAME}"
 
+#reusable templates
+.ccache_init: &ccache_init
+  before_script:
+    - apt update
+    - apt install -y build-essential qtcreator qt5-default libopenal-dev pkgconf wget git
+
 #-----------------------------------------------------------------------#
-# Linux (AppImage) Build Target                                         #
+# Linux (AppImage) 32-bit Build Target                                  #
 #-----------------------------------------------------------------------#
-build_linux:
+build_linux_32:
+  <<: *ccache_init
+  image: i386/ubuntu:bionic
+  stage: build
+  script:
+  - export $(dpkg-architecture)
+  - ./scripts/build-appimage.sh
+  
+  artifacts:
+    paths:
+    - Keyboard_Visualizer-i386.AppImage
+    expire_in: 30 days
+
+#-----------------------------------------------------------------------#
+# Linux (AppImage) 64-bit Build Target                                  #
+#-----------------------------------------------------------------------#
+build_linux_64:
+  <<: *ccache_init
   image: ubuntu:bionic
   stage: build
   script:
-  - apt update
-  - apt install -y build-essential qtcreator qt5-default libopenal-dev pkgconf wget git
+  - export $(dpkg-architecture)
   - ./scripts/build-appimage.sh
   
   artifacts:
@@ -38,6 +60,48 @@ build_linux:
     - Keyboard_Visualizer-x86_64.AppImage
     expire_in: 30 days
 
+#-----------------------------------------------------------------------#
+# Linux (.deb) 32-bit Build Target                                      #
+#-----------------------------------------------------------------------#
+build_linux_deb32:
+  <<: *ccache_init
+  image: i386/ubuntu:bionic
+  stage: build
+  script:
+  - apt install -y debhelper
+  - dpkg-architecture -l
+  - dpkg-buildpackage --target-arch i386 -us -B
+  - rm -v ../keyboardvisualizer-dbgsym*.ddeb
+  - mv -v ../keyboardvisualizer*.deb ./
+
+  artifacts:
+    paths:
+    - keyboardvisualizer*.deb
+    exclude:
+    - keyboardvisualizer-dbgsym*.deb
+    expire_in: 30 days
+
+#-----------------------------------------------------------------------#
+# Linux (.deb) 64-bit Build Target                                      #
+#-----------------------------------------------------------------------#
+build_linux_deb64:
+  <<: *ccache_init
+  image: ubuntu:bionic
+  stage: build
+  script:
+  - apt install -y debhelper
+  - dpkg-architecture -l
+  - dpkg-buildpackage -us -B
+  - rm -v ../keyboardvisualizer-dbgsym*.ddeb
+  - mv -v ../keyboardvisualizer*.deb ./
+
+  artifacts:
+    paths:
+    - keyboardvisualizer*.deb
+    exclude:
+    - keyboardvisualizer-dbgsym*.deb
+    expire_in: 30 days
+  
 #-----------------------------------------------------------------------#
 # Windows (32-bit) Build Target                                         #
 #-----------------------------------------------------------------------#
