@@ -91,7 +91,7 @@ typedef struct
 {
     RGBController *             controller_ptr;
     bool                        enabled;
-    std::vector<ZoneIndexType>  zones;
+    std::vector<std::vector<ZoneIndexType>> zones;
 } ControllerSettingsType;
 
 typedef struct

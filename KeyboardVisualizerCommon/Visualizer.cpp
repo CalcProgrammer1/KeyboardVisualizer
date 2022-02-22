@@ -1536,7 +1536,7 @@ void Visualizer::LEDUpdateThreadFunction()
                                         int                 x_count                 = controller->zones[zone_idx].leds_count;
                                         int                 y_count                 = 0;
                                         zone_type           type                    = controller->zones[zone_idx].type;
-                                        ZoneIndexType *     zone_index_map          = NULL;
+                                        std::vector<ZoneIndexType> * zone_index_map = NULL;
                                         bool                index_map_found         = false;
 
                                         // If matrix type and matrix mapping is valid, get X and Y count
@@ -1558,16 +1558,20 @@ void Visualizer::LEDUpdateThreadFunction()
                                         {
                                             zone_index_map = &controller_settings->zones[i];
 
-                                            if((zone_index_map->x_count == x_count) && (zone_index_map->y_count == y_count))
+                                            if((*zone_index_map).size() > 0)
                                             {
-                                                index_map_found = true;
-                                                break;
+                                                if(((*zone_index_map)[0].x_count == x_count) && ((*zone_index_map)[0].y_count == y_count))
+                                                {
+                                                    index_map_found = true;
+                                                    break;
+                                                }
                                             }
                                         }
 
                                         // If the index map doesn't exist for this zone, create it
                                         if(index_map_found == false)
                                         {
+                                            std::vector<ZoneIndexType> new_zone_vector;
                                             ZoneIndexType *   new_index_map             = new ZoneIndexType();
                                             new_index_map->x_count                      = x_count;
                                             new_index_map->y_count                      = y_count;
@@ -1578,49 +1582,97 @@ void Visualizer::LEDUpdateThreadFunction()
                                                 new_index_map->y_index                  = new int[y_count];
 
                                                 SetupMatrixGrid(x_count, y_count, new_index_map->x_index, new_index_map->y_index);
+
+                                                new_zone_vector.push_back(*new_index_map);
                                             }
                                             else if(type == ZONE_TYPE_LINEAR)
                                             {
                                                 new_index_map->x_index                  = new int[x_count];
 
                                                 SetupLinearGrid(x_count, new_index_map->x_index);
+
+                                                new_zone_vector.push_back(*new_index_map);
                                             }
 
-                                            controller_settings->zones.push_back(*new_index_map);
+                                            if(controller->zones[zone_idx].segments.size() > 0)
+                                            {
+                                                for(unsigned int segment_idx = 0; segment_idx < controller->zones[zone_idx].segments.size(); segment_idx++)
+                                                {
+                                                    if(controller->zones[zone_idx].segments[segment_idx].type == ZONE_TYPE_LINEAR)
+                                                    {
+                                                        x_count                                 = controller->zones[zone_idx].segments[segment_idx].leds_count;
+                                                        new_index_map->x_index                  = new int[x_count];
+
+                                                        SetupLinearGrid(x_count, new_index_map->x_index);
+
+                                                        new_zone_vector.push_back(*new_index_map);
+                                                    }
+                                                }
+                                            }
+
+                                            controller_settings->zones.push_back(new_zone_vector);
 
                                             zone_index_map = &controller_settings->zones[controller_settings->zones.size() - 1];
                                         }
 
-                                        switch (controller->zones[zone_idx].type)
+                                        if(controller->zones[zone_idx].segments.size() > 0)
                                         {
-                                        case ZONE_TYPE_MATRIX:
-                                            for (int y = 0; y < y_count; y++)
+                                            for(unsigned int segment_idx = 0; segment_idx < controller->zones[zone_idx].segments.size(); segment_idx++)
                                             {
-                                                for (int x = 0; x < x_count; x++)
+                                                x_count = controller->zones[zone_idx].segments[segment_idx].leds_count;
+                                                unsigned int x_offset = controller->zones[zone_idx].segments[segment_idx].start_idx;
+
+                                                switch(controller->zones[zone_idx].segments[segment_idx].type)
                                                 {
-                                                    unsigned int map_idx = (y * x_count) + x;
-                                                    unsigned int color_idx = controller->zones[zone_idx].matrix_map->map[map_idx];
-                                                    if( color_idx != 0xFFFFFFFF )
+                                                case ZONE_TYPE_SINGLE:
+                                                    for (int r = 0; r < x_count; r++)
                                                     {
-                                                        controller->zones[zone_idx].colors[color_idx] = pixels_out->pixels[zone_index_map->y_index[y]][zone_index_map->x_index[x]];
+                                                        controller->zones[zone_idx].colors[x_offset + r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
                                                     }
+                                                    break;
+
+                                                case ZONE_TYPE_LINEAR:
+                                                    for (int x = 0; x < x_count; x++)
+                                                    {
+                                                        controller->zones[zone_idx].colors[x_offset + x] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][(*zone_index_map)[1 + segment_idx].x_index[x]];
+                                                    }
+                                                    break;
                                                 }
                                             }
-                                            break;
-
-                                        case ZONE_TYPE_SINGLE:
-                                            for (int r = 0; r < x_count; r++)
+                                        }
+                                        else
+                                        {
+                                            switch (controller->zones[zone_idx].type)
                                             {
-                                                controller->zones[zone_idx].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
-                                            }
-                                            break;
+                                            case ZONE_TYPE_MATRIX:
+                                                for (int y = 0; y < y_count; y++)
+                                                {
+                                                    for (int x = 0; x < x_count; x++)
+                                                    {
+                                                        unsigned int map_idx = (y * x_count) + x;
+                                                        unsigned int color_idx = controller->zones[zone_idx].matrix_map->map[map_idx];
+                                                        if( color_idx != 0xFFFFFFFF )
+                                                        {
+                                                            controller->zones[zone_idx].colors[color_idx] = pixels_out->pixels[(*zone_index_map)[0].y_index[y]][(*zone_index_map)[0].x_index[x]];
+                                                        }
+                                                    }
+                                                }
+                                                break;
 
-                                        case ZONE_TYPE_LINEAR:
-                                            for (int x = 0; x < x_count; x++)
-                                            {
-                                                controller->zones[zone_idx].colors[x] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][zone_index_map->x_index[x]];
+                                            case ZONE_TYPE_SINGLE:
+                                                for (int r = 0; r < x_count; r++)
+                                                {
+                                                    controller->zones[zone_idx].colors[r] = pixels_out->pixels[ROW_IDX_SINGLE_COLOR][0];
+                                                }
+                                                break;
+
+                                            case ZONE_TYPE_LINEAR:
+                                                for (int x = 0; x < x_count; x++)
+                                                {
+                                                    controller->zones[zone_idx].colors[x] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][(*zone_index_map)[0].x_index[x]];
+                                                }
+                                                break;
                                             }
-                                            break;
                                         }
                                     }
                                     controller->DeviceUpdateLEDs();
