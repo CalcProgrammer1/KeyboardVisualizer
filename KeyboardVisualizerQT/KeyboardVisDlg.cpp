@@ -74,17 +74,32 @@ void KeyboardVisDlg::show_hide()
     }
 }
 
-void Ui::KeyboardVisDlg::on_checkBox_Start_From_Bottom_toggled(bool checked)
+void Ui::KeyboardVisDlg::on_checkBox_Start_From_Bottom_clicked(bool checked)
 {
     vis_ptr->start_from_bottom = checked;
+
+    if (vis_ptr->start_from_bot_inv == true)
+    {
+        vis_ptr->start_from_bot_inv = false;
+        ui->checkBox_InvSFB->setChecked(false);
+    }
+
     vis_ptr->OnSettingsChanged();
 }
 
-void Ui::KeyboardVisDlg::on_checkBox_InvSFB_toggled(bool checked)
+void Ui::KeyboardVisDlg::on_checkBox_InvSFB_clicked(bool checked)
 {
     vis_ptr->start_from_bot_inv = checked;
+
+    if (vis_ptr->start_from_bottom == false)
+    {
+        vis_ptr->start_from_bot_inv = false;
+        ui->checkBox_InvSFB->setChecked(false);
+    }
+
     vis_ptr->OnSettingsChanged();
 }
+
 
 void KeyboardVisDlg::update()
 {
@@ -149,6 +164,8 @@ void KeyboardVisDlg::update()
 
         ui->checkBox_Reactive_Background->setChecked(vis_ptr->reactive_bkgd);
         ui->checkBox_Silent_Background->setChecked(vis_ptr->silent_bkgd);
+        ui->checkBox_Start_From_Bottom->setChecked(vis_ptr->start_from_bottom);
+        ui->checkBox_InvSFB->setChecked(vis_ptr->start_from_bot_inv);
     }
 }
 
@@ -218,6 +235,8 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
 
     ui->checkBox_Reactive_Background->setChecked(vis_ptr->reactive_bkgd);
     ui->checkBox_Silent_Background->setChecked(vis_ptr->silent_bkgd);
+    ui->checkBox_Start_From_Bottom->setChecked(vis_ptr->start_from_bottom);
+    ui->checkBox_InvSFB->setChecked(vis_ptr->start_from_bot_inv);
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
