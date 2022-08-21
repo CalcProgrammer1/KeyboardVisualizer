@@ -5,6 +5,7 @@
 
 #include <QTreeWidgetItem>
 #include <QSignalMapper>
+#include <iostream>
 
 Visualizer* vis_ptr;
 boolean startminimized;
@@ -71,6 +72,18 @@ void KeyboardVisDlg::show_hide()
         hide();
         timer->stop();
     }
+}
+
+void Ui::KeyboardVisDlg::on_checkBox_Start_From_Bottom_toggled(bool checked)
+{
+    vis_ptr->start_from_bottom = checked;
+    vis_ptr->OnSettingsChanged();
+}
+
+void Ui::KeyboardVisDlg::on_checkBox_InvSFB_toggled(bool checked)
+{
+    vis_ptr->start_from_bot_inv = checked;
+    vis_ptr->OnSettingsChanged();
 }
 
 void KeyboardVisDlg::update()
@@ -365,6 +378,7 @@ void Ui::KeyboardVisDlg::on_lineEdit_Background_Timeout_textChanged(const QStrin
     vis_ptr->OnSettingsChanged();
 }
 
+
 class NetworkClientPointer : public QObject
 {
 public:
@@ -508,3 +522,4 @@ void Ui::KeyboardVisDlg::on_button_Connect_clicked()
 
     NetworkClient * new_client = vis_ptr->OpenRGBConnect(ip.c_str(), port);
 }
+

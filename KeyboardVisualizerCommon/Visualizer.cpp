@@ -247,6 +247,8 @@ void Visualizer::Initialize()
     frgd_mode            = VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED;
     single_color_mode    = VISUALIZER_SINGLE_COLOR_FOLLOW_FOREGROUND;
     reactive_bkgd        = false;
+    start_from_bot_inv   = false;
+    start_from_bottom    = false;
     audio_device_idx     = 0;
     filter_constant      = 1.0f;
 
@@ -378,6 +380,14 @@ void Visualizer::SaveSettings()
     snprintf(out_str, 1024, "silent_bkgd=%d\r\n", silent_bkgd);
     outfile.write(out_str, strlen(out_str));
 
+    //Save Silent Background Flag
+    snprintf(out_str, 1024, "start_from_bottom=%d\r\n", start_from_bottom);
+    outfile.write(out_str, strlen(out_str));
+
+    //Save Silent Background Flag
+    snprintf(out_str, 1024, "start_from_bot_inv=%d\r\n", start_from_bot_inv);
+    outfile.write(out_str, strlen(out_str));
+
     //Save Background Timeout
     snprintf(out_str, 1024, "background_timeout=%d\r\n", background_timeout);
     outfile.write(out_str, strlen(out_str));
@@ -441,6 +451,8 @@ void Visualizer::SendSettings()
         settings.frgd_mode = frgd_mode;
         settings.reactive_bkgd = reactive_bkgd;
         settings.silent_bkgd = silent_bkgd;
+        settings.start_from_bot_inv = start_from_bot_inv;
+        settings.start_from_bottom = start_from_bottom;
         settings.background_timeout = background_timeout;
         port->tcp_write((char *)&settings, sizeof(settings));
     }
@@ -653,9 +665,11 @@ void Visualizer::Update()
             fft[i] = sum / (2 * avg_size + 1);
         }
     }
+
     for(int i = 0; i < 256; i++)
     {
-        fft_fltr[i] = fft_fltr[i] + (filter_constant * (fft[i] - fft_fltr[i]));
+        float current = fft[i];
+        fft_fltr[i] = fft_fltr[i] + (filter_constant * (current - fft_fltr[i]));
     }
 }
 
@@ -891,84 +905,6 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
 {
     switch (pattern)
     {
-    case VISUALIZER_PATTERN_SOLID_BLACK:
-        DrawSolidColor(bright, 0x00000000, pixels);
-        break;
-
-    case VISUALIZER_PATTERN_SOLID_WHITE:
-        DrawSolidColor(bright, 0x00FFFFFF, pixels);
-        break;
-
-    case VISUALIZER_PATTERN_SOLID_RED:
-        DrawSolidColor(bright, 0x000000FF, pixels);
-        break;
-
-    case VISUALIZER_PATTERN_SOLID_ORANGE:
-        DrawSolidColor(bright, 0x000040FF, pixels);
-        break;
-
-    case VISUALIZER_PATTERN_SOLID_YELLOW:
-        DrawSolidColor(bright, 0x0000FFFF, pixels);
-        break;
-
-    case VISUALIZER_PATTERN_SOLID_GREEN:
-        DrawSolidColor(bright, 0x0000FF00, pixels);
-        break;
-
-    case VISUALIZER_PATTERN_SOLID_CYAN:
-        DrawSolidColor(bright, 0x00FFFF00, pixels);
-        break;
-
-    case VISUALIZER_PATTERN_SOLID_BLUE:
-        DrawSolidColor(bright, 0x00FF0000, pixels);
-        break;
-
-    case VISUALIZER_PATTERN_SOLID_PURPLE:
-        DrawSolidColor(bright, 0x00FF0040, pixels);
-        break;
-
-    case VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED:
-        {
-        RGBColor colors[] = { 0x0000FF00, 0x0000FFFF, 0x000000FF };
-        DrawHorizontalBars(bright, colors, 3, pixels);
-        }
-        break;
-
-    case VISUALIZER_PATTERN_STATIC_GREEN_WHITE_RED:
-        {
-        RGBColor colors[] = { 0x0000FF00, 0x00FFFFFF, 0x000000FF };
-        DrawHorizontalBars(bright, colors, 3, pixels);
-        }
-        break;
-
-    case VISUALIZER_PATTERN_STATIC_BLUE_CYAN_WHITE:
-        {
-        RGBColor colors[] = { 0x00FF0000, 0x00FFFF00, 0x00FFFFFF };
-        DrawHorizontalBars(bright, colors, 3, pixels);
-        }
-        break;
-
-    case VISUALIZER_PATTERN_STATIC_RED_WHITE_BLUE:
-        {
-        RGBColor colors[] = { 0x000000FF, 0x00FFFFFF, 0x00FF0000 };
-        DrawHorizontalBars(bright, colors, 3, pixels);
-        }
-        break;
-
-    case VISUALIZER_PATTERN_STATIC_RAINBOW:
-        {
-        RGBColor colors[] = { 0x000000FF, 0x0000FFFF, 0x0000FF00, 0x00FFFF00, 0x00FF0000, 0x00FF00FF };
-        DrawHorizontalBars(bright, colors, 6, pixels);
-        }
-        break;
-
-    case VISUALIZER_PATTERN_STATIC_RAINBOW_INVERSE:
-        {
-        RGBColor colors[] = { 0x00FF00FF, 0x00FF0000, 0x00FFFF00, 0x0000FF00, 0x0000FFFF, 0x000000FF };
-        DrawHorizontalBars(bright, colors, 6, pixels);
-        }
-        break;
-
     case VISUALIZER_PATTERN_ANIM_RAINBOW_SINUSOIDAL:
         DrawRainbowSinusoidal(bright, bkgd_step, pixels);
         break;
@@ -991,6 +927,24 @@ void Visualizer::DrawPattern(VISUALIZER_PATTERN pattern, int bright, vis_pixels 
 
     case VISUALIZER_PATTERN_ANIM_SINUSOIDAL_CYCLE:
         DrawSinusoidalCycle(bright, bkgd_step, pixels);
+        break;
+    default:
+        if(pattern <= VISUALIZER_SINGLE_COLOR_PURPLE)
+            DrawSolidColor(bright, colors[pattern], pixels);
+        else
+        {
+            std::vector<std::vector<RGBColor>> colors=
+            {
+                { 0x0000FF00, 0x0000FFFF, 0x000000FF },
+                { 0x0000FF00, 0x00FFFFFF, 0x000000FF },
+                { 0x00FF0000, 0x00FFFF00, 0x00FFFFFF },
+                { 0x000000FF, 0x00FFFFFF, 0x00FF0000 },
+                { 0x000000FF, 0x0000FFFF, 0x0000FF00, 0x00FFFF00, 0x00FF0000, 0x00FF00FF },
+                { 0x00FF00FF, 0x00FF0000, 0x00FFFF00, 0x0000FF00, 0x0000FFFF, 0x000000FF }
+            };
+            std::vector<RGBColor>& current = colors[pattern-VISUALIZER_PATTERN_STATIC_GREEN_YELLOW_RED];
+            DrawHorizontalBars(bright, (RGBColor*)current.data(), current.size(), pixels);
+        }
         break;
     }
 }
@@ -1082,6 +1036,8 @@ void Visualizer::NetUpdateThreadFunction()
                     frgd_mode = ((settings_pkt_type *)buf)->frgd_mode;
                     reactive_bkgd = ((settings_pkt_type *)buf)->reactive_bkgd;
                     silent_bkgd = ((settings_pkt_type *)buf)->silent_bkgd;
+                    start_from_bottom = ((settings_pkt_type *)buf)->start_from_bottom;
+                    start_from_bot_inv = ((settings_pkt_type *)buf)->start_from_bot_inv;
                     background_timeout = ((settings_pkt_type *)buf)->background_timeout;
                     SetNormalization(nrml_ofst, nrml_scl);
 
@@ -1200,74 +1156,29 @@ void Visualizer::VisThreadFunction()
                 //Draw Bar Graph Foreground
                 if (y == ROW_IDX_BAR_GRAPH)
                 {
-                    if (x < 128)
-                    {
-                        if ((fft_fltr[5] - 0.05f) >((1 / 128.0f)*(127-x)))
+
+                    bool A = start_from_bottom;
+                    bool B = fft_fltr[5] - 0.05f > (start_from_bot_inv ? 255 - x : x) / 256.0f;
+                    bool C = x < 128;
+                    bool D = fft_fltr[5] - 0.05f > 1 / 128.0f*(127-x);
+                    bool E = fft_fltr[5] - 0.05f > 1 / 128.0f*(x-128);
+
+                    if([&]() -> bool { if(A) return B; if(C) return D; return E; }())
+                        if (shutdown_flag == true)
                         {
-                            if (shutdown_flag == true)
-                            {
-                                int in_color = pixels_fg.pixels[y][x];
-                                pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
-                            }
-                            else
-                            {
-                                pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
-                            }
+                            int in_color = pixels_fg.pixels[y][x];
+                            pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
+                        }
+                        else pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
+                    else if (reactive_bkgd || silent_bkgd)
+                        if (!silent_bkgd || ((background_timer >= background_timeout) && (background_timeout > 0)))
+                        {
+                            int in_color = pixels_bg.pixels[y][x];
+                            pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
                         }
                         else
-                        {
-                            if (reactive_bkgd || silent_bkgd)
-                            {
-                                if (!silent_bkgd || ((background_timer >= background_timeout) && (background_timeout > 0)))
-                                {
-                                    int in_color = pixels_bg.pixels[y][x];
-                                    pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
-                                }
-                                else
-                                {
-                                    pixels_render->pixels[y][x] = RGB(0, 0, 0);
-                                }
-                            }
-                            else
-                            {
-                                pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if ((fft_fltr[5] - 0.05f) >((1 / 128.0f)*((x-128))))
-                        {
-                            if (shutdown_flag == true)
-                            {
-                                int in_color = pixels_fg.pixels[y][x];
-                                pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
-                            }
-                            else
-                            {
-                                pixels_render->pixels[y][x] = pixels_fg.pixels[y][x];
-                            }
-                        }
-                        else
-                        {
-                            if (reactive_bkgd || silent_bkgd)
-                            {
-                                if (!silent_bkgd || (background_timer >= background_timeout))
-                                {
-                                    int in_color = pixels_bg.pixels[y][x];
-                                    pixels_render->pixels[y][x] = RGB(((brightness * GetRValue(in_color))), ((brightness * GetGValue(in_color))), ((brightness * GetBValue(in_color))));
-                                }
-                                else
-                                {
-                                    pixels_render->pixels[y][x] = RGB(0, 0, 0);
-                                }
-                            }
-                            else
-                            {
-                                pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
-                            }
-                        }
-                    }
+                            pixels_render->pixels[y][x] = RGB(0, 0, 0);
+                    else pixels_render->pixels[y][x] = pixels_bg.pixels[y][x];
                 }
             }
         }
@@ -1280,69 +1191,21 @@ void Visualizer::VisThreadFunction()
         if ((background_timeout <= 0 ) || (background_timer < background_timeout))
         {
             //Draw brightness based visualizer for single LED devices
-            switch (single_color_mode)
+            if(single_color_mode <= VISUALIZER_SINGLE_COLOR_PURPLE)
+                DrawSingleColorStatic(brightness, colors[single_color_mode], pixels_render);
+            else if(single_color_mode != VISUALIZER_SINGLE_COLOR_BACKGROUND)
             {
-            case VISUALIZER_SINGLE_COLOR_BLACK:
-                DrawSingleColorStatic(brightness, 0x00000000, pixels_render);
-                break;
-
-            case VISUALIZER_SINGLE_COLOR_WHITE:
-                DrawSingleColorStatic(brightness, 0x00FFFFFF, pixels_render);
-                break;
-
-            case VISUALIZER_SINGLE_COLOR_RED:
-                DrawSingleColorStatic(brightness, 0x000000FF, pixels_render);
-                break;
-
-            case VISUALIZER_SINGLE_COLOR_ORANGE:
-                DrawSingleColorStatic(brightness, 0x000080FF, pixels_render);
-                break;
-
-            case VISUALIZER_SINGLE_COLOR_YELLOW:
-                DrawSingleColorStatic(brightness, 0x0000FFFF, pixels_render);
-                break;
-
-            case VISUALIZER_SINGLE_COLOR_GREEN:
-                DrawSingleColorStatic(brightness, 0x0000FF00, pixels_render);
-                break;
-
-            case VISUALIZER_SINGLE_COLOR_CYAN:
-                DrawSingleColorStatic(brightness, 0x00FFFF00, pixels_render);
-                break;
-
-            case VISUALIZER_SINGLE_COLOR_BLUE:
-                DrawSingleColorStatic(brightness, 0x00FF0000, pixels_render);
-                break;
-
-            case VISUALIZER_SINGLE_COLOR_PURPLE:
-                DrawSingleColorStatic(brightness, 0x00FF00FF, pixels_render);
-                break;
-
-            case VISUALIZER_SINGLE_COLOR_BACKGROUND:
-                //Intentionally do nothing, leave the background unmodified
-                break;
-
-            case VISUALIZER_SINGLE_COLOR_FOLLOW_BACKGROUND:
-                DrawSingleColorBackground(brightness, &pixels_bg, pixels_render);
-                break;
-
-            case VISUALIZER_SINGLE_COLOR_FOLLOW_FOREGROUND:
-                DrawSingleColorForeground(brightness, &pixels_fg, pixels_render);
-                break;
+                if(single_color_mode == VISUALIZER_SINGLE_COLOR_FOLLOW_BACKGROUND)
+                    DrawSingleColorBackground(brightness, &pixels_bg, pixels_render);
+                else
+                    DrawSingleColorForeground(brightness, &pixels_fg, pixels_render);
             }
         }
 
+
         //Swap buffers
-        if (pixels_render == &pixels_vs1)
-        {
-            pixels_render = &pixels_vs2;
-            pixels_out = &pixels_vs1;
-        }
-        else
-        {
-            pixels_render = &pixels_vs1;
-            pixels_out = &pixels_vs2;
-        }
+        pixels_render = (pixels_render == &pixels_vs1) ? &pixels_vs2 : &pixels_vs1;
+        pixels_out = (pixels_out == &pixels_vs1) ? &pixels_vs2 : &pixels_vs1;
 
         //Increment background step
         bkgd_step = bkgd_step += (anim_speed / 100.0f);
@@ -1797,6 +1660,7 @@ void Visualizer::LEDUpdateThreadFunction()
                                             break;
 
                                         case ZONE_TYPE_LINEAR:
+
                                             for (int x = 0; x < x_count; x++)
                                             {
                                                 controller->zones[zone_idx].colors[x] = pixels_out->pixels[ROW_IDX_BAR_GRAPH][zone_index_map->x_index[x]];

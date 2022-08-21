@@ -78,6 +78,8 @@ private slots:
 
     void on_button_Enabled_clicked(QObject *);
 
+    void on_checkBox_Start_From_Bottom_toggled(bool checked);
+    void on_checkBox_InvSFB_toggled(bool checked);
 private:
     Ui::KeyboardVisualizerDlg *ui;
     QSystemTrayIcon* trayIcon;

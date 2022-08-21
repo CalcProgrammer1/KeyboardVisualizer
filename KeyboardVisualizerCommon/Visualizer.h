@@ -72,6 +72,8 @@ typedef struct
     int frgd_mode;
     bool reactive_bkgd;
     bool silent_bkgd;
+    bool start_from_bottom;
+    bool start_from_bot_inv;
     unsigned int background_timeout;
 } settings_pkt_type;
 
@@ -199,6 +201,8 @@ public:
     int bkgd_mode;
     bool reactive_bkgd;
     bool silent_bkgd;
+    bool start_from_bottom;
+    bool start_from_bot_inv;
     unsigned int background_timeout;
     unsigned int background_timer;
 

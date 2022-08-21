@@ -144,6 +144,24 @@ void parse_argument_string(char * argument, char * value)
                 vis.reactive_bkgd = false;
             }
         }
+        else if (strcmp(argument, "start_from_bot_inv") == 0)
+        {
+            vis.start_from_bot_inv = atoi(value);
+
+            if ((vis.start_from_bot_inv == true) && (vis.start_from_bot_inv == true))
+            {
+                vis.start_from_bot_inv = false;
+            }
+        }
+        else if (strcmp(argument, "start_from_bottom") == 0)
+        {
+            vis.start_from_bottom = atoi(value);
+
+            if ((vis.start_from_bottom == true) && (vis.start_from_bottom == true))
+            {
+                vis.start_from_bottom = false;
+            }
+        }
         else if (strcmp(argument, "background_timeout") == 0)
         {
             vis.background_timeout = atoi(value);
@@ -154,6 +172,8 @@ void parse_argument_string(char * argument, char * value)
             vis.audio_device_idx = atoi(value);
             vis.ChangeAudioDevice();
         }
+
+
     }
 }
 
