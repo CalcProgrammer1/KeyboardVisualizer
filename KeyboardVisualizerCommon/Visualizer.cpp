@@ -1158,7 +1158,7 @@ void Visualizer::VisThreadFunction()
                 {
 
                     bool A = start_from_bottom;
-                    bool B = fft_fltr[5] - 0.05f > (start_from_bot_inv ? 255 - x : x) / 256.0f;
+                    bool B = fft_fltr[5] > (start_from_bot_inv ? 256 - x : x) / 256.0f;
                     bool C = x < 128;
                     bool D = fft_fltr[5] - 0.05f > 1 / 128.0f*(127-x);
                     bool E = fft_fltr[5] - 0.05f > 1 / 128.0f*(x-128);
