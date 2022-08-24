@@ -120,6 +120,8 @@ enum
     VISUALIZER_NUM_SINGLE_COLOR
 };
 
+constexpr int colors[] = {0x00000000, 0x00FFFFFF, 0x000000FF, 0x000080FF, 0x0000FFFF, 0x0000FF00, 0x00FFFF00, 0x00FF0000, 0x00FF00FF};
+
 const char * const visualizer_single_color_labels[VISUALIZER_NUM_SINGLE_COLOR] =
 {
     "Black",

@@ -144,6 +144,16 @@ void parse_argument_string(char * argument, char * value)
                 vis.reactive_bkgd = false;
             }
         }
+        else if (strcmp(argument, "start_from_bot_inv") == 0)
+        {
+            vis.start_from_bot_inv = atoi(value);
+        }
+        else if (strcmp(argument, "start_from_bottom") == 0)
+        {
+            std::cout<< value;
+            vis.start_from_bottom = atoi(value);
+            std::cout<< " " << vis.start_from_bottom << std::endl;
+        }
         else if (strcmp(argument, "background_timeout") == 0)
         {
             vis.background_timeout = atoi(value);
@@ -154,6 +164,7 @@ void parse_argument_string(char * argument, char * value)
             vis.audio_device_idx = atoi(value);
             vis.ChangeAudioDevice();
         }
+
     }
 }
 

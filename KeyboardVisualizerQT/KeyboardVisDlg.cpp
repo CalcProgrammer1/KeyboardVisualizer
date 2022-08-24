@@ -5,6 +5,7 @@
 
 #include <QTreeWidgetItem>
 #include <QSignalMapper>
+#include <iostream>
 
 Visualizer* vis_ptr;
 boolean startminimized;
@@ -73,6 +74,33 @@ void KeyboardVisDlg::show_hide()
     }
 }
 
+void Ui::KeyboardVisDlg::on_checkBox_Start_From_Bottom_clicked(bool checked)
+{
+    vis_ptr->start_from_bottom = checked;
+
+    if (vis_ptr->start_from_bot_inv == true)
+    {
+        vis_ptr->start_from_bot_inv = false;
+        ui->checkBox_InvSFB->setChecked(false);
+    }
+
+    vis_ptr->OnSettingsChanged();
+}
+
+void Ui::KeyboardVisDlg::on_checkBox_InvSFB_clicked(bool checked)
+{
+    vis_ptr->start_from_bot_inv = checked;
+
+    if (vis_ptr->start_from_bottom == false)
+    {
+        vis_ptr->start_from_bot_inv = false;
+        ui->checkBox_InvSFB->setChecked(false);
+    }
+
+    vis_ptr->OnSettingsChanged();
+}
+
+
 void KeyboardVisDlg::update()
 {
     if (startminimized && firstrun)
@@ -136,6 +164,8 @@ void KeyboardVisDlg::update()
 
         ui->checkBox_Reactive_Background->setChecked(vis_ptr->reactive_bkgd);
         ui->checkBox_Silent_Background->setChecked(vis_ptr->silent_bkgd);
+        ui->checkBox_Start_From_Bottom->setChecked(vis_ptr->start_from_bottom);
+        ui->checkBox_InvSFB->setChecked(vis_ptr->start_from_bot_inv);
     }
 }
 
@@ -205,6 +235,8 @@ void KeyboardVisDlg::SetVisualizer(Visualizer* v)
 
     ui->checkBox_Reactive_Background->setChecked(vis_ptr->reactive_bkgd);
     ui->checkBox_Silent_Background->setChecked(vis_ptr->silent_bkgd);
+    ui->checkBox_Start_From_Bottom->setChecked(vis_ptr->start_from_bottom);
+    ui->checkBox_InvSFB->setChecked(vis_ptr->start_from_bot_inv);
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -365,6 +397,7 @@ void Ui::KeyboardVisDlg::on_lineEdit_Background_Timeout_textChanged(const QStrin
     vis_ptr->OnSettingsChanged();
 }
 
+
 class NetworkClientPointer : public QObject
 {
 public:
@@ -508,3 +541,4 @@ void Ui::KeyboardVisDlg::on_button_Connect_clicked()
 
     NetworkClient * new_client = vis_ptr->OpenRGBConnect(ip.c_str(), port);
 }
+
