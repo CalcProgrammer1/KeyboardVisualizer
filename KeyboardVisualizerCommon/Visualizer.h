@@ -28,7 +28,6 @@
 /*---------------------------------------------------------*\
 | OpenRGB SDK Includes                                      |
 \*---------------------------------------------------------*/
-#include "OpenRGB.h"
 #include "NetworkClient.h"
 #include "RGBController.h"
 
