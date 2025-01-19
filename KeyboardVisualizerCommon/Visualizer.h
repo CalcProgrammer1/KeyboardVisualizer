@@ -56,35 +56,6 @@
 
 typedef struct
 {
-    int amplitude;
-    int avg_mode;
-    int avg_size;
-    int window_mode;
-    int decay;
-    int delay;
-    float anim_speed;
-    int bkgd_bright;
-    int bkgd_mode;
-    int single_color_mode;
-    float nrml_ofst;
-    float nrml_scl;
-    float filter_constant;
-    int frgd_mode;
-    bool reactive_bkgd;
-    bool silent_bkgd;
-    unsigned int background_timeout;
-} settings_pkt_type;
-
-typedef int net_mode;
-enum
-{
-    NET_MODE_DISABLED,
-    NET_MODE_CLIENT,
-    NET_MODE_SERVER
-};
-
-typedef struct
-{
     int                 x_count;
     int                 y_count;
     int *               x_index;
@@ -120,8 +91,6 @@ public:
 
     //Thread Functions
     void LEDUpdateThreadFunction();
-    void NetConnectThreadFunction();
-    void NetUpdateThreadFunction();
     void VisThreadFunction();
 
     //Connect to OpenRGB
@@ -135,12 +104,6 @@ public:
 
     //Send Settings to network clients
     void SendSettings();
-
-    //Initialize Server
-    void InitServer(char * serverstring);
-
-    //Initialize CLient
-    void InitClient(char * clientstring);
 
     //Change Audio Device
     void ChangeAudioDevice();
@@ -245,18 +208,10 @@ private:
 
     //Threads
     std::thread * LEDUpdateThread;
-    std::thread * NetConnectThread;
-    std::thread * NetUpdateThread;
     std::thread * VisThread;
 
     //Background Step
     float bkgd_step;
-
-    //Network Port Pointer
-    net_port * port;
-
-    //Network Mode
-    net_mode netmode;
 
     //FFT Variables
     float win_hanning[256];

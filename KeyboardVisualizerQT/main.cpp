@@ -118,14 +118,6 @@ void parse_argument_string(char * argument, char * value)
                 vis.avg_mode = atoi(value);
             }
         }
-        else if (strcmp(argument, "server") == 0)
-        {
-            vis.InitServer(value);
-        }
-        else if (strcmp(argument, "client") == 0)
-        {
-            vis.InitClient(value);
-        }
         else if (strcmp(argument, "reactive_bkgd") == 0)
         {
             vis.reactive_bkgd = atoi(value);
@@ -230,11 +222,6 @@ bool parse_command_line(int argc, char *argv[])
             printf("                      - 0:  Binning\r\n");
             printf("                      - 1:  Low-pass filtering\r\n");
             printf("    anim_speed        - Animation Speed (percent)\r\n");
-            printf("    server            - Configure this instance as a server for synchronization\r\n");
-            printf("                      -  Takes what port to serve on as argument, i.e. server=1234\r\n");
-            printf("    client            - Configure this instance as a client for synchronization\r\n");
-            printf("                      -  Takes the IP/hostname of the server and port as arguments,\r\n");
-            printf("                      -  i.e. client=192.168.1.100,1234\r\n");
             return false;
         }
 
