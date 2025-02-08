@@ -210,6 +210,7 @@ void Visualizer::ChangeAudioDevice()
     if(device != NULL)
     {
         alcCaptureStop(device);
+        alcCaptureCloseDevice(device);
     }
 
     if(audio_device_idx < audio_devices.size())
