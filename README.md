@@ -15,7 +15,7 @@ Development on this version has stalled as I'm not interested in supporting a mu
 # Download/Build
 
 ## Windows
-  *  Pre-built binaries are available under the Releases section on GitLab.
+  *  Pre-built binaries are available under the Releases section on [`GitLab`](https://gitlab.com/CalcProgrammer1/KeyboardVisualizer).
 
   *  If you wish to build the application yourself:
 
